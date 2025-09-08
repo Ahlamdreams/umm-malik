@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام حضور المعلمات - مع النجوم والتحقق</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Amiri:wght@400;700&display=swap');
+        
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+            animation: gradientShift 20s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { 
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            }
+            25% { 
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 25%, #667eea 50%, #764ba2 75%, #f093fb 100%);
+            }
+            50% { 
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 25%, #4facfe 50%, #00f2fe 75%, #667eea 100%);
+            }
+            75% { 
+                background: linear-gradient(135deg, #764ba2 0%, #f093fb 25%, #f5576c 50%, #4facfe 75%, #00f2fe 100%);
+            }
+        }
+
+        .glass-morphism {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .teacher-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .teacher-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .present-card {
+            background: var(--success-gradient);
+            color: white;
+            animation: presentPulse 3s infinite;
+            box-shadow: 0 0 30px rgba(79, 172, 254, 0.6);
+        }
+
+        @keyframes presentPulse {
+            0%, 100% { 
+                box-shadow: 0 0 30px rgba(79, 172, 254, 0.6), 0 0 0 0 rgba(79, 172, 254, 0.4); 
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(79, 172, 254, 0.8), 0 0 0 15px rgba(79, 172, 254, 0); 
+            }
+        }
+
+        .absent-card {
+            background: var(--danger-gradient);
+            color: white;
+            animation: absentPulse 3s infinite;
+        }
+
+        @keyframes absentPulse {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(250, 112, 154, 0.5); 
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(250, 112, 154, 0.8); 
+            }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+        
+        .success-message {
+            animation: slideInBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: var(--success-gradient);
+            backdrop-filter: blur(20px);
+        }
+        
+        @keyframes slideInBounce {
+            0% { 
+                transform: translateX(100%) scale(0.8); 
+                opacity: 0;
+            }
+            60% { 
+                transform: translateX(-10%) scale(1.05); 
+                opacity: 1;
+            }
+            100% { 
+                transform: translateX(0) scale(1); 
+            }
+        }
+
+        .star-animation {
+            animation: starDance 3s infinite;
+            filter: drop-shadow(0 0 10px gold);
+        }
+
+        @keyframes starDance {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg); 
+                filter: drop-shadow(0 0 10px gold) hue-rotate(0deg);
+            }
+            25% { 
+                transform: scale(1.2) rotate(90deg); 
+                filter: drop-shadow(0 0 15px gold) hue-rotate(90deg);
+            }
+            50% { 
+                transform: scale(1.1) rotate(180deg); 
+                filter: drop-shadow(0 0 20px gold) hue-rotate(180deg);
+            }
+            75% { 
+                transform: scale(1.3) rotate(270deg); 
+                filter: drop-shadow(0 0 15px gold) hue-rotate(270deg);
+            }
+        }
+
+        .verification-badge {
+            animation: verifyBounce 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
+        }
+
+        @keyframes verifyBounce {
+            0% { 
+                transform: scale(0) rotate(-180deg); 
+                opacity: 0;
+            }
+            60% { 
+                transform: scale(1.3) rotate(10deg); 
+                opacity: 1;
+            }
+            100% { 
+                transform: scale(1) rotate(0deg); 
+            }
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .btn-gradient {
+            background: var(--primary-gradient);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .tab-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ffd700, #ffed4e, #ffd700);
+            animation: tabGlow 2s infinite;
+        }
+
+        @keyframes tabGlow {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .floating-icon {
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .pulse-ring {
+            animation: pulseRing 2s infinite;
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2.4);
+                opacity: 0;
+            }
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.8);
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            animation: modalSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .class-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .class-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border-color: rgba(255,215,0,0.5);
+        }
+
+        .criteria-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .criteria-badge:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .certificate-modal {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            border: 3px solid #FFD700;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+            animation: certificateGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes certificateGlow {
+            0% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); }
+            100% { box-shadow: 0 0 80px rgba(255, 215, 0, 0.8); }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffd700;
+            border-radius: 50%;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .falling-star {
+            position: absolute;
+            color: #FFD700;
+            font-size: 20px;
+            animation: fallingStar 3s linear infinite;
+        }
+
+        @keyframes fallingStar {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-8 relative">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="relative inline-block mb-6">
+                <div class="absolute inset-0 pulse-ring w-24 h-24 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full opacity-30"></div>
+                <div class="relative inline-flex items-center justify-center w-24 h-24 glass-morphism rounded-full floating-icon">
+                    <span class="text-4xl">👩‍🏫</span>
+                    <div class="sparkle" style="top: 10%; right: 15%; animation-delay: 0s;"></div>
+                    <div class="sparkle" style="top: 70%; left: 20%; animation-delay: 0.5s;"></div>
+                    <div class="sparkle" style="bottom: 15%; right: 25%; animation-delay: 1s;"></div>
+                </div>
+            </div>
+            <h1 class="text-4xl font-bold text-white mb-4 font-['Amiri'] drop-shadow-2xl">
+                ✨ الطـابور المـدرسي ⭐
+            </h1>
+            <h2 class="text-2xl font-bold text-yellow-300 mb-4 font-['Amiri'] drop-shadow-lg">
+                انضباط يعكس وعيًا، ونظام يصنع استدامة
+            </h2>
+            
+            <!-- Principal Info -->
+            <div class="relative mb-6">
+                <div class="glass-morphism rounded-3xl px-8 py-6 inline-block shadow-2xl border-2 border-yellow-400 border-opacity-30">
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <div class="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
+                                <span class="text-3xl">👑</span>
+                            </div>
+                            <div class="absolute -top-2 -right-2 star-animation">
+                                <span class="text-2xl">✨</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-yellow-300 text-sm font-medium mb-1">تصميم وإشراف</p>
+                            <h3 class="text-white text-xl font-bold mb-1">أ. أحلام الحمدانية</h3>
+                            <p class="text-gray-200 text-sm flex items-center gap-2">
+                                <span class="text-lg">🏫</span>
+                                <span>مديرة المدرسة</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="text-gray-100 text-xl mb-6 font-semibold drop-shadow-lg">نظام حضور المعلمات - مع نظام النجوم والتحقق الذكي</p>
+            <div class="glass-morphism rounded-2xl px-8 py-4 inline-block">
+                <div class="flex items-center gap-4 text-white font-semibold">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl floating-icon">📅</span>
+                        <span id="currentDate"></span>
+                    </div>
+                    <div class="w-px h-6 bg-white opacity-30"></div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl floating-icon">⏰</span>
+                        <span id="currentTime"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="glass-morphism rounded-3xl p-3 mb-12 shadow-2xl">
+            <div class="flex flex-wrap gap-3">
+                <button onclick="showTab('attendance')" id="attendanceTab" class="tab-button active flex-1 min-w-fit px-6 py-4 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-3 text-lg">
+                    <span class="text-2xl">✅</span>
+                    تسجيل الحضور
+                </button>
+                <button onclick="showTab('classes')" id="classesTab" class="tab-button flex-1 min-w-fit glass-morphism text-white px-6 py-4 rounded-2xl font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-lg">
+                    <span class="text-2xl">🏆</span>
+                    نجم الطابور
+                </button>
+                <button onclick="showTab('reports')" id="reportsTab" class="tab-button flex-1 min-w-fit glass-morphism text-white px-6 py-4 rounded-2xl font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-lg">
+                    <span class="text-2xl">📊</span>
+                    التقارير الشهرية
+                </button>
+                <button onclick="showTab('management')" id="managementTab" class="tab-button flex-1 min-w-fit glass-morphism text-white px-6 py-4 rounded-2xl font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-lg">
+                    <span class="text-2xl">⚙️</span>
+                    إدارة النظام
+                </button>
+            </div>
+        </div>
+
+        <!-- Attendance Tab -->
+        <div id="attendanceContent" class="tab-content">
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12">
+                <div class="stat-card rounded-3xl shadow-2xl p-8 text-center transform hover:scale-105 transition-all duration-300">
+                    <div class="relative w-16 h-16 mx-auto mb-4">
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-20 pulse-ring"></div>
+                        <div class="relative w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center floating-icon">
+                            <span class="text-3xl">👥</span>
+                        </div>
+                    </div>
+                    <h3 class="text-3xl font-bold text-white mb-2 drop-shadow-lg" id="totalTeachers">0</h3>
+                    <p class="text-gray-100 font-semibold">إجمالي المعلمات</p>
+                </div>
+                <div class="stat-card rounded-3xl shadow-2xl p-8 text-center transform hover:scale-105 transition-all duration-300">
+                    <div class="relative w-16 h-16 mx-auto mb-4">
+                        <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-400 rounded-full opacity-20 pulse-ring"></div>
+                        <div class="relative w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center floating-icon">
+                            <span class="text-3xl">✅</span>
+                        </div>
+                    </div>
+                    <h3 class="text-3xl font-bold text-green-400 mb-2" id="presentCount">0</h3>
+                    <p class="text-white font-semibold">الحاضرات اليوم</p>
+                </div>
+                <div class="stat-card rounded-3xl shadow-2xl p-8 text-center transform hover:scale-105 transition-all duration-300">
+                    <div class="relative w-16 h-16 mx-auto mb-4">
+                        <div class="absolute inset-0 bg-gradient-to-r from-red-400 to-pink-400 rounded-full opacity-20 pulse-ring"></div>
+                        <div class="relative w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center floating-icon">
+                            <span class="text-3xl">❌</span>
+                        </div>
+                    </div>
+                    <h3 class="text-3xl font-bold text-red-400 mb-2" id="absentCount">0</h3>
+                    <p class="text-white font-semibold">الغائبات اليوم</p>
+                </div>
+                <div class="stat-card rounded-3xl shadow-2xl p-8 text-center transform hover:scale-105 transition-all duration-300">
+                    <div class="relative w-16 h-16 mx-auto mb-4">
+                        <div class="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full opacity-20 pulse-ring"></div>
+                        <div class="relative w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center floating-icon">
+                            <span class="text-3xl star-animation">⭐</span>
+                        </div>
+                    </div>
+                    <h3 class="text-3xl font-bold text-yellow-400 mb-2" id="dailyStars">0</h3>
+                    <p class="text-white font-semibold">نجوم الطابور اليوم</p>
+                </div>
+                <div class="stat-card rounded-3xl shadow-2xl p-8 text-center transform hover:scale-105 transition-all duration-300">
+                    <div class="relative w-16 h-16 mx-auto mb-4">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full opacity-20 pulse-ring"></div>
+                        <div class="relative w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center floating-icon">
+                            <span class="text-3xl">📊</span>
+                        </div>
+                    </div>
+                    <h3 class="text-3xl font-bold text-blue-400 mb-2" id="attendanceRate">0%</h3>
+                    <p class="text-white font-semibold">نسبة الحضور</p>
+                </div>
+            </div>
+
+            <!-- Teachers Grid -->
+            <div class="mb-12">
+                <div class="glass-morphism rounded-3xl p-8 mb-8 shadow-2xl">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                        <h2 class="text-3xl font-bold text-white flex items-center">
+                            <span class="text-4xl ml-4 floating-icon">👩‍🏫</span>
+                            <span class="text-white drop-shadow-lg">قائمة المعلمات</span>
+                        </h2>
+                        <div class="flex gap-4">
+                            <button onclick="markAllPresent()" class="btn-gradient text-white px-6 py-3 rounded-2xl font-bold transition-all duration-300 flex items-center gap-3 hover:scale-105 shadow-lg">
+                                <span class="text-xl">✅</span>
+                                تحديد الكل حاضر
+                            </button>
+                            <button onclick="clearAttendance()" class="glass-morphism text-white px-6 py-3 rounded-2xl font-bold transition-all duration-300 hover:scale-105 flex items-center gap-3 shadow-lg">
+                                <span class="text-xl">🔄</span>
+                                مسح الحضور
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="teachersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div class="col-span-full text-center text-gray-400 py-12">
+                        <div class="text-6xl mb-4">👩‍🏫</div>
+                        <p class="text-xl font-semibold">لا توجد معلمات مسجلات بعد</p>
+                        <p class="text-sm mt-2">انتقلي إلى إدارة النظام لإضافة المعلمات</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Classes Tab (نجم الطابور) -->
+        <div id="classesContent" class="tab-content hidden">
+            <!-- Class Competition Header -->
+            <div class="glass-morphism rounded-3xl p-8 mb-8 shadow-2xl text-center">
+                <h2 class="text-4xl font-bold text-white mb-4 flex items-center justify-center">
+                    <span class="text-5xl ml-4 star-animation">🏆</span>
+                    <span class="text-white drop-shadow-lg">مسابقة نجم الطابور المدرسي</span>
+                </h2>
+                <p class="text-gray-100 text-xl font-semibold">تنافس بين الصفوف الخامس والسادس على أفضل طابور مدرسي</p>
+            </div>
+
+            <!-- Criteria Section -->
+            <div class="glass-morphism rounded-3xl p-8 mb-8 shadow-2xl">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <span class="text-3xl ml-3 floating-icon">📋</span>
+                    معايير التقييم
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 floating-icon">
+                            <span class="text-3xl">⚡</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-white mb-2">سرعة الانتظام</h4>
+                        <p class="text-gray-300 text-sm">الوصول للطابور في الوقت المحدد والانتظام السريع</p>
+                        <div class="criteria-badge mt-3">
+                            <span>⚡</span>
+                            <span>20 نقطة</span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 floating-icon">
+                            <span class="text-3xl">🔊</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-white mb-2">الصوت العالي</h4>
+                        <p class="text-gray-300 text-sm">قوة ووضوح الصوت في النشيد والتحية</p>
+                        <div class="criteria-badge mt-3">
+                            <span>🔊</span>
+                            <span>25 نقطة</span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-r from-pink-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4 floating-icon">
+                            <span class="text-3xl">✨</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-white mb-2">النظافة الشخصية</h4>
+                        <p class="text-gray-300 text-sm">نظافة الزي المدرسي والمظهر العام</p>
+                        <div class="criteria-badge mt-3">
+                            <span>✨</span>
+                            <span>25 نقطة</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-6">
+                    <div class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-2xl font-bold">
+                        <span class="text-2xl ml-2">🏆</span>
+                        المجموع الكلي: 70 نقطة
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classes Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <!-- Grade 5 Classes -->
+                <div class="glass-morphism rounded-3xl p-6 shadow-2xl">
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center flex items-center justify-center">
+                        <span class="text-3xl ml-3">📚</span>
+                        الصف الخامس
+                    </h3>
+                    <div id="grade5Classes" class="space-y-4">
+                        <p class="text-gray-400 text-center py-4">لا توجد صفوف مضافة بعد</p>
+                    </div>
+                    <button onclick="addGrade5Class()" class="w-full mt-4 btn-gradient text-white py-3 px-6 rounded-2xl font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
+                        <span class="text-xl">➕</span>
+                        إضافة صف خامس
+                    </button>
+                </div>
+
+                <!-- Grade 6 Classes -->
+                <div class="glass-morphism rounded-3xl p-6 shadow-2xl">
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center flex items-center justify-center">
+                        <span class="text-3xl ml-3">📖</span>
+                        الصف السادس
+                    </h3>
+                    <div id="grade6Classes" class="space-y-4">
+                        <p class="text-gray-400 text-center py-4">لا توجد صفوف مضافة بعد</p>
+                    </div>
+                    <button onclick="addGrade6Class()" class="w-full mt-4 btn-gradient text-white py-3 px-6 rounded-2xl font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
+                        <span class="text-xl">➕</span>
+                        إضافة صف سادس
+                    </button>
+                </div>
+            </div>
+
+            <!-- Monthly Winners -->
+            <div class="glass-morphism rounded-3xl p-8 shadow-2xl">
+                <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <span class="text-3xl ml-3 star-animation">🌟</span>
+                    أبطال الشهر
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="text-center">
+                        <h4 class="text-xl font-bold text-yellow-400 mb-4">🏆 بطل الصف الخامس</h4>
+                        <div id="grade5Winner" class="glass-morphism rounded-2xl p-6">
+                            <p class="text-gray-300">لم يتم اختيار البطل بعد</p>
+                        </div>
+                        <button onclick="selectGrade5Winner()" class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-xl font-bold transition-all duration-300">
+                            اختيار البطل
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="text-xl font-bold text-yellow-400 mb-4">🏆 بطل الصف السادس</h4>
+                        <div id="grade6Winner" class="glass-morphism rounded-2xl p-6">
+                            <p class="text-gray-300">لم يتم اختيار البطل بعد</p>
+                        </div>
+                        <button onclick="selectGrade6Winner()" class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-xl font-bold transition-all duration-300">
+                            اختيار البطل
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reportsContent" class="tab-content hidden">
+            <!-- Month Selector -->
+            <div class="glass-morphism rounded-2xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center">
+                    <span class="text-3xl ml-3">📅</span>
+                    اختيار الشهر
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-white font-semibold mb-2">الشهر</label>
+                        <select id="monthSelector" onchange="updateMonthlyReport()" class="w-full px-4 py-3 bg-gray-800 text-white border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <option value="0">يناير</option>
+                            <option value="1">فبراير</option>
+                            <option value="2">مارس</option>
+                            <option value="3">أبريل</option>
+                            <option value="4">مايو</option>
+                            <option value="5">يونيو</option>
+                            <option value="6">يوليو</option>
+                            <option value="7">أغسطس</option>
+                            <option value="8">سبتمبر</option>
+                            <option value="9">أكتوبر</option>
+                            <option value="10">نوفمبر</option>
+                            <option value="11">ديسمبر</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-white font-semibold mb-2">السنة</label>
+                        <select id="yearSelector" onchange="updateMonthlyReport()" class="w-full px-4 py-3 bg-gray-800 text-white border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="glass-morphism rounded-2xl shadow-lg p-6 text-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="text-2xl">📅</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-blue-400" id="workingDays">0</h3>
+                    <p class="text-gray-300">أيام العمل</p>
+                </div>
+                <div class="glass-morphism rounded-2xl shadow-lg p-6 text-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="text-2xl">📈</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-green-400" id="avgAttendance">0%</h3>
+                    <p class="text-gray-300">متوسط الحضور</p>
+                </div>
+                <div class="glass-morphism rounded-2xl shadow-lg p-6 text-center">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="text-2xl">🌟</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-yellow-400" id="monthlyStars">0</h3>
+                    <p class="text-gray-300">نجوم الشهر</p>
+                </div>
+                <div class="glass-morphism rounded-2xl shadow-lg p-6 text-center">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="text-2xl">🏆</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-purple-400" id="bestDay">-</h3>
+                    <p class="text-gray-300">أفضل يوم حضور</p>
+                </div>
+            </div>
+
+            <!-- Individual Teacher Reports -->
+            <div class="glass-morphism rounded-2xl shadow-lg p-6 mb-8">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <span class="text-2xl ml-3">👩‍🏫</span>
+                    تقرير المعلمات الشهري
+                </h3>
+                <div id="teacherReports" class="space-y-4">
+                    <p class="text-gray-400 text-center py-8">اختاري شهراً لعرض التقرير</p>
+                </div>
+            </div>
+
+            <!-- Export Monthly Reports -->
+            <div class="glass-morphism rounded-2xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <span class="text-2xl ml-3">📊</span>
+                    تصدير التقارير الشهرية
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button onclick="exportMonthlyReport()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl transition duration-200 flex items-center justify-center gap-2">
+                        <span>📄</span>
+                        تصدير التقرير الشهري
+                    </button>
+                    <button onclick="exportTeacherAttendance()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl transition duration-200 flex items-center justify-center gap-2">
+                        <span>👩‍🏫</span>
+                        تصدير حضور المعلمات
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Tab -->
+        <div id="managementContent" class="tab-content hidden">
+            <!-- System Management Section -->
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-lg p-6 mb-8 text-white">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <span class="text-3xl ml-3">⚙️</span>
+                    إدارة النظام
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white bg-opacity-20 rounded-xl p-4">
+                        <h3 class="text-lg font-semibold mb-3 flex items-center">
+                            <span class="text-2xl ml-2">📊</span>
+                            رفع ملف المعلمات
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="relative">
+                                <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handleFileUpload(event)">
+                                <div class="w-full px-4 py-3 bg-white bg-opacity-20 rounded-xl text-white border-2 border-dashed border-white border-opacity-30 hover:border-opacity-50 transition-all duration-300 cursor-pointer flex items-center justify-center gap-3 min-h-[50px]">
+                                    <span class="text-xl">📊</span>
+                                    <span class="font-semibold">اضغطي هنا لاختيار ملف المعلمات</span>
+                                </div>
+                            </div>
+                            <div id="fileStatus" class="text-sm text-white text-opacity-90 hidden">
+                                <div class="flex items-center gap-2">
+                                    <span class="animate-spin">⏳</span>
+                                    <span>جاري معالجة الملف...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-sm mt-2 text-white text-opacity-80">
+                            📋 يدعم الملفات التي تحتوي على: <strong>الصف</strong> و <strong>أسماء المعلمات</strong>
+                        </p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-xl p-4">
+                        <h3 class="text-lg font-semibold mb-3 flex items-center">
+                            <span class="text-2xl ml-2">👩‍🏫</span>
+                            إضافة معلمة يدوياً
+                        </h3>
+                        <button onclick="showAddTeacherForm()" class="w-full bg-white text-purple-600 font-bold py-3 px-6 rounded-xl hover:bg-gray-100 transition duration-200 flex items-center justify-center gap-2">
+                            <span>➕</span>
+                            إضافة معلمة جديدة
+                        </button>
+                        <p class="text-sm mt-2 text-white text-opacity-80">
+                            إضافة معلمة واحدة بالاسم والمادة والموقع
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="glass-morphism rounded-2xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <span class="text-2xl ml-3">💾</span>
+                    إدارة البيانات
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button onclick="exportAllData()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl transition duration-200 flex items-center justify-center gap-2">
+                        <span>💾</span>
+                        نسخ احتياطي
+                    </button>
+                    <button onclick="importData()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl transition duration-200 flex items-center justify-center gap-2">
+                        <span>📥</span>
+                        استيراد البيانات
+                    </button>
+                    <button onclick="clearAllData()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl transition duration-200 flex items-center justify-center gap-2">
+                        <span>🗑️</span>
+                        مسح جميع البيانات
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Teacher Form Modal -->
+        <div id="addTeacherModal" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center z-50">
+            <div class="modal-content rounded-3xl p-10 max-w-lg w-full mx-4 shadow-2xl">
+                <h3 class="text-3xl font-bold text-white mb-8 flex items-center justify-center drop-shadow-2xl">
+                    <span class="text-4xl ml-4 floating-icon">👩‍🏫</span>
+                    <span class="text-white">إضافة معلمة جديدة</span>
+                </h3>
+                <form id="addTeacherForm" onsubmit="addTeacher(event)">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-white font-bold mb-3 text-lg">اسم المعلمة</label>
+                            <input type="text" id="teacherName" required class="w-full px-6 py-4 glass-morphism rounded-2xl text-white placeholder-white placeholder-opacity-70 focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-all duration-300 text-lg" placeholder="أدخلي اسم المعلمة...">
+                        </div>
+                        <div>
+                            <label class="block text-white font-bold mb-3 text-lg">المادة</label>
+                            <select id="teacherSubject" required class="w-full px-6 py-4 glass-morphism rounded-2xl text-white focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-all duration-300 text-lg">
+                                <option value="" class="bg-gray-800">اختاري المادة...</option>
+                                <option value="الرياضيات" class="bg-gray-800">🔢 الرياضيات</option>
+                                <option value="العلوم" class="bg-gray-800">🔬 العلوم</option>
+                                <option value="اللغة العربية" class="bg-gray-800">📖 اللغة العربية</option>
+                                <option value="اللغة الإنجليزية" class="bg-gray-800">🇬🇧 اللغة الإنجليزية</option>
+                                <option value="التربية الإسلامية" class="bg-gray-800">☪️ التربية الإسلامية</option>
+                                <option value="الاجتماعيات" class="bg-gray-800">🌍 الاجتماعيات</option>
+                                <option value="التربية البدنية" class="bg-gray-800">⚽ التربية البدنية</option>
+                                <option value="التربية الفنية" class="bg-gray-800">🎨 التربية الفنية</option>
+                                <option value="التربية الموسيقية" class="bg-gray-800">🎵 التربية الموسيقية</option>
+                                <option value="الحاسوب" class="bg-gray-800">💻 الحاسوب</option>
+                                <option value="رياض الأطفال" class="bg-gray-800">🧸 رياض الأطفال</option>
+                                <option value="معلمة فصل" class="bg-gray-800">👩‍🏫 معلمة فصل</option>
+                                <option value="إشراف الطابور" class="bg-gray-800">🏫 إشراف الطابور</option>
+                                <option value="الإذاعة المدرسية" class="bg-gray-800">📻 الإذاعة المدرسية</option>
+                                <option value="التنسيق الإعلامي" class="bg-gray-800">📺 التنسيق الإعلامي</option>
+                                <option value="أخرى" class="bg-gray-800">📝 أخرى</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-white font-bold mb-3 text-lg">الموقع في الطابور</label>
+                            <input type="text" id="teacherPosition" required class="w-full px-6 py-4 glass-morphism rounded-2xl text-white placeholder-white placeholder-opacity-70 focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-all duration-300 text-lg" placeholder="مثال: الصف الخامس أ، الطابور، الإذاعة المدرسية...">
+                        </div>
+                    </div>
+                    <div class="flex gap-4 mt-8">
+                        <button type="submit" class="flex-1 btn-gradient text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 flex items-center justify-center gap-3 text-lg hover:scale-105 shadow-lg">
+                            <span class="text-xl">✅</span>
+                            إضافة المعلمة
+                        </button>
+                        <button type="button" onclick="hideAddTeacherForm()" class="flex-1 glass-morphism text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-lg shadow-lg">
+                            <span class="text-xl">❌</span>
+                            إلغاء
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Certificate Modal -->
+        <div id="certificateModal" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center z-50">
+            <div class="star-shower">
+                <div class="falling-star" style="left: 10%; animation-delay: 0s;">⭐</div>
+                <div class="falling-star" style="left: 20%; animation-delay: 0.5s;">🌟</div>
+                <div class="falling-star" style="left: 30%; animation-delay: 1s;">⭐</div>
+                <div class="falling-star" style="left: 40%; animation-delay: 1.5s;">🌟</div>
+                <div class="falling-star" style="left: 50%; animation-delay: 2s;">⭐</div>
+                <div class="falling-star" style="left: 60%; animation-delay: 2.5s;">🌟</div>
+                <div class="falling-star" style="left: 70%; animation-delay: 3s;">⭐</div>
+                <div class="falling-star" style="left: 80%; animation-delay: 3.5s;">🌟</div>
+                <div class="falling-star" style="left: 90%; animation-delay: 4s;">⭐</div>
+            </div>
+            <div class="certificate-modal rounded-3xl p-12 max-w-2xl w-full mx-4 shadow-2xl text-center">
+                <div class="text-8xl mb-6 star-animation">🏆</div>
+                <h2 class="text-4xl font-bold text-white mb-4 font-['Amiri']">شهادة تقدير</h2>
+                <div class="text-6xl mb-6">🌟</div>
+                <h3 class="text-2xl font-bold text-yellow-300 mb-6">نجم الطابور المدرسي</h3>
+                <div class="bg-white bg-opacity-20 rounded-2xl p-6 mb-6">
+                    <p class="text-xl text-white mb-4">تُمنح هذه الشهادة إلى</p>
+                    <h4 id="certificateName" class="text-3xl font-bold text-yellow-300 mb-4">اسم الفائز</h4>
+                    <p class="text-lg text-white mb-2">لتفوقهم في معايير الطابور المدرسي</p>
+                    <div class="flex justify-center gap-4 mt-4">
+                        <div class="criteria-badge">⚡ سرعة الانتظام</div>
+                        <div class="criteria-badge">🔊 الصوت العالي</div>
+                        <div class="criteria-badge">✨ النظافة الشخصية</div>
+                    </div>
+                </div>
+                <div class="text-lg text-white mb-6">
+                    <p id="certificateDate">التاريخ: </p>
+                    <p id="certificateScore">النتيجة: </p>
+                </div>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="downloadCertificate()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 flex items-center gap-2">
+                        <span>📄</span>
+                        تحميل الشهادة
+                    </button>
+                    <button onclick="closeCertificate()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300">
+                        إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="fixed top-6 left-6 glass-morphism text-white px-8 py-6 rounded-3xl shadow-2xl hidden success-message z-50">
+        <div class="flex items-center gap-4">
+            <div class="relative">
+                <span class="text-3xl floating-icon">✅</span>
+                <div class="sparkle" style="top: 0; right: 0; animation-delay: 0s;"></div>
+                <div class="sparkle" style="bottom: 0; left: 0; animation-delay: 0.5s;"></div>
+            </div>
+            <span id="successText" class="text-lg font-bold">تم بنجاح!</span>
+        </div>
+    </div>
+
+    <!-- Import Data Input -->
+    <input type="file" id="importFile" accept=".json" class="hidden" onchange="handleImportData(event)">
+
+    <script>
+        let teachers = JSON.parse(localStorage.getItem('femaleTeachers')) || [];
+        let attendance = JSON.parse(localStorage.getItem('femaleAttendance')) || {};
+        let attendanceTimes = JSON.parse(localStorage.getItem('femaleAttendanceTimes')) || {};
+        let verifications = JSON.parse(localStorage.getItem('femaleVerifications')) || {};
+        let classes = JSON.parse(localStorage.getItem('schoolClasses')) || {
+            grade5: [],
+            grade6: []
+        };
+        let monthlyWinners = JSON.parse(localStorage.getItem('monthlyWinners')) || {};
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            renderTeachers();
+            updateStats();
+            initializeYearSelector();
+            setCurrentMonth();
+            renderClasses();
+            renderMonthlyWinners();
+        });
+
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            };
+            
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('ar-SA', dateOptions);
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('ar-SA', timeOptions);
+        }
+
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+                tab.classList.add('glass-morphism', 'text-white');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + 'Content').classList.remove('hidden');
+            
+            // Add active class to selected tab
+            const activeTab = document.getElementById(tabName + 'Tab');
+            activeTab.classList.add('active');
+            activeTab.classList.remove('glass-morphism', 'text-white');
+            
+            // Update reports if reports tab is selected
+            if (tabName === 'reports') {
+                updateMonthlyReport();
+            }
+        }
+
+        function renderTeachers() {
+            const container = document.getElementById('teachersGrid');
+
+            if (teachers.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center text-gray-400 py-12">
+                        <div class="text-6xl mb-4">👩‍🏫</div>
+                        <p class="text-xl font-semibold">لا توجد معلمات مسجلات بعد</p>
+                        <p class="text-sm mt-2">انتقلي إلى إدارة النظام لإضافة المعلمات</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const today = new Date().toDateString();
+            
+            container.innerHTML = teachers.map(teacher => {
+                const isPresent = attendance[today] && attendance[today][teacher.id];
+                const attendanceTime = attendanceTimes[today] && attendanceTimes[today][teacher.id];
+                const isVerified = verifications[today] && verifications[today][teacher.id];
+                const subjectEmoji = getSubjectEmoji(teacher.subject);
+                const positionEmoji = getPositionEmoji(teacher.position);
+                
+                // Check for daily star (before 7:30 AM)
+                const hasDailyStar = attendanceTime && isPresent && new Date(attendanceTime).getHours() < 7 || 
+                                   (new Date(attendanceTime).getHours() === 7 && new Date(attendanceTime).getMinutes() <= 30);
+                
+                // Check for monthly star (90% attendance)
+                const monthlyAttendanceRate = getTeacherMonthlyRate(teacher.id);
+                const hasMonthlystar = monthlyAttendanceRate >= 90;
+                
+                const cardStyle = isPresent === true ? 'present-card' : 
+                                 isPresent === false ? 'absent-card' : '';
+                
+                return `
+                    <div class="teacher-card rounded-3xl p-8 shadow-2xl fade-in ${cardStyle}" >
+                        <div class="text-center">
+                            <div class="relative w-20 h-20 mx-auto mb-6">
+                                <div class="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-20 pulse-ring"></div>
+                                <div class="relative w-20 h-20 glass-morphism rounded-full flex items-center justify-center floating-icon">
+                                    <span class="text-4xl">👩‍🏫</span>
+                                    ${hasDailyStar ? '<div class="absolute -top-2 -right-2 star-animation"><span class="text-2xl">⭐</span></div>' : ''}
+                                    ${hasMonthlystar ? '<div class="absolute -top-2 -left-2 star-animation"><span class="text-2xl">🌟</span></div>' : ''}
+                                    ${isVerified ? '<div class="absolute -bottom-2 -right-2 verification-badge"><span class="text-2xl">✅</span></div>' : ''}
+                                </div>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4 ${isPresent === true || isPresent === false ? 'text-white' : 'text-white'}">${teacher.name}</h3>
+                            <div class="space-y-3 text-sm mb-6">
+                                <div class="flex items-center justify-center gap-3 glass-morphism rounded-2xl py-3 px-4">
+                                    <span class="text-xl">${subjectEmoji}</span>
+                                    <span class="font-bold text-white">${teacher.subject}</span>
+                                </div>
+                                <div class="flex items-center justify-center gap-3 glass-morphism rounded-2xl py-3 px-4">
+                                    <span class="text-xl">${positionEmoji}</span>
+                                    <span class="font-bold text-white text-sm">${teacher.position}</span>
+                                </div>
+                                ${attendanceTime ? `
+                                    <div class="text-sm text-white glass-morphism rounded-2xl py-2 px-4 flex items-center justify-center gap-2">
+                                        <span class="text-lg floating-icon">⏰</span>
+                                        <span class="font-semibold">${new Date(attendanceTime).toLocaleTimeString('ar-SA', {hour: '2-digit', minute: '2-digit'})}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="flex gap-3 mb-4">
+                                <button 
+                                    onclick="markPresent('${teacher.id}')"
+                                    class="flex-1 py-4 px-6 rounded-2xl font-bold transition-all duration-300 transform hover:scale-105 ${
+                                        isPresent === true
+                                        ? 'bg-gradient-to-r from-green-400 to-blue-500 text-white shadow-2xl' 
+                                        : 'glass-morphism text-white hover:bg-white hover:bg-opacity-30'
+                                    }"
+                                >
+                                    <div class="flex items-center justify-center gap-3">
+                                        <span class="text-2xl floating-icon">${isPresent === true ? '✅' : '⭕'}</span>
+                                        <span class="text-lg">حاضرة</span>
+                                    </div>
+                                </button>
+                                <button 
+                                    onclick="markAbsent('${teacher.id}')"
+                                    class="flex-1 py-4 px-6 rounded-2xl font-bold transition-all duration-300 transform hover:scale-105 ${
+                                        isPresent === false 
+                                        ? 'bg-gradient-to-r from-red-400 to-pink-500 text-white shadow-2xl' 
+                                        : 'glass-morphism text-white hover:bg-white hover:bg-opacity-30'
+                                    }"
+                                >
+                                    <div class="flex items-center justify-center gap-3">
+                                        <span class="text-2xl floating-icon">${isPresent === false ? '❌' : '⭕'}</span>
+                                        <span class="text-lg">غائبة</span>
+                                    </div>
+                                </button>
+                            </div>
+                            ${isPresent === true ? `
+                                <button 
+                                    onclick="verifyAttendance('${teacher.id}')"
+                                    class="w-full py-3 px-6 rounded-2xl font-bold transition-all duration-300 transform hover:scale-105 ${
+                                        isVerified 
+                                        ? 'bg-gradient-to-r from-blue-400 to-indigo-500 text-white shadow-2xl' 
+                                        : 'glass-morphism text-white hover:bg-white hover:bg-opacity-30'
+                                    }"
+                                >
+                                    <div class="flex items-center justify-center gap-3">
+                                        <span class="text-xl floating-icon">${isVerified ? '✅' : '📸'}</span>
+                                        <span class="text-lg">${isVerified ? 'تم التحقق' : 'تأكيد الحضور'}</span>
+                                    </div>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderClasses() {
+            renderGrade5Classes();
+            renderGrade6Classes();
+        }
+
+        function renderGrade5Classes() {
+            const container = document.getElementById('grade5Classes');
+            if (classes.grade5.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-4">لا توجد صفوف مضافة بعد</p>';
+                return;
+            }
+
+            container.innerHTML = classes.grade5.map(classData => `
+                <div class="class-card rounded-2xl p-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-lg font-bold text-white">${classData.name}</h4>
+                        <div class="text-2xl font-bold text-yellow-400">${classData.totalScore}/70</div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-300">سرعة الانتظام</div>
+                            <div class="text-lg font-bold text-blue-400">${classData.speed}/20</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-sm text-gray-300">الصوت العالي</div>
+                            <div class="text-lg font-bold text-green-400">${classData.voice}/25</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-sm text-gray-300">النظافة</div>
+                            <div class="text-lg font-bold text-pink-400">${classData.cleanliness}/25</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editClassScores('grade5', '${classData.id}')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-xl text-sm transition duration-200">
+                            تعديل النقاط
+                        </button>
+                        <button onclick="removeClass('grade5', '${classData.id}')" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl text-sm transition duration-200">
+                            حذف
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderGrade6Classes() {
+            const container = document.getElementById('grade6Classes');
+            if (classes.grade6.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-4">لا توجد صفوف مضافة بعد</p>';
+                return;
+            }
+
+            container.innerHTML = classes.grade6.map(classData => `
+                <div class="class-card rounded-2xl p-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-lg font-bold text-white">${classData.name}</h4>
+                        <div class="text-2xl font-bold text-yellow-400">${classData.totalScore}/70</div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-300">سرعة الانتظام</div>
+                            <div class="text-lg font-bold text-blue-400">${classData.speed}/20</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-sm text-gray-300">الصوت العالي</div>
+                            <div class="text-lg font-bold text-green-400">${classData.voice}/25</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-sm text-gray-300">النظافة</div>
+                            <div class="text-lg font-bold text-pink-400">${classData.cleanliness}/25</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editClassScores('grade6', '${classData.id}')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-xl text-sm transition duration-200">
+                            تعديل النقاط
+                        </button>
+                        <button onclick="removeClass('grade6', '${classData.id}')" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl text-sm transition duration-200">
+                            حذف
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addGrade5Class() {
+            const className = prompt('أدخلي اسم الصف (مثال: الخامس أ):');
+            if (className) {
+                const newClass = {
+                    id: Date.now().toString(),
+                    name: className,
+                    speed: 0,
+                    voice: 0,
+                    cleanliness: 0,
+                    totalScore: 0
+                };
+                classes.grade5.push(newClass);
+                localStorage.setItem('schoolClasses', JSON.stringify(classes));
+                renderGrade5Classes();
+                showSuccess(`تم إضافة ${className} بنجاح! 🎉`);
+            }
+        }
+
+        function addGrade6Class() {
+            const className = prompt('أدخلي اسم الصف (مثال: السادس ب):');
+            if (className) {
+                const newClass = {
+                    id: Date.now().toString(),
+                    name: className,
+                    speed: 0,
+                    voice: 0,
+                    cleanliness: 0,
+                    totalScore: 0
+                };
+                classes.grade6.push(newClass);
+                localStorage.setItem('schoolClasses', JSON.stringify(classes));
+                renderGrade6Classes();
+                showSuccess(`تم إضافة ${className} بنجاح! 🎉`);
+            }
+        }
+
+        function editClassScores(grade, classId) {
+            const classData = classes[grade].find(c => c.id === classId);
+            if (!classData) return;
+
+            const speed = parseInt(prompt(`نقاط سرعة الانتظام للصف ${classData.name} (0-20):`, classData.speed) || 0);
+            const voice = parseInt(prompt(`نقاط الصوت العالي للصف ${classData.name} (0-25):`, classData.voice) || 0);
+            const cleanliness = parseInt(prompt(`نقاط النظافة الشخصية للصف ${classData.name} (0-25):`, classData.cleanliness) || 0);
+
+            if (speed >= 0 && speed <= 20 && voice >= 0 && voice <= 25 && cleanliness >= 0 && cleanliness <= 25) {
+                classData.speed = speed;
+                classData.voice = voice;
+                classData.cleanliness = cleanliness;
+                classData.totalScore = speed + voice + cleanliness;
+                
+                localStorage.setItem('schoolClasses', JSON.stringify(classes));
+                renderClasses();
+                showSuccess(`تم تحديث نقاط ${classData.name} بنجاح! 📊`);
+            } else {
+                alert('يرجى إدخال نقاط صحيحة ضمن النطاق المحدد');
+            }
+        }
+
+        function removeClass(grade, classId) {
+            const classData = classes[grade].find(c => c.id === classId);
+            if (classData && confirm(`هل أنت متأكدة من حذف ${classData.name}؟`)) {
+                classes[grade] = classes[grade].filter(c => c.id !== classId);
+                localStorage.setItem('schoolClasses', JSON.stringify(classes));
+                renderClasses();
+                showSuccess(`تم حذف ${classData.name} 🗑️`);
+            }
+        }
+
+        function selectGrade5Winner() {
+            if (classes.grade5.length === 0) {
+                alert('لا توجد صفوف في الصف الخامس');
+                return;
+            }
+
+            const winner = classes.grade5.reduce((prev, current) => 
+                (prev.totalScore > current.totalScore) ? prev : current
+            );
+
+            const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM format
+            if (!monthlyWinners[currentMonth]) {
+                monthlyWinners[currentMonth] = {};
+            }
+            monthlyWinners[currentMonth].grade5 = winner;
+            
+            localStorage.setItem('monthlyWinners', JSON.stringify(monthlyWinners));
+            renderMonthlyWinners();
+            showCertificate(winner.name, winner.totalScore, 'الصف الخامس');
+            showSuccess(`تم اختيار ${winner.name} كبطل الصف الخامس! 🏆`);
+        }
+
+        function selectGrade6Winner() {
+            if (classes.grade6.length === 0) {
+                alert('لا توجد صفوف في الصف السادس');
+                return;
+            }
+
+            const winner = classes.grade6.reduce((prev, current) => 
+                (prev.totalScore > current.totalScore) ? prev : current
+            );
+
+            const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM format
+            if (!monthlyWinners[currentMonth]) {
+                monthlyWinners[currentMonth] = {};
+            }
+            monthlyWinners[currentMonth].grade6 = winner;
+            
+            localStorage.setItem('monthlyWinners', JSON.stringify(monthlyWinners));
+            renderMonthlyWinners();
+            showCertificate(winner.name, winner.totalScore, 'الصف السادس');
+            showSuccess(`تم اختيار ${winner.name} كبطل الصف السادس! 🏆`);
+        }
+
+        function renderMonthlyWinners() {
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            const winners = monthlyWinners[currentMonth] || {};
+
+            const grade5Container = document.getElementById('grade5Winner');
+            const grade6Container = document.getElementById('grade6Winner');
+
+            if (winners.grade5) {
+                grade5Container.innerHTML = `
+                    <div class="text-center">
+                        <div class="text-4xl mb-2 star-animation">🏆</div>
+                        <h5 class="text-xl font-bold text-yellow-400 mb-2">${winners.grade5.name}</h5>
+                        <p class="text-white">النتيجة: ${winners.grade5.totalScore}/70</p>
+                        <button onclick="showCertificate('${winners.grade5.name}', ${winners.grade5.totalScore}, 'الصف الخامس')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-4 rounded-lg text-sm">
+                            عرض الشهادة
+                        </button>
+                    </div>
+                `;
+            } else {
+                grade5Container.innerHTML = '<p class="text-gray-300">لم يتم اختيار البطل بعد</p>';
+            }
+
+            if (winners.grade6) {
+                grade6Container.innerHTML = `
+                    <div class="text-center">
+                        <div class="text-4xl mb-2 star-animation">🏆</div>
+                        <h5 class="text-xl font-bold text-yellow-400 mb-2">${winners.grade6.name}</h5>
+                        <p class="text-white">النتيجة: ${winners.grade6.totalScore}/70</p>
+                        <button onclick="showCertificate('${winners.grade6.name}', ${winners.grade6.totalScore}, 'الصف السادس')" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-4 rounded-lg text-sm">
+                            عرض الشهادة
+                        </button>
+                    </div>
+                `;
+            } else {
+                grade6Container.innerHTML = '<p class="text-gray-300">لم يتم اختيار البطل بعد</p>';
+            }
+        }
+
+        function showCertificate(name, score, grade) {
+            document.getElementById('certificateName').textContent = name;
+            document.getElementById('certificateDate').textContent = `التاريخ: ${new Date().toLocaleDateString('ar-SA')}`;
+            document.getElementById('certificateScore').textContent = `النتيجة: ${score}/70 نقطة`;
+            document.getElementById('certificateModal').classList.remove('hidden');
+        }
+
+        function closeCertificate() {
+            document.getElementById('certificateModal').classList.add('hidden');
+        }
+
+        function downloadCertificate() {
+            // Create a simple text-based certificate for download
+            const name = document.getElementById('certificateName').textContent;
+            const date = document.getElementById('certificateDate').textContent;
+            const score = document.getElementById('certificateScore').textContent;
+            
+            const certificateText = `
+🏆 شهادة تقدير - نجم الطابور المدرسي 🏆
+
+${name}
+
+${date}
+${score}
+
+معايير التقييم:
+⚡ سرعة الانتظام
+🔊 الصوت العالي  
+✨ النظافة الشخصية
+
+تصميم وإشراف: أ. أحلام الحمدانية
+مديرة المدرسة
+            `;
+            
+            const blob = new Blob([certificateText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `شهادة_${name.replace(/\s+/g, '_')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccess('تم تحميل الشهادة بنجاح! 📄');
+        }
+
+        function getSubjectEmoji(subject) {
+            const emojiMap = {
+                'الرياضيات': '🔢',
+                'العلوم': '🔬',
+                'اللغة العربية': '📖',
+                'اللغة الإنجليزية': '🇬🇧',
+                'التربية الإسلامية': '☪️',
+                'الاجتماعيات': '🌍',
+                'التربية البدنية': '⚽',
+                'التربية الفنية': '🎨',
+                'التربية الموسيقية': '🎵',
+                'الحاسوب': '💻',
+                'رياض الأطفال': '🧸',
+                'معلمة فصل': '👩‍🏫',
+                'إشراف الطابور': '🏫',
+                'الإذاعة المدرسية': '📻',
+                'التنسيق الإعلامي': '📺'
+            };
+            return emojiMap[subject] || '📝';
+        }
+
+        function getPositionEmoji(position) {
+            if (position.includes('الخامس') || position.includes('السادس')) return '📚';
+            if (position.includes('طابور')) return '🏫';
+            if (position.includes('إذاعة')) return '📻';
+            if (position.includes('إعلام')) return '📺';
+            return '📍';
+        }
+
+        function markPresent(teacherId) {
+            const today = new Date().toDateString();
+            if (!attendance[today]) attendance[today] = {};
+            if (!attendanceTimes[today]) attendanceTimes[today] = {};
+            
+            attendance[today][teacherId] = true;
+            attendanceTimes[today][teacherId] = new Date().toISOString();
+            
+            localStorage.setItem('femaleAttendance', JSON.stringify(attendance));
+            localStorage.setItem('femaleAttendanceTimes', JSON.stringify(attendanceTimes));
+            
+            renderTeachers();
+            updateStats();
+            showSuccess('تم تسجيل الحضور بنجاح! ✅');
+        }
+
+        function markAbsent(teacherId) {
+            const today = new Date().toDateString();
+            if (!attendance[today]) attendance[today] = {};
+            
+            attendance[today][teacherId] = false;
+            
+            // Remove verification if exists
+            if (verifications[today] && verifications[today][teacherId]) {
+                delete verifications[today][teacherId];
+                localStorage.setItem('femaleVerifications', JSON.stringify(verifications));
+            }
+            
+            localStorage.setItem('femaleAttendance', JSON.stringify(attendance));
+            
+            renderTeachers();
+            updateStats();
+            showSuccess('تم تسجيل الغياب 📝');
+        }
+
+        function verifyAttendance(teacherId) {
+            const today = new Date().toDateString();
+            if (!verifications[today]) verifications[today] = {};
+            
+            verifications[today][teacherId] = true;
+            localStorage.setItem('femaleVerifications', JSON.stringify(verifications));
+            
+            renderTeachers();
+            showSuccess('تم تأكيد الحضور الفعلي! ✅');
+        }
+
+        function markAllPresent() {
+            if (teachers.length === 0) {
+                showSuccess('لا توجد معلمات لتسجيل حضورهن ❌');
+                return;
+            }
+
+            const today = new Date().toDateString();
+            if (!attendance[today]) attendance[today] = {};
+            if (!attendanceTimes[today]) attendanceTimes[today] = {};
+            
+            teachers.forEach(teacher => {
+                attendance[today][teacher.id] = true;
+                attendanceTimes[today][teacher.id] = new Date().toISOString();
+            });
+            
+            localStorage.setItem('femaleAttendance', JSON.stringify(attendance));
+            localStorage.setItem('femaleAttendanceTimes', JSON.stringify(attendanceTimes));
+            
+            renderTeachers();
+            updateStats();
+            showSuccess(`تم تسجيل حضور جميع المعلمات (${teachers.length}) بنجاح! 🎉`);
+        }
+
+        function clearAttendance() {
+            if (confirm('هل أنت متأكدة من مسح حضور اليوم؟')) {
+                const today = new Date().toDateString();
+                if (attendance[today]) delete attendance[today];
+                if (attendanceTimes[today]) delete attendanceTimes[today];
+                if (verifications[today]) delete verifications[today];
+                
+                localStorage.setItem('femaleAttendance', JSON.stringify(attendance));
+                localStorage.setItem('femaleAttendanceTimes', JSON.stringify(attendanceTimes));
+                localStorage.setItem('femaleVerifications', JSON.stringify(verifications));
+                
+                renderTeachers();
+                updateStats();
+                showSuccess('تم مسح حضور اليوم 🔄');
+            }
+        }
+
+        function updateStats() {
+            const today = new Date().toDateString();
+            const todayAttendance = attendance[today] || {};
+            
+            const totalTeachers = teachers.length;
+            const presentCount = Object.values(todayAttendance).filter(status => status === true).length;
+            const absentCount = Object.values(todayAttendance).filter(status => status === false).length;
+            
+            // Calculate daily stars (attendance before 7:30 AM)
+            const todayTimes = attendanceTimes[today] || {};
+            let dailyStars = 0;
+            
+            Object.entries(todayTimes).forEach(([teacherId, timeStr]) => {
+                if (todayAttendance[teacherId] === true) {
+                    const time = new Date(timeStr);
+                    if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() <= 30)) {
+                        dailyStars++;
+                    }
+                }
+            });
+            
+            const attendanceRate = totalTeachers > 0 ? Math.round((presentCount / totalTeachers) * 100) : 0;
+            
+            document.getElementById('totalTeachers').textContent = totalTeachers;
+            document.getElementById('presentCount').textContent = presentCount;
+            document.getElementById('absentCount').textContent = absentCount;
+            document.getElementById('dailyStars').textContent = dailyStars;
+            document.getElementById('attendanceRate').textContent = attendanceRate + '%';
+        }
+
+        function getTeacherMonthlyRate(teacherId) {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            let presentDays = 0;
+            let totalDays = 0;
+            
+            Object.entries(attendance).forEach(([dateStr, dayAttendance]) => {
+                const date = new Date(dateStr);
+                if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+                    if (dayAttendance[teacherId] !== undefined) {
+                        totalDays++;
+                        if (dayAttendance[teacherId] === true) {
+                            presentDays++;
+                        }
+                    }
+                }
+            });
+            
+            return totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 0;
+        }
+
+        function showAddTeacherForm() {
+            document.getElementById('addTeacherModal').classList.remove('hidden');
+        }
+
+        function hideAddTeacherForm() {
+            document.getElementById('addTeacherModal').classList.add('hidden');
+            document.getElementById('addTeacherForm').reset();
+        }
+
+        function addTeacher(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('teacherName').value.trim();
+            const subject = document.getElementById('teacherSubject').value;
+            const position = document.getElementById('teacherPosition').value.trim();
+            
+            if (!name || !subject || !position) {
+                alert('يرجى ملء جميع الحقول');
+                return;
+            }
+            
+            const newTeacher = {
+                id: Date.now().toString(),
+                name: name,
+                subject: subject,
+                position: position
+            };
+            
+            teachers.push(newTeacher);
+            localStorage.setItem('femaleTeachers', JSON.stringify(teachers));
+            
+            hideAddTeacherForm();
+            renderTeachers();
+            updateStats();
+            showSuccess(`تم إضافة المعلمة ${name} بنجاح! 👩‍🏫`);
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const fileStatus = document.getElementById('fileStatus');
+            fileStatus.classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    processExcelData(jsonData);
+                    fileStatus.classList.add('hidden');
+                    showSuccess('تم رفع ملف المعلمات بنجاح! 📊');
+                } catch (error) {
+                    console.error('Error processing file:', error);
+                    fileStatus.classList.add('hidden');
+                    showSuccess('حدث خطأ في معالجة الملف ❌');
+                }
+            };
+
+            reader.onerror = function() {
+                fileStatus.classList.add('hidden');
+                showSuccess('حدث خطأ في قراءة الملف ❌');
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        function processExcelData(data) {
+            const newTeachers = [];
+            
+            // Skip header row and process data
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                if (row && row.length >= 2) {
+                    const grade = row[0] ? row[0].toString().trim() : '';
+                    
+                    // Process teacher names from remaining columns
+                    for (let j = 1; j < row.length; j++) {
+                        const teacherName = row[j] ? row[j].toString().trim() : '';
+                        if (teacherName && teacherName !== '') {
+                            const teacher = {
+                                id: Date.now().toString() + '_' + i + '_' + j,
+                                name: teacherName,
+                                subject: 'معلمة فصل', // Default subject
+                                position: grade || 'غير محدد'
+                            };
+                            newTeachers.push(teacher);
+                        }
+                    }
+                }
+            }
+            
+            if (newTeachers.length > 0) {
+                teachers.push(...newTeachers);
+                localStorage.setItem('femaleTeachers', JSON.stringify(teachers));
+                renderTeachers();
+                updateStats();
+                showSuccess(`تم إضافة ${newTeachers.length} معلمة من الملف! 🎉`);
+            } else {
+                showSuccess('لم يتم العثور على بيانات معلمات في الملف ❌');
+            }
+        }
+
+        function initializeYearSelector() {
+            const yearSelector = document.getElementById('yearSelector');
+            const currentYear = new Date().getFullYear();
+            
+            for (let year = currentYear - 2; year <= currentYear + 1; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                if (year === currentYear) option.selected = true;
+                yearSelector.appendChild(option);
+            }
+        }
+
+        function setCurrentMonth() {
+            const monthSelector = document.getElementById('monthSelector');
+            monthSelector.value = new Date().getMonth();
+        }
+
+        function updateMonthlyReport() {
+            const month = parseInt(document.getElementById('monthSelector').value);
+            const year = parseInt(document.getElementById('yearSelector').value);
+            
+            // Calculate monthly statistics
+            let workingDays = 0;
+            let totalAttendance = 0;
+            let totalPossibleAttendance = 0;
+            let monthlyStars = 0;
+            let bestDayAttendance = 0;
+            let bestDay = '-';
+            
+            const monthlyData = {};
+            
+            Object.entries(attendance).forEach(([dateStr, dayAttendance]) => {
+                const date = new Date(dateStr);
+                if (date.getMonth() === month && date.getFullYear() === year) {
+                    workingDays++;
+                    
+                    const dayPresent = Object.values(dayAttendance).filter(status => status === true).length;
+                    const dayTotal = Object.keys(dayAttendance).length;
+                    
+                    totalAttendance += dayPresent;
+                    totalPossibleAttendance += dayTotal;
+                    
+                    // Check for daily stars
+                    const dayTimes = attendanceTimes[dateStr] || {};
+                    Object.entries(dayTimes).forEach(([teacherId, timeStr]) => {
+                        if (dayAttendance[teacherId] === true) {
+                            const time = new Date(timeStr);
+                            if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() <= 30)) {
+                                monthlyStars++;
+                            }
+                        }
+                    });
+                    
+                    // Track best day
+                    const dayRate = dayTotal > 0 ? (dayPresent / dayTotal) * 100 : 0;
+                    if (dayRate > bestDayAttendance) {
+                        bestDayAttendance = dayRate;
+                        bestDay = date.toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric' });
+                    }
+                }
+            });
+            
+            const avgAttendance = totalPossibleAttendance > 0 ? Math.round((totalAttendance / totalPossibleAttendance) * 100) : 0;
+            
+            document.getElementById('workingDays').textContent = workingDays;
+            document.getElementById('avgAttendance').textContent = avgAttendance + '%';
+            document.getElementById('monthlyStars').textContent = monthlyStars;
+            document.getElementById('bestDay').textContent = bestDay;
+            
+            // Generate teacher reports
+            generateTeacherReports(month, year);
+        }
+
+        function generateTeacherReports(month, year) {
+            const container = document.getElementById('teacherReports');
+            
+            if (teachers.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center py-8">لا توجد معلمات مسجلات</p>';
+                return;
+            }
+            
+            const teacherStats = teachers.map(teacher => {
+                let presentDays = 0;
+                let totalDays = 0;
+                let stars = 0;
+                
+                Object.entries(attendance).forEach(([dateStr, dayAttendance]) => {
+                    const date = new Date(dateStr);
+                    if (date.getMonth() === month && date.getFullYear() === year) {
+                        if (dayAttendance[teacher.id] !== undefined) {
+                            totalDays++;
+                            if (dayAttendance[teacher.id] === true) {
+                                presentDays++;
+                                
+                                // Check for star
+                                const dayTimes = attendanceTimes[dateStr] || {};
+                                if (dayTimes[teacher.id]) {
+                                    const time = new Date(dayTimes[teacher.id]);
+                                    if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() <= 30)) {
+                                        stars++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                const rate = totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 0;
+                
+                return {
+                    ...teacher,
+                    presentDays,
+                    totalDays,
+                    rate,
+                    stars
+                };
+            });
+            
+            // Sort by attendance rate
+            teacherStats.sort((a, b) => b.rate - a.rate);
+            
+            container.innerHTML = teacherStats.map((teacher, index) => `
+                <div class="glass-morphism rounded-xl p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+                            ${index + 1}
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-white">${teacher.name}</h4>
+                            <p class="text-gray-300 text-sm">${teacher.subject} - ${teacher.position}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold ${teacher.rate >= 90 ? 'text-green-400' : teacher.rate >= 75 ? 'text-yellow-400' : 'text-red-400'}">${teacher.rate}%</div>
+                        <div class="text-sm text-gray-300">${teacher.presentDays}/${teacher.totalDays} يوم</div>
+                        ${teacher.stars > 0 ? `<div class="text-yellow-400 text-sm">⭐ ${teacher.stars} نجمة</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function exportMonthlyReport() {
+            const month = parseInt(document.getElementById('monthSelector').value);
+            const year = parseInt(document.getElementById('yearSelector').value);
+            
+            const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 
+                              'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+            
+            let reportContent = `تقرير الحضور الشهري - ${monthNames[month]} ${year}\n`;
+            reportContent += `تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}\n\n`;
+            
+            // Add teacher statistics
+            teachers.forEach(teacher => {
+                let presentDays = 0;
+                let totalDays = 0;
+                let stars = 0;
+                
+                Object.entries(attendance).forEach(([dateStr, dayAttendance]) => {
+                    const date = new Date(dateStr);
+                    if (date.getMonth() === month && date.getFullYear() === year) {
+                        if (dayAttendance[teacher.id] !== undefined) {
+                            totalDays++;
+                            if (dayAttendance[teacher.id] === true) {
+                                presentDays++;
+                                
+                                const dayTimes = attendanceTimes[dateStr] || {};
+                                if (dayTimes[teacher.id]) {
+                                    const time = new Date(dayTimes[teacher.id]);
+                                    if (time.getHours() < 7 || (time.getHours() === 7 && time.getMinutes() <= 30)) {
+                                        stars++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                const rate = totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 0;
+                
+                reportContent += `${teacher.name} - ${teacher.subject}\n`;
+                reportContent += `الحضور: ${presentDays}/${totalDays} يوم (${rate}%)\n`;
+                if (stars > 0) reportContent += `النجوم: ${stars}\n`;
+                reportContent += `الموقع: ${teacher.position}\n\n`;
+            });
+            
+            const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `تقرير_${monthNames[month]}_${year}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccess('تم تصدير التقرير الشهري! 📄');
+        }
+
+        function exportTeacherAttendance() {
+            if (teachers.length === 0) {
+                showSuccess('لا توجد بيانات معلمات للتصدير ❌');
+                return;
+            }
+            
+            const wb = XLSX.utils.book_new();
+            
+            // Create attendance data
+            const attendanceData = [['اسم المعلمة', 'المادة', 'الموقع', 'التاريخ', 'الحضور', 'وقت الوصول', 'تم التحقق']];
+            
+            Object.entries(attendance).forEach(([dateStr, dayAttendance]) => {
+                const date = new Date(dateStr);
+                const formattedDate = date.toLocaleDateString('ar-SA');
+                
+                teachers.forEach(teacher => {
+                    if (dayAttendance[teacher.id] !== undefined) {
+                        const isPresent = dayAttendance[teacher.id];
+                        const arrivalTime = attendanceTimes[dateStr] && attendanceTimes[dateStr][teacher.id] 
+                            ? new Date(attendanceTimes[dateStr][teacher.id]).toLocaleTimeString('ar-SA', {hour: '2-digit', minute: '2-digit'})
+                            : '';
+                        const isVerified = verifications[dateStr] && verifications[dateStr][teacher.id] ? 'نعم' : 'لا';
+                        
+                        attendanceData.push([
+                            teacher.name,
+                            teacher.subject,
+                            teacher.position,
+                            formattedDate,
+                            isPresent ? 'حاضرة' : 'غائبة',
+                            arrivalTime,
+                            isVerified
+                        ]);
+                    }
+                });
+            });
+            
+            const ws = XLSX.utils.aoa_to_sheet(attendanceData);
+            XLSX.utils.book_append_sheet(wb, ws, 'حضور المعلمات');
+            
+            XLSX.writeFile(wb, `حضور_المعلمات_${new Date().toISOString().slice(0, 10)}.xlsx`);
+            showSuccess('تم تصدير بيانات الحضور! 📊');
+        }
+
+        function exportAllData() {
+            const allData = {
+                teachers: teachers,
+                attendance: attendance,
+                attendanceTimes: attendanceTimes,
+                verifications: verifications,
+                classes: classes,
+                monthlyWinners: monthlyWinners,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `نسخة_احتياطية_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccess('تم إنشاء النسخة الاحتياطية! 💾');
+        }
+
+        function importData() {
+            document.getElementById('importFile').click();
+        }
+
+        function handleImportData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.teachers) teachers = data.teachers;
+                    if (data.attendance) attendance = data.attendance;
+                    if (data.attendanceTimes) attendanceTimes = data.attendanceTimes;
+                    if (data.verifications) verifications = data.verifications;
+                    if (data.classes) classes = data.classes;
+                    if (data.monthlyWinners) monthlyWinners = data.monthlyWinners;
+                    
+                    // Save to localStorage
+                    localStorage.setItem('femaleTeachers', JSON.stringify(teachers));
+                    localStorage.setItem('femaleAttendance', JSON.stringify(attendance));
+                    localStorage.setItem('femaleAttendanceTimes', JSON.stringify(attendanceTimes));
+                    localStorage.setItem('femaleVerifications', JSON.stringify(verifications));
+                    localStorage.setItem('schoolClasses', JSON.stringify(classes));
+                    localStorage.setItem('monthlyWinners', JSON.stringify(monthlyWinners));
+                    
+                    // Refresh displays
+                    renderTeachers();
+                    updateStats();
+                    renderClasses();
+                    renderMonthlyWinners();
+                    
+                    showSuccess('تم استيراد البيانات بنجاح! 📥');
+                } catch (error) {
+                    showSuccess('حدث خطأ في استيراد البيانات ❌');
+                    console.error('Import error:', error);
+                }
+            };
+            
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function clearAllData() {
+            if (confirm('هل أنت متأكدة من مسح جميع البيانات؟ هذا الإجراء لا يمكن التراجع عنه!')) {
+                localStorage.clear();
+                
+                teachers = [];
+                attendance = {};
+                attendanceTimes = {};
+                verifications = {};
+                classes = { grade5: [], grade6: [] };
+                monthlyWinners = {};
+                
+                renderTeachers();
+                updateStats();
+                renderClasses();
+                renderMonthlyWinners();
+                
+                showSuccess('تم مسح جميع البيانات 🗑️');
+            }
+        }
+
+        function showSuccess(message) {
+            const successMessage = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            
+            successText.textContent = message;
+            successMessage.classList.remove('hidden');
+            
+            setTimeout(() => {
+                successMessage.classList.add('hidden');
+            }, 4000);
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c0e2582392d1e8',t:'MTc1NzM2MDA3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
