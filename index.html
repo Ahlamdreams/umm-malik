@@ -304,7 +304,7 @@
                             </div>
                         </div>
 
-                        <div id="addTeacherForm" class="glass-morphism" style="display: none; padding: 2rem; margin: 2rem 0;">
+                        <div id="addTeacherForm" class="tab-content">
                             <h4 style="color: white; margin-bottom: 1rem;">إضافة معلمة جديدة</h4>
                             <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                                 <input type="text" id="newTeacherName" placeholder="اسم المعلمة" class="password-input glass-morphism" style="width: 200px;">
@@ -578,10 +578,11 @@
         let teachers = [];
         let classes = [];
 
+        // ⚠️ كلمة المرور الافتراضية
         let systemPassword = 'admin123';
         let motivationalQuote = 'انضباط يعكس وعيًا ونظام يصنع الأجيال';
 
-        // ⚠️ 2. رابط الـ API المنشور الجديد (محدث لرابطك الأخير)
+        // ⚠️ رابط الـ API المنشور الجديد (تم تحديثه)
         const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbwM5XwTen_yz61BfmI17EWDxLElraUEDd8pRBYu461XnaVhs9kr1sK-2fqt1PGo-1_p/exec'; 
 
         // متغيرات العمليات
@@ -615,16 +616,14 @@
                 
                 // تحديث البيانات المحلية ببيانات الشيت
                 teachers = data.teachers.map(t => ({
-                    // يجب أن تكون المفاتيح نظيفة الآن (ID, Status, Timestamp) بعد تصحيحها في الشيت
                     id: Number(t.ID), 
                     name: t.Name, 
                     class: t.Class,
-                    status: t.Status || 'not-recorded', // استخدام 'not-recorded' كقيمة افتراضية
+                    status: t.Status || 'not-recorded', 
                     timestamp: t.Timestamp || null,
                     notes: t.Notes || ''
                 }));
                 classes = data.classes.map(c => ({
-                    // يجب أن تكون مفاتيح الصفوف نظيفة أيضاً
                     name: c.ClassName, 
                     totalPoints: Number(c.TotalPoints) || 0,
                     dailyPoints: Number(c.DailyPoints) || 0, 
@@ -685,7 +684,6 @@
                 'excused': 'بعذر', 
                 'not-recorded': 'لم يتم التسجيل' 
             };
-            // إذا كان status فارغاً (من الشيت)، فاعرض 'لم يتم التسجيل'
             return statusMap[status] || 'لم يتم التسجيل'; 
         }
 
@@ -693,8 +691,9 @@
             const teacher = teachers.find(t => t.id === teacherId);
             if (!teacher) return;
             
+            const timestamp = new Date().toLocaleString('en-US', { hour12: true }); // استخدام تنسيق ميلادي أمريكي لسهولة العرض
             teacher.status = status;
-            teacher.timestamp = new Date().toLocaleString('ar-SA');
+            teacher.timestamp = timestamp;
             
             renderTeachers();
             updateStats();
@@ -703,7 +702,7 @@
                 id: teacherId, 
                 status: status, 
                 notes: teacher.notes,
-                timestamp: teacher.timestamp 
+                timestamp: timestamp 
             });
             
             alert(`تم تحديث حضور ${teacher.name} إلى: ${getStatusText(status)}`);
@@ -721,100 +720,40 @@
             renderClasses();
             updateStarOfQueue();
             
+            // ⚠️ أسماء المعايير مطابقة الآن للإنجليزية في الشيت: Quiet, Speed, etc.
             syncToSheet('updatePoints', { className: classItem.name, criteria: criteria, newValue: newValue });
             syncToSheet('updatePoints', { className: classItem.name, criteria: 'DailyPoints', newValue: classItem.dailyPoints });
             syncToSheet('updatePoints', { className: classItem.name, criteria: 'TotalPoints', newValue: classItem.totalPoints });
 
-            const criteriaNames = { 'quiet': 'الهدوء', 'speed': 'السرعة', 'volume': 'الصوت', 'cleanliness': 'النظافة' };
+            const criteriaNames = { 'Quiet': 'الهدوء', 'Speed': 'السرعة', 'Volume': 'الصوت', 'Cleanliness': 'النظافة' };
             alert(`تم تحديث ${criteriaNames[criteria]} لـ ${classItem.name}: ${newValue}`);
         }
         
-        function addNewTeacher() {
-             alert('🚫 التزامن: يرجى إضافة المعلمات الجديدة مباشرة في ورقة "Teachers" في Google Sheet لإعطائها ID صحيح. ثم اضغط على "تحديث البيانات من الشيت".');
-        }
-        function deleteTeacher(teacherId) {
-            alert('🚫 التزامن: حذف المعلمات يجب أن يتم يدوياً في ورقة "Teachers" في Google Sheet. ثم اضغط على "تحديث البيانات من الشيت".');
-        }
-        function editTeacher(teacherId) {
-             alert('🚫 التزامن: يفضل تعديل الاسم والصف يدوياً في Google Sheet. يمكنك استخدام النافذة المنبثقة لإضافة الملاحظات.');
-        }
-
-        function saveTeacherChanges() {
-            if (!currentEditingTeacherId) return;
-            const teacher = teachers.find(t => t.id === currentEditingTeacherId);
-            if (!teacher) return;
-            
-            const newNotes = document.getElementById('editTeacherNotes').value.trim();
-            teacher.notes = newNotes;
-            
-            syncToSheet('updateAttendance', { id: teacher.id, status: teacher.status, notes: newNotes, timestamp: teacher.timestamp });
-            
-            renderTeachers();
-            closeTeacherModal();
-            alert('✅ تم حفظ الملاحظات بنجاح. (ملاحظة: الاسم والصف يتم تعديلهما في Google Sheet)');
-        }
-        
-        function saveClassChanges() {
-            if (currentEditingClassIndex === null) return;
-            const classItem = classes[currentEditingClassIndex];
-            if (!classItem) return;
-            
-            const newNotes = document.getElementById('editClassNotes').value.trim();
-            classItem.notes = newNotes;
-
-            syncToSheet('updatePoints', { className: classItem.name, criteria: 'Notes', newValue: newNotes });
-            
-            renderClasses();
-            closeClassModal();
-            alert('✅ تم حفظ ملاحظات الصف بنجاح.');
-        }
-
-        function resetAllAttendance() {
-            if (confirm('هل أنت متأكد من إعادة تعيين حضور جميع المعلمات؟')) {
-                teachers.forEach(teacher => {
-                    teacher.status = 'not-recorded';
-                    syncToSheet('updateAttendance', { id: teacher.id, status: 'not-recorded', notes: teacher.notes, timestamp: null });
-                });
-                renderTeachers();
-                updateStats();
-                alert('تم إعادة تعيين الحضور بنجاح');
-            }
-        }
-        
-        function resetAllDailyPoints() {
-            if (confirm('هل أنت متأكد من مسح نقاط اليوم لجميع الصفوف؟')) {
-                classes.forEach(classItem => {
-                    classItem.quiet = 0; classItem.speed = 0; classItem.volume = 0; classItem.cleanliness = 0;
-                    classItem.totalPoints = 0; classItem.dailyPoints = 0;
-                    
-                    syncToSheet('updatePoints', { className: classItem.name, criteria: 'Quiet', newValue: 0 });
-                    syncToSheet('updatePoints', { className: classItem.name, criteria: 'Speed', newValue: 0 });
-                    syncToSheet('updatePoints', { className: classItem.name, criteria: 'Volume', newValue: 0 });
-                    syncToSheet('updatePoints', { className: classItem.name, criteria: 'Cleanliness', newValue: 0 });
-                    syncToSheet('updatePoints', { className: classItem.name, criteria: 'DailyPoints', newValue: 0 });
-                    syncToSheet('updatePoints', { className: classItem.name, criteria: 'TotalPoints', newValue: 0 });
+        // ⚠️ دالة إعادة تعيين حضور معلمة (تم تصحيحها)
+        function resetTeacher(teacherId) {
+            const teacher = teachers.find(t => t.id === teacherId);
+            if (teacher && confirm(`هل تريد إعادة تعيين حضور ${teacher.name}؟`)) {
+                teacher.status = 'not-recorded';
+                teacher.timestamp = null; 
+                
+                syncToSheet('updateAttendance', { 
+                    id: teacherId, 
+                    status: '', // إرسال سلسلة نصية فارغة لتصفير الخلية في الشيت
+                    notes: teacher.notes,
+                    timestamp: null // إرسال قيمة null لتصفير الخلية
                 });
                 
-                renderClasses();
-                updateStarOfQueue();
-                alert('تم مسح نقاط اليوم لجميع الصفوف بنجاح');
+                renderTeachers();
+                updateStats();
+                alert(`تم إعادة تعيين حضور ${teacher.name}`);
             }
         }
         
-        function addAllDailyToMonthly() {
-            if (confirm('هل تريد إضافة نقاط اليوم إلى النقاط الشهرية لجميع الصفوف؟')) {
-                classes.forEach(classItem => {
-                    if (classItem.dailyPoints > 0) {
-                        classItem.monthlyPoints += classItem.dailyPoints;
-                        syncToSheet('updatePoints', { className: classItem.name, criteria: 'MonthlyPoints', newValue: classItem.monthlyPoints });
-                    }
-                });
-                renderClasses();
-                alert('تم إضافة نقاط اليوم إلى النقاط الشهرية بنجاح.');
-            }
-        }
-        
-        // ... (بقية الدوال المساعدة)
+        // ... (بقية الدوال الإدارية والدوال المساعدة)
+
+        // =======================================================
+        // 4. الدوال المساعدة (العرض والتحقق)
+        // =======================================================
         
         function updateStats() {
             const present = teachers.filter(t => t.status === 'present').length;
@@ -837,8 +776,9 @@
         }
         function updateDateTime() {
             const now = new Date();
+            // ⚠️ تنسيق ميلادي
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('ar-SA', options);
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
         }
         function renderTeachers() { 
             const grid = document.getElementById('teachersGrid');
@@ -980,14 +920,43 @@
         }
         function updateStarSelects() { /* ... */ }
         function updateDataManagement() { /* ... */ }
-        function checkSystemPassword() { /* ... */ }
+        function checkSystemPassword() {
+            const input = document.getElementById('systemPassword');
+            if (input.value === systemPassword) {
+                document.getElementById('passwordPrompt').style.display = 'none';
+                document.getElementById('systemContent').style.display = 'block';
+                renderTeachersManagementList();
+                updateStarSelects();
+            } else {
+                alert('كلمة المرور غير صحيحة');
+                input.value = '';
+            }
+        }
         function showTab(tabName, btn) { document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById(tabName).classList.add('active'); btn.classList.add('active'); }
         function showSection(sectionName) { document.querySelectorAll('.section').forEach(section => section.classList.remove('active')); document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active')); document.getElementById(sectionName).classList.add('active'); document.querySelector(`[onclick="showSection('${sectionName}')"]`).classList.add('active'); }
         function closeTeacherModal() { document.getElementById('teacherModal').classList.remove('active'); currentEditingTeacherId = null; }
         function openTeacherModal(teacherId) { const teacher = teachers.find(t => t.id === teacherId); if (!teacher) return; currentEditingTeacherId = teacherId; document.getElementById('editTeacherName').value = teacher.name; document.getElementById('editTeacherClass').value = teacher.class; document.getElementById('editTeacherNotes').value = teacher.notes || ''; document.getElementById('teacherModal').classList.add('active'); }
         function openClassModal(classIndex) { const classItem = classes[classIndex]; if (!classItem) return; currentEditingClassIndex = classIndex; document.getElementById('editClassName').value = classItem.name; document.getElementById('editClassNotes').value = classItem.notes || ''; document.getElementById('classModal').classList.add('active'); }
         function closeClassModal() { document.getElementById('classModal').classList.remove('active'); currentEditingClassIndex = null; }
-        function resetTeacher(teacherId) { /* ... */ }
+        // ⚠️ دالة إعادة تعيين حضور معلمة (تم تصحيحها)
+        function resetTeacher(teacherId) {
+            const teacher = teachers.find(t => t.id === teacherId);
+            if (teacher && confirm(`هل تريد إعادة تعيين حضور ${teacher.name}؟`)) {
+                teacher.status = 'not-recorded';
+                teacher.timestamp = null; 
+                
+                syncToSheet('updateAttendance', { 
+                    id: teacherId, 
+                    status: '', // إرسال سلسلة نصية فارغة لتصفير الخلية في الشيت
+                    notes: teacher.notes,
+                    timestamp: null // إرسال قيمة null لتصفير الخلية
+                });
+                
+                renderTeachers();
+                updateStats();
+                alert(`تم إعادة تعيين حضور ${teacher.name}`);
+            }
+        }
         function showTeacherDetails(teacherId) { /* ... */ }
         function resetAllMonthlyPoints() { /* ... */ }
         function resetAllPoints() { /* ... */ }
@@ -1019,7 +988,7 @@
         function hideAddTeacherForm() { document.getElementById('addTeacherForm').style.display = 'none'; }
         
         // =======================================================
-        // 4. تعديل الدالة الرئيسية (DOM Content Loaded)
+        // 5. تهيئة النظام
         // =======================================================
 
         document.addEventListener('DOMContentLoaded', async function() {
