@@ -615,19 +615,24 @@
                 
                 // تحديث البيانات المحلية ببيانات الشيت
                 teachers = data.teachers.map(t => ({
-                    // نستخدم مفاتيح clean (بدون مسافات) بعد التأكد من تصحيحها في Apps Script
+                    // يجب أن تكون المفاتيح نظيفة الآن (ID, Status, Timestamp) بعد تصحيحها في الشيت
                     id: Number(t.ID), 
                     name: t.Name, 
                     class: t.Class,
-                    status: t.Status || 'not-recorded',
+                    status: t.Status || 'not-recorded', // استخدام 'not-recorded' كقيمة افتراضية
                     timestamp: t.Timestamp || null,
                     notes: t.Notes || ''
                 }));
                 classes = data.classes.map(c => ({
-                    name: c.ClassName, totalPoints: Number(c.TotalPoints) || 0,
-                    dailyPoints: Number(c.DailyPoints) || 0, monthlyPoints: Number(c.MonthlyPoints) || 0,
-                    quiet: Number(c.Quiet) || 0, speed: Number(c.Speed) || 0,
-                    volume: Number(c.Volume) || 0, cleanliness: Number(c.Cleanliness) || 0,
+                    // يجب أن تكون مفاتيح الصفوف نظيفة أيضاً
+                    name: c.ClassName, 
+                    totalPoints: Number(c.TotalPoints) || 0,
+                    dailyPoints: Number(c.DailyPoints) || 0, 
+                    monthlyPoints: Number(c.MonthlyPoints) || 0,
+                    quiet: Number(c.Quiet) || 0, 
+                    speed: Number(c.Speed) || 0,
+                    volume: Number(c.Volume) || 0, 
+                    cleanliness: Number(c.Cleanliness) || 0,
                     notes: c.Notes || ''
                 }));
                 
@@ -670,6 +675,19 @@
         // =======================================================
         // 3. الدوال الرئيسية التي تستدعي الـ Sync
         // =======================================================
+
+        // ⚠️ دالة الترجمة للعربية
+        function getStatusText(status) { 
+            const statusMap = { 
+                'present': 'حاضرة', 
+                'absent': 'غائبة', 
+                'late': 'متأخرة', 
+                'excused': 'بعذر', 
+                'not-recorded': 'لم يتم التسجيل' 
+            };
+            // إذا كان status فارغاً (من الشيت)، فاعرض 'لم يتم التسجيل'
+            return statusMap[status] || 'لم يتم التسجيل'; 
+        }
 
         function updateAttendanceWithSave(teacherId, status) {
             const teacher = teachers.find(t => t.id === teacherId);
@@ -797,10 +815,7 @@
         }
         
         // ... (بقية الدوال المساعدة)
-        function getStatusText(status) { 
-            const statusMap = { 'present': 'حاضرة', 'absent': 'غائبة', 'late': 'متأخرة', 'excused': 'بعذر', 'not-recorded': 'لم يتم التسجيل' };
-            return statusMap[status] || 'غير محدد';
-        }
+        
         function updateStats() {
             const present = teachers.filter(t => t.status === 'present').length;
             const absent = teachers.filter(t => t.status === 'absent').length;
@@ -825,7 +840,6 @@
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
             document.getElementById('currentDateTime').textContent = now.toLocaleDateString('ar-SA', options);
         }
-        function createFloatingParticles() { /* ... */ }
         function renderTeachers() { 
             const grid = document.getElementById('teachersGrid');
             if (teachers.length === 0) {
@@ -869,7 +883,101 @@
                 grid.appendChild(card);
             });
         }
-        function renderClasses() { /* ... */ }
+        function renderClasses() { 
+            const grid = document.getElementById('classesGrid');
+            if (classes.length === 0) {
+                grid.innerHTML = `<div class="glass-morphism" style="padding: 3rem; text-align: center; color: white; grid-column: 1 / -1;"><h3>📚 لا توجد بيانات صفوف</h3><p>يرجى التأكد من أسماء الأعمدة في ورقة "Classes".</p></div>`;
+                return;
+            }
+            grid.innerHTML = '';
+            const sortedClasses = [...classes].sort((a, b) => b.totalPoints - a.totalPoints);
+            sortedClasses.forEach((classItem, index) => {
+                const originalIndex = classes.findIndex(c => c.name === classItem.name);
+                const card = document.createElement('div');
+                card.className = 'class-card glass-morphism';
+                let cardStyle = '';
+                let rankIcon = '';
+                if (index === 0 && classItem.totalPoints > 0) { cardStyle = 'background: linear-gradient(135deg, rgba(255, 193, 7, 0.4), rgba(255, 235, 59, 0.2)); border: 3px solid rgba(255, 193, 7, 0.7);'; rankIcon = '🥇'; } else if (index === 1 && classItem.totalPoints > 0) { cardStyle = 'background: linear-gradient(135deg, rgba(158, 158, 158, 0.4), rgba(189, 189, 189, 0.2)); border: 3px solid rgba(158, 158, 158, 0.7);'; rankIcon = '🥈'; } else if (index === 2 && classItem.totalPoints > 0) { cardStyle = 'background: linear-gradient(135deg, rgba(205, 127, 50, 0.4), rgba(255, 152, 0, 0.2)); border: 3px solid rgba(205, 127, 50, 0.7);'; rankIcon = '🥉'; } else { rankIcon = '📊'; }
+                card.style.cssText = cardStyle;
+                
+                card.innerHTML = `
+                    ${classItem.notes ? '<div class="notes-indicator">📝 ملاحظات</div>' : ''}
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">${rankIcon}</div>
+                        <div class="class-name" style="margin: 0; font-size: 1.4rem;">${classItem.name || classItem.ClassName}</div>
+                        ${classItem.totalPoints > 0 ? `<div style="font-size: 1rem; color: rgba(255,255,255,0.8); margin-top: 0.25rem;">المركز ${index + 1}</div>` : ''}
+                    </div>
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <div class="class-points" style="font-size: 3rem; margin-bottom: 0.5rem; text-shadow: 0 0 30px rgba(255, 165, 38, 0.8);">
+                            ${classItem.totalPoints} نقطة
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
+                            <div style="background: rgba(255, 193, 7, 0.2); padding: 0.5rem; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #ffc107;">${classItem.dailyPoints || 0}</div>
+                                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.8);">نقاط اليوم</div>
+                            </div>
+                            <div style="background: rgba(156, 39, 176, 0.2); padding: 0.5rem; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #9c27b0;">${classItem.monthlyPoints || 0}</div>
+                                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.8);">نقاط الشهر</div>
+                            </div>
+                        </div>
+                    </div>
+                    ${classItem.notes ? `<div style="color: rgba(255,255,255,0.9); font-size: 0.85rem; margin: 1rem 0; text-align: center; background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 10px; max-height: 80px; overflow-y: auto;">📝 ${classItem.notes}</div>` : ''}
+                    
+                    <div class="criteria-controls">
+                        <div class="criteria-row">
+                            <span class="criteria-name">⭐ الهدوء</span>
+                            <div class="criteria-controls-btn">
+                                <button class="point-btn minus" onclick="updatePointsWithSave(${originalIndex}, 'Quiet', -1)">-</button>
+                                <span class="criteria-points">${classItem.quiet}</span>
+                                <button class="point-btn plus" onclick="updatePointsWithSave(${originalIndex}, 'Quiet', 1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="criteria-row">
+                            <span class="criteria-name">⚡ السرعة</span>
+                            <div class="criteria-controls-btn">
+                                <button class="point-btn minus" onclick="updatePointsWithSave(${originalIndex}, 'Speed', -1)">-</button>
+                                <span class="criteria-points">${classItem.speed}</span>
+                                <button class="point-btn plus" onclick="updatePointsWithSave(${originalIndex}, 'Speed', 1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="criteria-row">
+                            <span class="criteria-name">🔊 الصوت</span>
+                            <div class="criteria-controls-btn">
+                                <button class="point-btn minus" onclick="updatePointsWithSave(${originalIndex}, 'Volume', -1)">-</button>
+                                <span class="criteria-points">${classItem.volume}</span>
+                                <button class="point-btn plus" onclick="updatePointsWithSave(${originalIndex}, 'Volume', 1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="criteria-row">
+                            <span class="criteria-name">🧹 النظافة</span>
+                            <div class="criteria-controls-btn">
+                                <button class="point-btn minus" onclick="updatePointsWithSave(${originalIndex}, 'Cleanliness', -1)">-</button>
+                                <span class="criteria-points">${classItem.cleanliness}</span>
+                                <button class="point-btn plus" onclick="updatePointsWithSave(${originalIndex}, 'Cleanliness', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 1.5rem;">
+                        <div style="display: flex; justify-content: center; gap: 0.25rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+                            <button onclick="resetClassPoints(${originalIndex})" class="action-btn" style="background: rgba(255, 152, 0, 0.4); font-size: 0.8rem; padding: 0.4rem;">🔄 إعادة تعيين</button>
+                            <button onclick="openClassModal(${originalIndex})" class="action-btn" style="background: rgba(33, 150, 243, 0.4); font-size: 0.8rem; padding: 0.4rem;">✏️ تعديل</button>
+                            <button onclick="setAsStarClass('${classItem.name}')" class="action-btn" style="background: rgba(255, 193, 7, 0.4); font-size: 0.8rem; padding: 0.4rem;">⭐ نجم اليوم</button>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 0.25rem; flex-wrap: wrap;">
+                            <button onclick="resetDailyPoints(${originalIndex})" class="action-btn" style="background: rgba(255, 193, 7, 0.3); font-size: 0.75rem; padding: 0.3rem;">📅 مسح اليوم</button>
+                            <button onclick="addToMonthlyPoints(${originalIndex})" class="action-btn" style="background: rgba(156, 39, 176, 0.3); font-size: 0.75rem; padding: 0.3rem;">📊 إضافة للشهر</button>
+                            <button onclick="resetMonthlyPoints(${originalIndex})" class="action-btn" style="background: rgba(156, 39, 176, 0.3); font-size: 0.75rem; padding: 0.3rem;">🗓️ مسح الشهر</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
         function updateStarSelects() { /* ... */ }
         function updateDataManagement() { /* ... */ }
         function checkSystemPassword() { /* ... */ }
@@ -909,8 +1017,7 @@
         function updateMotivationalText() { /* ... */ }
         function showAddTeacherForm() { document.getElementById('addTeacherForm').style.display = 'block'; }
         function hideAddTeacherForm() { document.getElementById('addTeacherForm').style.display = 'none'; }
-        // ... (بقية الدوال)
-
+        
         // =======================================================
         // 4. تعديل الدالة الرئيسية (DOM Content Loaded)
         // =======================================================
