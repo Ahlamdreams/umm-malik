@@ -1097,7 +1097,7 @@
         }
 
         function printCertificate() {
-            const content = document.getElementById('certificate-content-to-print');
+            const content = document.getElementById('certificatePreview').querySelector('#certificate-content-to-print');
             if (!content) { alert('يرجى اختيار نوع الشهادة للمعاينة أولاً.'); return; }
 
             window.jsPDF = window.jspdf.jsPDF;
@@ -1113,6 +1113,7 @@
             });
         }
         
+        // ⭐️ دوال التقارير (توليد المعاينة والتصدير)
         function generateAndExportDailyAttendance(format) {
             const dates = getFormattedDates();
             const present = teachers.filter(t => t.status === 'present').length;
@@ -1135,6 +1136,7 @@
             `;
             if (format === 'excel') { exportAttendanceToExcel(); }
             if (format === 'pdf') { printReport(); }
+            if (format === 'image') { captureAndDownloadImage('تقرير_الحضور_اليومي'); }
         }
 
         function generateAndExportDailyStars(format) {
@@ -1156,6 +1158,7 @@
             `;
             if (format === 'excel') { exportStarsToExcel('Daily'); }
             if (format === 'pdf') { printReport(); }
+            if (format === 'image') { captureAndDownloadImage('تقرير_نجوم_اليوم'); }
         }
         
         function exportCompleteReport(format) {
@@ -1181,8 +1184,15 @@
             `;
             if (format === 'excel') { exportCompleteReportToExcel(); }
             if (format === 'pdf') { printReport(); }
+            if (format === 'image') { captureAndDownloadImage('تقرير_شامل'); }
         }
         
+        // ⭐️ دوال التقارير الأسبوعية والشهرية (تستخدم نفس الدوال اليومية للعرض حالياً)
+        function generateAndExportWeeklyAttendance(format) { generateAndExportDailyAttendance(format); alert('عرض التقرير الأسبوعي يستخدم حالياً بيانات اليوم.'); }
+        function generateAndExportMonthlyAttendance(format) { generateAndExportDailyAttendance(format); alert('عرض التقرير الشهري يستخدم حالياً بيانات اليوم.'); }
+        function generateAndExportWeeklyStars(format) { generateAndExportDailyStars(format); alert('عرض التقرير الأسبوعي يستخدم حالياً بيانات اليوم.'); }
+        function generateAndExportMonthlyStars(format) { generateAndExportDailyStars(format); alert('عرض التقرير الشهري يستخدم حالياً بيانات اليوم.'); }
+
         function exportAttendanceToExcel() {
             const data = [['تقرير الحضور اليومي'], ['التاريخ', getFormattedDates().gregorian], [], ['ID', 'اسم المعلمة', 'الصف', 'الحالة', 'توقيت التسجيل']];
             teachers.forEach(t => data.push([t.id, t.name, t.class, getStatusText(t.status), t.timestamp || '']));
@@ -1214,35 +1224,47 @@
             XLSX.writeFile(wb, `تقرير_شامل_${getFormattedDates().gregorian}.xlsx`);
         }
 
-        function getFormattedDates() { 
-            const now = new Date();
-            return { gregorian: now.toLocaleDateString('ar-SA'), hijri: now.toLocaleDateString('ar-SA-u-ca-islamic') };
+        function captureAndDownloadImage(filename) {
+            const content = document.getElementById('reportPreview').querySelector('#report-content-to-print');
+            if (!content) { alert('يرجى توليد المعاينة أولاً.'); return; }
+
+            html2canvas(content, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = `${filename}_${getFormattedDates().gregorian}.png`;
+                link.click();
+                alert('✅ تم إنشاء ملف الصورة بنجاح.');
+            });
+        }
+
+        function printReport() {
+            const content = document.getElementById('reportPreview').querySelector('#report-content-to-print');
+            if (!content) { alert('يرجى توليد المعاينة أولاً.'); return; }
+
+            // ⭐️ استخدام طباعة المتصفح مباشرة (الأكثر موثوقية)
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>طباعة التقرير</title>
+                        <style>
+                            body { font-family: 'Tajawal', Arial, sans-serif; direction: rtl; margin: 0; padding: 20px; }
+                            @media print { 
+                                body { margin: 0; } 
+                                .report-preview-container { box-shadow: none; border: none; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${content.outerHTML}
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
         }
         
-        function renderTeachersManagementList() { /* ... */ }
-        function openCameraModal(teacherId) { /* ... */ }
-        function closeCameraModal() { /* ... */ }
-        function showTeacherDetails(teacherId) { /* ... */ }
-        function resetAllMonthlyPoints() { /* ... */ }
-        function resetAllPoints() { /* ... */ }
-        function setAsStarClass(className) { /* ... */ }
-        function getFormattedDates() { 
-            const now = new Date();
-            return { gregorian: now.toLocaleDateString('ar-SA'), hijri: now.toLocaleDateString('ar-SA-u-ca-islamic') };
-        }
-        function renderTeachersManagementList() { /* ... */ }
-        function createFloatingParticles() { /* ... */ }
-        function updateMonthlyStars() { /* ... */ }
-        function updateDailyStars() { /* ... */ }
-        function addNewTeacher() { alert('🚫 التزامن: يرجى إضافة المعلمات الجديدة مباشرة في ورقة "Teachers".'); }
-        function deleteTeacher(teacherId) { alert('🚫 التزامن: حذف المعلمات يتم يدوياً في ورقة "Teachers".'); }
-        function editTeacher(teacherId) { alert('🚫 التزامن: يفضل تعديل الاسم والصف يدوياً في Google Sheet.'); }
-        function saveTeacherChanges() { /*... (الكود الأصلي) ...*/ }
-        function saveClassChanges() { /*... (الكود الأصلي) ...*/ }
-        function addAllDailyToMonthly() { /*... (الكود الأصلي) ...*/ }
-        function resetDailyPoints(classIndex) { /*... (الكود الأصلي) ...*/ }
-        function resetMonthlyPoints(classIndex) { /*... (الكود الأصلي) ...*/ }
-        function resetClassPoints(classIndex) { /*... (الكود الأصلي) ...*/ }
+        // ... (بقية الدوال المساعدة)
         
         document.addEventListener('DOMContentLoaded', async function() {
             const apiLinkDisplay = document.getElementById('apiLinkDisplay');
