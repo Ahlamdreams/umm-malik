@@ -53,7 +53,7 @@
         .stat-card:hover { transform: translateY(-5px) rotateX(10deg); }
         .stat-number { font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem; }
         .stat-label { font-size: 1.1rem; opacity: 0.9; }
-        .teachers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .teachers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
         .teacher-card { padding: 1.5rem; position: relative; overflow: hidden; transition: all 0.3s ease; cursor: pointer; }
         .teacher-card:hover { transform: translateY(-10px) rotateY(5deg) rotateX(5deg); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); }
         .teacher-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(45deg, #ff6b9d, #ffa726); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; margin: 0 auto 1rem; box-shadow: 0 0 20px rgba(255, 107, 157, 0.3); }
@@ -306,7 +306,7 @@
 
                         <div id="addTeacherForm" class="tab-content">
                             <h4 style="color: white; margin-bottom: 1rem;">إضافة معلمة جديدة</h4>
-                            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                            <div style="display: flex; justify-content: center; gap: 1rem; align-items: center; flex-wrap: wrap;">
                                 <input type="text" id="newTeacherName" placeholder="اسم المعلمة" class="password-input glass-morphism" style="width: 200px;">
                                 <input type="text" id="newTeacherClass" placeholder="الصف" class="password-input glass-morphism" style="width: 150px;">
                                 <button class="nav-button" onclick="addNewTeacher()">إضافة</button>
@@ -582,7 +582,7 @@
         let systemPassword = 'admin123';
         let motivationalQuote = 'انضباط يعكس وعيًا ونظام يصنع الأجيال';
 
-        // ⚠️ رابط الـ API المنشور الجديد (تم تحديثه)
+        // ⚠️ رابط الـ API المنشور (تم تحديثه لرابطك الأخير)
         const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbwM5XwTen_yz61BfmI17EWDxLElraUEDd8pRBYu461XnaVhs9kr1sK-2fqt1PGo-1_p/exec'; 
 
         // متغيرات العمليات
@@ -675,23 +675,43 @@
         // 3. الدوال الرئيسية التي تستدعي الـ Sync
         // =======================================================
 
-        // ⚠️ دالة الترجمة للعربية
         function getStatusText(status) { 
-            const statusMap = { 
-                'present': 'حاضرة', 
-                'absent': 'غائبة', 
-                'late': 'متأخرة', 
-                'excused': 'بعذر', 
-                'not-recorded': 'لم يتم التسجيل' 
-            };
+            const statusMap = { 'present': 'حاضرة', 'absent': 'غائبة', 'late': 'متأخرة', 'excused': 'بعذر', 'not-recorded': 'لم يتم التسجيل' };
             return statusMap[status] || 'لم يتم التسجيل'; 
+        }
+
+        // ⭐️ الدالة المصححة لزيادة النقاط
+        function updatePointsWithSave(classIndex, criteria, change) {
+            const classItem = classes[classIndex];
+            if (!classItem) return;
+            
+            // ⭐️ نضمن أننا نبدأ من رقم، وإلا نعتبر القيمة الحالية 0 (الحل لـ NaN)
+            const currentValue = Number(classItem[criteria]) || 0; 
+            
+            const newValue = Math.max(0, currentValue + change); 
+            
+            // تحديث القيم في المصفوفة المحلية
+            classItem[criteria] = newValue;
+            classItem.totalPoints = classItem.quiet + classItem.speed + classItem.volume + classItem.cleanliness;
+            classItem.dailyPoints = classItem.totalPoints;
+
+            renderClasses();
+            updateStarOfQueue();
+            
+            // إرسال تحديثات النقاط الرئيسية إلى الشيت
+            syncToSheet('updatePoints', { className: classItem.name, criteria: criteria, newValue: newValue });
+            syncToSheet('updatePoints', { className: classItem.name, criteria: 'DailyPoints', newValue: classItem.dailyPoints });
+            syncToSheet('updatePoints', { className: classItem.name, criteria: 'TotalPoints', newValue: classItem.totalPoints });
+
+            const criteriaNames = { 'Quiet': 'الهدوء', 'Speed': 'السرعة', 'Volume': 'الصوت', 'Cleanliness': 'النظافة' };
+            alert(`تم تحديث ${criteriaNames[criteria]} لـ ${classItem.name}: ${newValue}`);
         }
 
         function updateAttendanceWithSave(teacherId, status) {
             const teacher = teachers.find(t => t.id === teacherId);
             if (!teacher) return;
             
-            const timestamp = new Date().toLocaleString('en-US', { hour12: true }); // استخدام تنسيق ميلادي أمريكي لسهولة العرض
+            const timestamp = new Date().toLocaleString('en-US', { hour12: true }); 
             teacher.status = status;
             teacher.timestamp = timestamp;
             
@@ -708,28 +728,6 @@
             alert(`تم تحديث حضور ${teacher.name} إلى: ${getStatusText(status)}`);
         }
 
-        function updatePointsWithSave(classIndex, criteria, change) {
-            const classItem = classes[classIndex];
-            if (!classItem) return;
-            
-            const newValue = Math.max(0, Math.min(10, classItem[criteria] + change));
-            classItem[criteria] = newValue;
-            classItem.totalPoints = classItem.quiet + classItem.speed + classItem.volume + classItem.cleanliness;
-            classItem.dailyPoints = classItem.totalPoints;
-
-            renderClasses();
-            updateStarOfQueue();
-            
-            // ⚠️ أسماء المعايير مطابقة الآن للإنجليزية في الشيت: Quiet, Speed, etc.
-            syncToSheet('updatePoints', { className: classItem.name, criteria: criteria, newValue: newValue });
-            syncToSheet('updatePoints', { className: classItem.name, criteria: 'DailyPoints', newValue: classItem.dailyPoints });
-            syncToSheet('updatePoints', { className: classItem.name, criteria: 'TotalPoints', newValue: classItem.totalPoints });
-
-            const criteriaNames = { 'Quiet': 'الهدوء', 'Speed': 'السرعة', 'Volume': 'الصوت', 'Cleanliness': 'النظافة' };
-            alert(`تم تحديث ${criteriaNames[criteria]} لـ ${classItem.name}: ${newValue}`);
-        }
-        
-        // ⚠️ دالة إعادة تعيين حضور معلمة (تم تصحيحها)
         function resetTeacher(teacherId) {
             const teacher = teachers.find(t => t.id === teacherId);
             if (teacher && confirm(`هل تريد إعادة تعيين حضور ${teacher.name}؟`)) {
@@ -738,9 +736,9 @@
                 
                 syncToSheet('updateAttendance', { 
                     id: teacherId, 
-                    status: '', // إرسال سلسلة نصية فارغة لتصفير الخلية في الشيت
+                    status: '', 
                     notes: teacher.notes,
-                    timestamp: null // إرسال قيمة null لتصفير الخلية
+                    timestamp: null 
                 });
                 
                 renderTeachers();
@@ -749,7 +747,7 @@
             }
         }
         
-        // ... (بقية الدوال الإدارية والدوال المساعدة)
+        // ... (بقية الدوال المساعدة والدوال الإدارية)
 
         // =======================================================
         // 4. الدوال المساعدة (العرض والتحقق)
@@ -776,7 +774,6 @@
         }
         function updateDateTime() {
             const now = new Date();
-            // ⚠️ تنسيق ميلادي
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
             document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
         }
@@ -938,7 +935,6 @@
         function openTeacherModal(teacherId) { const teacher = teachers.find(t => t.id === teacherId); if (!teacher) return; currentEditingTeacherId = teacherId; document.getElementById('editTeacherName').value = teacher.name; document.getElementById('editTeacherClass').value = teacher.class; document.getElementById('editTeacherNotes').value = teacher.notes || ''; document.getElementById('teacherModal').classList.add('active'); }
         function openClassModal(classIndex) { const classItem = classes[classIndex]; if (!classItem) return; currentEditingClassIndex = classIndex; document.getElementById('editClassName').value = classItem.name; document.getElementById('editClassNotes').value = classItem.notes || ''; document.getElementById('classModal').classList.add('active'); }
         function closeClassModal() { document.getElementById('classModal').classList.remove('active'); currentEditingClassIndex = null; }
-        // ⚠️ دالة إعادة تعيين حضور معلمة (تم تصحيحها)
         function resetTeacher(teacherId) {
             const teacher = teachers.find(t => t.id === teacherId);
             if (teacher && confirm(`هل تريد إعادة تعيين حضور ${teacher.name}؟`)) {
@@ -947,9 +943,9 @@
                 
                 syncToSheet('updateAttendance', { 
                     id: teacherId, 
-                    status: '', // إرسال سلسلة نصية فارغة لتصفير الخلية في الشيت
+                    status: '', 
                     notes: teacher.notes,
-                    timestamp: null // إرسال قيمة null لتصفير الخلية
+                    timestamp: null 
                 });
                 
                 renderTeachers();
@@ -987,10 +983,37 @@
         function showAddTeacherForm() { document.getElementById('addTeacherForm').style.display = 'block'; }
         function hideAddTeacherForm() { document.getElementById('addTeacherForm').style.display = 'none'; }
         
-        // =======================================================
-        // 5. تهيئة النظام
-        // =======================================================
+        // ... (بقية الدوال المساعدة والعرض)
 
+        // =======================================================
+        // 4. الدوال المساعدة (العرض والتحقق)
+        // =======================================================
+        
+        function updateStats() {
+            const present = teachers.filter(t => t.status === 'present').length;
+            const absent = teachers.filter(t => t.status === 'absent').length;
+            const notRecorded = teachers.filter(t => t.status === 'not-recorded').length;
+            document.getElementById('presentCount').textContent = present;
+            document.getElementById('absentCount').textContent = absent;
+            document.getElementById('notRecordedCount').textContent = notRecorded;
+            document.getElementById('totalCount').textContent = teachers.length;
+            const recordedTeachers = teachers.filter(t => t.status !== 'not-recorded' && t.timestamp);
+            const log = document.getElementById('attendanceLog');
+            log.innerHTML = recordedTeachers.length === 0 ? 'لا توجد تسجيلات حضور اليوم' : recordedTeachers.map(teacher => `<div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px;">${teacher.name} - ${getStatusText(teacher.status)} - ${teacher.timestamp}</div>`).join('');
+        }
+        function updateStarOfQueue() {
+            if (classes.length === 0) return;
+            const topClass = classes.reduce((max, current) => current.totalPoints > max.totalPoints ? current : max);
+            if (topClass.totalPoints > 0) {
+                document.getElementById('queueStar').textContent = topClass.name;
+            }
+        }
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        
         document.addEventListener('DOMContentLoaded', async function() {
             // عرض رابط الـ API في قسم الإدارة
             const apiLinkDisplay = document.getElementById('apiLinkDisplay');
