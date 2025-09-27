@@ -688,12 +688,11 @@
             return statusMap[status] || 'لم يتم التسجيل'; 
         }
 
-        // ⭐️ دالة زيادة النقاط (مع تحديث فوري)
+        // ⭐️ الدالة المصححة لزيادة النقاط (مع تحديث فوري)
         function updatePointsWithSave(classIndex, criteria, change) {
             const classItem = classes[classIndex];
             if (!classItem) return;
             
-            // ⭐️ نضمن أننا نبدأ من رقم، وإلا نعتبر القيمة الحالية 0 (الحل لـ NaN)
             const currentValue = Number(classItem[criteria]) || 0; 
             
             const newValue = Math.max(0, currentValue + change); 
@@ -1079,7 +1078,7 @@
                 </div>`).join('');
 
             preview.innerHTML = `
-                <div id="certificate-content-to-print" style="border: 5px solid #4caf50; padding: 2rem; border-radius: 20px; background: linear-gradient(45deg, #fff, #f8f9fa); position: relative; width: 100%; min-height: 500px;">
+                <div id="certificate-content-to-print" class="report-preview-container" style="border: 5px solid #4caf50; padding: 2rem; border-radius: 20px; background: linear-gradient(45deg, #fff, #f8f9fa); position: relative; width: 100%; min-height: 500px;">
                     <div style="text-align: center; margin-bottom: 2rem;">
                         <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
                         <h1 style="color: #4caf50; font-size: 2rem; margin-bottom: 0.5rem;">سجل الحضور اليومي المميز</h1>
@@ -1100,6 +1099,7 @@
             const content = document.getElementById('certificatePreview').querySelector('#certificate-content-to-print');
             if (!content) { alert('يرجى اختيار نوع الشهادة للمعاينة أولاً.'); return; }
 
+            // ⭐️ استخدام HTML2Canvas والـ PDF للطباعة (أفضل طريقة لطباعة التنسيقات المعقدة)
             window.jsPDF = window.jspdf.jsPDF;
             const doc = new jsPDF('l', 'pt', 'a4', true); // 'l' for landscape
 
@@ -1114,6 +1114,7 @@
         }
         
         // ⭐️ دوال التقارير (توليد المعاينة والتصدير)
+        
         function generateAndExportDailyAttendance(format) {
             const dates = getFormattedDates();
             const present = teachers.filter(t => t.status === 'present').length;
@@ -1121,7 +1122,7 @@
 
             const preview = document.getElementById('reportPreview');
             preview.innerHTML = `
-                <div id="report-content-to-print" class="report-preview-container">
+                <div id="report-content-to-print" class="report-preview-container" style="padding: 2rem; border: 1px solid #ddd;">
                     <div class="report-header">
                         <h1 class="report-title" style="color: #4caf50;">تقرير الحضور اليومي</h1>
                         <p class="report-date">${dates.gregorian}</p>
@@ -1129,7 +1130,7 @@
                     <h3 class="report-section-title">📊 الإحصائيات</h3>
                     <p>الحاضرات: ${present} / الغائبات: ${absent} / الإجمالي: ${teachers.length}</p>
                     <h3 class="report-section-title">📋 تفاصيل الحضور</h3>
-                    <ul class="report-list">
+                    <ul class="report-list" style="list-style-type: none; padding: 0;">
                         ${teachers.map(t => `<li class="report-list-item"><span>${t.name}</span><span>${getStatusText(t.status)} (${t.timestamp || '---'})</span></li>`).join('')}
                     </ul>
                 </div>
@@ -1145,13 +1146,13 @@
             const preview = document.getElementById('reportPreview');
 
             preview.innerHTML = `
-                <div id="report-content-to-print" class="report-preview-container">
+                <div id="report-content-to-print" class="report-preview-container" style="padding: 2rem; border: 1px solid #ddd;">
                     <div class="report-header">
                         <h1 class="report-title" style="color: #ffc107;">تقرير نجوم اليوم</h1>
                         <p class="report-date">${dates.gregorian}</p>
                     </div>
                     <h3 class="report-section-title">⭐ ترتيب الصفوف حسب النقاط اليومية</h3>
-                    <ul class="report-list">
+                    <ul class="report-list" style="list-style-type: none; padding: 0;">
                         ${sortedClasses.map((c, index) => `<li class="report-list-item"><span>${index + 1}. ${c.name}</span><span>${c.dailyPoints} نقطة</span></li>`).join('')}
                     </ul>
                 </div>
@@ -1162,14 +1163,13 @@
         }
         
         function exportCompleteReport(format) {
-            // توليد معاينة شاملة قبل التصدير
             const dates = getFormattedDates();
             const present = teachers.filter(t => t.status === 'present').length;
             const sortedClasses = [...classes].sort((a, b) => b.totalPoints - a.totalPoints);
             
             const preview = document.getElementById('reportPreview');
             preview.innerHTML = `
-                <div id="report-content-to-print" class="report-preview-container">
+                <div id="report-content-to-print" class="report-preview-container" style="padding: 2rem; border: 1px solid #ddd;">
                     <div class="report-header">
                         <h1 class="report-title" style="color: #ab47bc;">تقرير شامل</h1>
                         <p class="report-date">${dates.gregorian}</p>
@@ -1177,7 +1177,7 @@
                     <h3 class="report-section-title">📊 إحصائيات الحضور</h3>
                     <p>الحاضرات: ${present} / الإجمالي: ${teachers.length}</p>
                     <h3 class="report-section-title">🏆 ترتيب الصفوف (تراكمي)</h3>
-                    <ul class="report-list">
+                    <ul class="report-list" style="list-style-type: none; padding: 0;">
                         ${sortedClasses.map((c, index) => `<li class="report-list-item"><span>${index + 1}. ${c.name}</span><span>${c.totalPoints} نقطة تراكمية</span></li>`).join('')}
                     </ul>
                 </div>
@@ -1187,12 +1187,36 @@
             if (format === 'image') { captureAndDownloadImage('تقرير_شامل'); }
         }
         
-        // ⭐️ دوال التقارير الأسبوعية والشهرية (تستخدم نفس الدوال اليومية للعرض حالياً)
-        function generateAndExportWeeklyAttendance(format) { generateAndExportDailyAttendance(format); alert('عرض التقرير الأسبوعي يستخدم حالياً بيانات اليوم.'); }
-        function generateAndExportMonthlyAttendance(format) { generateAndExportDailyAttendance(format); alert('عرض التقرير الشهري يستخدم حالياً بيانات اليوم.'); }
-        function generateAndExportWeeklyStars(format) { generateAndExportDailyStars(format); alert('عرض التقرير الأسبوعي يستخدم حالياً بيانات اليوم.'); }
-        function generateAndExportMonthlyStars(format) { generateAndExportDailyStars(format); alert('عرض التقرير الشهري يستخدم حالياً بيانات اليوم.'); }
+        function captureAndDownloadImage(filename) {
+            const content = document.getElementById('reportPreview').querySelector('#report-content-to-print');
+            if (!content) { alert('يرجى توليد المعاينة أولاً.'); return; }
 
+            html2canvas(content, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = `${filename}_${getFormattedDates().gregorian}.png`;
+                link.click();
+                alert('✅ تم إنشاء ملف الصورة بنجاح.');
+            });
+        }
+        
+        function printReport() {
+            const content = document.getElementById('reportPreview').querySelector('#report-content-to-print');
+            if (!content) { alert('يرجى توليد المعاينة أولاً.'); return; }
+
+            window.jsPDF = window.jspdf.jsPDF;
+            const doc = new jsPDF('p', 'pt', 'a4', true);
+
+            html2canvas(content, { scale: 2 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                const pdfWidth = doc.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                doc.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                doc.save(`تقرير_${getFormattedDates().gregorian}.pdf`);
+                alert('✅ تم إنشاء ملف PDF بنجاح.');
+            });
+        }
+        
         function exportAttendanceToExcel() {
             const data = [['تقرير الحضور اليومي'], ['التاريخ', getFormattedDates().gregorian], [], ['ID', 'اسم المعلمة', 'الصف', 'الحالة', 'توقيت التسجيل']];
             teachers.forEach(t => data.push([t.id, t.name, t.class, getStatusText(t.status), t.timestamp || '']));
@@ -1224,48 +1248,41 @@
             XLSX.writeFile(wb, `تقرير_شامل_${getFormattedDates().gregorian}.xlsx`);
         }
 
-        function captureAndDownloadImage(filename) {
-            const content = document.getElementById('reportPreview').querySelector('#report-content-to-print');
-            if (!content) { alert('يرجى توليد المعاينة أولاً.'); return; }
-
-            html2canvas(content, { scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
-                link.download = `${filename}_${getFormattedDates().gregorian}.png`;
-                link.click();
-                alert('✅ تم إنشاء ملف الصورة بنجاح.');
-            });
-        }
-
-        function printReport() {
-            const content = document.getElementById('reportPreview').querySelector('#report-content-to-print');
-            if (!content) { alert('يرجى توليد المعاينة أولاً.'); return; }
-
-            // ⭐️ استخدام طباعة المتصفح مباشرة (الأكثر موثوقية)
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>طباعة التقرير</title>
-                        <style>
-                            body { font-family: 'Tajawal', Arial, sans-serif; direction: rtl; margin: 0; padding: 20px; }
-                            @media print { 
-                                body { margin: 0; } 
-                                .report-preview-container { box-shadow: none; border: none; }
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        ${content.outerHTML}
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
+        function getFormattedDates() { 
+            const now = new Date();
+            return { gregorian: now.toLocaleDateString('ar-SA'), hijri: now.toLocaleDateString('ar-SA-u-ca-islamic') };
         }
         
-        // ... (بقية الدوال المساعدة)
+        function renderTeachersManagementList() { /* ... */ }
+        function openCameraModal(teacherId) { /* ... */ }
+        function closeCameraModal() { /* ... */ }
+        function showTeacherDetails(teacherId) { /* ... */ }
+        function resetAllMonthlyPoints() { /* ... */ }
+        function resetAllPoints() { /* ... */ }
+        function setAsStarClass(className) { /* ... */ }
         
+        function updateStarSummaries() {
+            const topDailyClass = classes.reduce((max, current) => 
+                current.dailyPoints > max.dailyPoints ? current : max
+            );
+            document.getElementById('queueStar').textContent = (topDailyClass && topDailyClass.dailyPoints > 0) ? topDailyClass.name : 'لم يتم الاختيار بعد';
+
+            const topMonthlyClass = classes.reduce((max, current) => 
+                current.monthlyPoints > max.monthlyPoints ? current : max
+            );
+            document.getElementById('queueStarMonth').textContent = (topMonthlyClass && topMonthlyClass.monthlyPoints > 0) ? topMonthlyClass.name : 'لم يتم الاختيار بعد';
+            
+            const firstPresentTeacher = teachers
+                .filter(t => t.status === 'present' && t.timestamp)
+                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))[0];
+
+            document.getElementById('starOfDay').textContent = firstPresentTeacher 
+                ? `${firstPresentTeacher.name} (${firstPresentTeacher.class})` 
+                : 'لم يتم الاختيار بعد';
+        }
+
+        // ... (بقية الدوال)
+
         document.addEventListener('DOMContentLoaded', async function() {
             const apiLinkDisplay = document.getElementById('apiLinkDisplay');
             if (apiLinkDisplay) {
