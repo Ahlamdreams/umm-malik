@@ -635,7 +635,7 @@
                     notes: c.Notes || ''
                 }));
                 
-                // ⭐️ تحديث ملخصات النجوم والإحصائيات
+                // ⭐️ تحديث ملخصات النجوم والإحصائيات بعد الجلب
                 updateStarSummaries();
                 renderTeachers();
                 renderClasses();
@@ -688,7 +688,7 @@
             return statusMap[status] || 'لم يتم التسجيل'; 
         }
 
-        // ⭐️ دالة زيادة النقاط (مع تحديث فوري)
+        // ⭐️ الدالة المصححة لزيادة النقاط (مع تحديث فوري)
         function updatePointsWithSave(classIndex, criteria, change) {
             const classItem = classes[classIndex];
             if (!classItem) return;
@@ -708,9 +708,6 @@
 
             // 1. إرسال تحديثات النقاط الرئيسية إلى الشيت
             syncToSheet('updatePoints', { className: classItem.name, criteria: criteria, newValue: newValue });
-            syncToSheet('updatePoints', { className: classItem.name, criteria: 'DailyPoints', newValue: classItem.dailyPoints });
-            syncToSheet('updatePoints', { className: classItem.name, criteria: 'TotalPoints', newValue: classItem.totalPoints });
-
             // 2. ⭐️ تحديث البيانات من الخادم في الخلفية بعد ثانية واحدة (للتزامن)
             setTimeout(loadDataFromSheet, 1000); 
 
@@ -785,7 +782,7 @@
         }
 
         // =======================================================
-        // 4. الدوال المساعدة (العرض والتحقق)
+        // 4. الدوال المساعدة (العرض والتحقق والتقارير)
         // =======================================================
         
         function updateStats() {
@@ -1008,12 +1005,52 @@
         function showAddTeacherForm() { document.getElementById('addTeacherForm').classList.add('active'); }
         function hideAddTeacherForm() { document.getElementById('addTeacherForm').classList.remove('active'); }
         
+        // ... (بقية الدوال المساعدة والعرض)
+
+        function updateStarSummaries() {
+            const topDailyClass = classes.reduce((max, current) => 
+                current.dailyPoints > max.dailyPoints ? current : max
+            );
+            document.getElementById('queueStar').textContent = (topDailyClass && topDailyClass.dailyPoints > 0) ? topDailyClass.name : 'لم يتم الاختيار بعد';
+
+            const topMonthlyClass = classes.reduce((max, current) => 
+                current.monthlyPoints > max.monthlyPoints ? current : max
+            );
+            document.getElementById('queueStarMonth').textContent = (topMonthlyClass && topMonthlyClass.monthlyPoints > 0) ? topMonthlyClass.name : 'لم يتم الاختيار بعد';
+            
+            const firstPresentTeacher = teachers
+                .filter(t => t.status === 'present' && t.timestamp)
+                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))[0];
+
+            document.getElementById('starOfDay').textContent = firstPresentTeacher 
+                ? `${firstPresentTeacher.name} (${firstPresentTeacher.class})` 
+                : 'لم يتم الاختيار بعد';
+        }
+        function updateStats() {
+            const present = teachers.filter(t => t.status === 'present').length;
+            const absent = teachers.filter(t => t.status === 'absent').length;
+            const notRecorded = teachers.filter(t => t.status === 'not-recorded').length;
+            document.getElementById('presentCount').textContent = present;
+            document.getElementById('absentCount').textContent = absent;
+            document.getElementById('notRecordedCount').textContent = notRecorded;
+            document.getElementById('totalCount').textContent = teachers.length;
+            const recordedTeachers = teachers.filter(t => t.status !== 'not-recorded' && t.timestamp);
+            const log = document.getElementById('attendanceLog');
+            log.innerHTML = recordedTeachers.length === 0 ? 'لا توجد تسجيلات حضور اليوم' : recordedTeachers.map(teacher => `<div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px;">${teacher.name} - ${getStatusText(teacher.status)} - ${teacher.timestamp}</div>`).join('');
+        }
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        
+        // ... (بقية الدوال المساعدة)
+
         // =======================================================
         // 5. تهيئة النظام
         // =======================================================
 
         document.addEventListener('DOMContentLoaded', async function() {
-            // عرض رابط الـ API في قسم الإدارة
             const apiLinkDisplay = document.getElementById('apiLinkDisplay');
             if (apiLinkDisplay) {
                 apiLinkDisplay.textContent = SHEET_API_URL;
@@ -1024,11 +1061,6 @@
             if (dataLoaded) {
                 updateDateTime();
                 setInterval(updateDateTime, 60000);
-                
-                renderTeachers();
-                renderClasses();
-                updateStats();
-                updateStarSelects();
                 
                 if (document.getElementById('dataManagementInfo')) {
                     updateDataManagement();
