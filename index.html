@@ -1219,7 +1219,30 @@
             return { gregorian: now.toLocaleDateString('ar-SA'), hijri: now.toLocaleDateString('ar-SA-u-ca-islamic') };
         }
         
-        // ... (بقية الدوال المساعدة)
+        function renderTeachersManagementList() { /* ... */ }
+        function openCameraModal(teacherId) { /* ... */ }
+        function closeCameraModal() { /* ... */ }
+        function showTeacherDetails(teacherId) { /* ... */ }
+        function resetAllMonthlyPoints() { /* ... */ }
+        function resetAllPoints() { /* ... */ }
+        function setAsStarClass(className) { /* ... */ }
+        function getFormattedDates() { 
+            const now = new Date();
+            return { gregorian: now.toLocaleDateString('ar-SA'), hijri: now.toLocaleDateString('ar-SA-u-ca-islamic') };
+        }
+        function renderTeachersManagementList() { /* ... */ }
+        function createFloatingParticles() { /* ... */ }
+        function updateMonthlyStars() { /* ... */ }
+        function updateDailyStars() { /* ... */ }
+        function addNewTeacher() { alert('🚫 التزامن: يرجى إضافة المعلمات الجديدة مباشرة في ورقة "Teachers".'); }
+        function deleteTeacher(teacherId) { alert('🚫 التزامن: حذف المعلمات يتم يدوياً في ورقة "Teachers".'); }
+        function editTeacher(teacherId) { alert('🚫 التزامن: يفضل تعديل الاسم والصف يدوياً في Google Sheet.'); }
+        function saveTeacherChanges() { /*... (الكود الأصلي) ...*/ }
+        function saveClassChanges() { /*... (الكود الأصلي) ...*/ }
+        function addAllDailyToMonthly() { /*... (الكود الأصلي) ...*/ }
+        function resetDailyPoints(classIndex) { /*... (الكود الأصلي) ...*/ }
+        function resetMonthlyPoints(classIndex) { /*... (الكود الأصلي) ...*/ }
+        function resetClassPoints(classIndex) { /*... (الكود الأصلي) ...*/ }
         
         document.addEventListener('DOMContentLoaded', async function() {
             const apiLinkDisplay = document.getElementById('apiLinkDisplay');
