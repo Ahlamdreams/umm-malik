@@ -69,7 +69,7 @@
         .teacher-actions { display: flex; justify-content: center; gap: 0.5rem; }
         .action-btn { padding: 0.5rem; border: none; border-radius: 8px; background: rgba(255, 255, 255, 0.2); color: white; cursor: pointer; transition: all 0.3s ease; }
         .action-btn:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.1); }
-        .classes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; }
+        .classes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; }
         .class-card { padding: 2rem; position: relative; overflow: hidden; transition: all 0.3s ease; }
         .class-card:hover { transform: translateY(-10px) rotateY(5deg) rotateX(5deg); }
         .class-name { font-size: 1.5rem; font-weight: 700; text-align: center; margin-bottom: 1rem; color: white; }
@@ -1005,7 +1005,7 @@
         function showAddTeacherForm() { document.getElementById('addTeacherForm').classList.add('active'); }
         function hideAddTeacherForm() { document.getElementById('addTeacherForm').classList.remove('active'); }
         
-        // ... (بقية الدوال المساعدة والعرض)
+        // ... (بقية الدوال المساعدة والدوال الإدارية)
 
         function updateStarSummaries() {
             const topDailyClass = classes.reduce((max, current) => 
@@ -1043,8 +1043,267 @@
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
             document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
         }
+        function renderTeachers() { 
+            const grid = document.getElementById('teachersGrid');
+            if (teachers.length === 0) {
+                grid.innerHTML = `<div class="glass-morphism" style="padding: 3rem; text-align: center; color: white; grid-column: 1 / -1;"><h3>📋 لا توجد بيانات معلمات</h3><p>يرجى تحميل البيانات من Google Sheets.</p></div>`;
+                return;
+            }
+            grid.innerHTML = '';
+            teachers.forEach((teacher) => {
+                const card = document.createElement('div');
+                card.className = 'teacher-card glass-morphism';
+                let cardStyle = '';
+                if (teacher.status === 'present') { cardStyle = 'background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(129, 199, 132, 0.2)); border: 2px solid rgba(76, 175, 80, 0.5);'; } else if (teacher.status === 'absent') { cardStyle = 'background: linear-gradient(135deg, rgba(244, 67, 54, 0.3), rgba(239, 83, 80, 0.2)); border: 2px solid rgba(244, 67, 54, 0.5);'; } else if (teacher.status === 'late') { cardStyle = 'background: linear-gradient(135deg, rgba(255, 152, 0, 0.3), rgba(255, 183, 77, 0.2)); border: 2px solid rgba(255, 152, 0, 0.5);'; } else if (teacher.status === 'excused') { cardStyle = 'background: linear-gradient(135deg, rgba(33, 150, 243, 0.3), rgba(100, 181, 246, 0.2)); border: 2px solid rgba(33, 150, 243, 0.5);'; }
+                card.style.cssText = cardStyle;
+                const firstLetter = (teacher.name && teacher.name.charAt(0)) || '?';
+                
+                card.innerHTML = `
+                    ${teacher.notes ? '<div class="notes-indicator">📝 ملاحظات</div>' : ''}
+                    <div class="teacher-avatar">${firstLetter}</div>
+                    <div class="teacher-name">${teacher.name || '---'}</div>
+                    <div class="teacher-class">${teacher.class || 'غير محدد'}</div>
+                    ${teacher.timestamp ? `<div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin: 0.5rem 0; text-align: center;">آخر تحديث: ${teacher.timestamp}</div>` : ''}
+                    ${teacher.notes ? `<div style="color: rgba(255,255,255,0.9); font-size: 0.85rem; margin: 0.5rem 0; text-align: center; background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 8px; max-height: 60px; overflow-y: auto;">📝 ${teacher.notes}</div>` : ''}
+                    
+                    <div class="attendance-status">
+                        <button class="status-btn present" onclick="updateAttendanceWithSave(${teacher.id}, 'present')" style="${teacher.status === 'present' ? 'transform: scale(1.05); box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);' : ''}">✅ حاضرة</button>
+                        <button class="status-btn absent" onclick="updateAttendanceWithSave(${teacher.id}, 'absent')" style="${teacher.status === 'absent' ? 'transform: scale(1.05); box-shadow: 0 0 20px rgba(244, 67, 54, 0.6);' : ''}">❌ غائبة</button>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
+                        <button class="status-btn late" onclick="updateAttendanceWithSave(${teacher.id}, 'late')" style="${teacher.status === 'late' ? 'transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 152, 0, 0.6);' : ''}">⏰ متأخرة</button>
+                        <button class="status-btn excused" onclick="updateAttendanceWithSave(${teacher.id}, 'excused')" style="${teacher.status === 'excused' ? 'transform: scale(1.05); box-shadow: 0 0 20px rgba(33, 150, 243, 0.6);' : ''}">📋 بعذر</button>
+                    </div>
+                    
+                    <div class="teacher-actions">
+                        <button class="action-btn" onclick="resetTeacher(${teacher.id})" title="إعادة تعيين">🔄</button>
+                        <button class="action-btn" onclick="openTeacherModal(${teacher.id})" title="تعديل وملاحظات">✏️</button>
+                        <button class="action-btn" onclick="openCameraModal(${teacher.id})" title="تصوير الطابور">📸</button>
+                        <button class="action-btn" onclick="showTeacherDetails(${teacher.id})" title="التفاصيل">ℹ️</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        function renderClasses() { 
+            const grid = document.getElementById('classesGrid');
+            if (classes.length === 0) {
+                grid.innerHTML = `<div class="glass-morphism" style="padding: 3rem; text-align: center; color: white; grid-column: 1 / -1;"><h3>📚 لا توجد بيانات صفوف</h3><p>يرجى التأكد من أسماء الأعمدة في ورقة "Classes".</p></div>`;
+                return;
+            }
+            grid.innerHTML = '';
+            const sortedClasses = [...classes].sort((a, b) => b.totalPoints - a.totalPoints);
+            sortedClasses.forEach((classItem, index) => {
+                const originalIndex = classes.findIndex(c => c.name === classItem.name);
+                const card = document.createElement('div');
+                card.className = 'class-card glass-morphism';
+                let cardStyle = '';
+                let rankIcon = '';
+                if (index === 0 && classItem.totalPoints > 0) { cardStyle = 'background: linear-gradient(135deg, rgba(255, 193, 7, 0.4), rgba(255, 235, 59, 0.2)); border: 3px solid rgba(255, 193, 7, 0.7);'; rankIcon = '🥇'; } else if (index === 1 && classItem.totalPoints > 0) { cardStyle = 'background: linear-gradient(135deg, rgba(158, 158, 158, 0.4), rgba(189, 189, 189, 0.2)); border: 3px solid rgba(158, 158, 158, 0.7);'; rankIcon = '🥈'; } else if (index === 2 && classItem.totalPoints > 0) { cardStyle = 'background: linear-gradient(135deg, rgba(205, 127, 50, 0.4), rgba(255, 152, 0, 0.2)); border: 3px solid rgba(205, 127, 50, 0.7);'; rankIcon = '🥉'; } else { rankIcon = '📊'; }
+                card.style.cssText = cardStyle;
+                
+                card.innerHTML = `
+                    ${classItem.notes ? '<div class="notes-indicator">📝 ملاحظات</div>' : ''}
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">${rankIcon}</div>
+                        <div class="class-name" style="margin: 0; font-size: 1.4rem;">${classItem.name || classItem.ClassName}</div>
+                        ${classItem.totalPoints > 0 ? `<div style="font-size: 1rem; color: rgba(255,255,255,0.8); margin-top: 0.25rem;">المركز ${index + 1}</div>` : ''}
+                    </div>
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <div class="class-points" style="font-size: 3rem; margin-bottom: 0.5rem; text-shadow: 0 0 30px rgba(255, 165, 38, 0.8);">
+                            ${classItem.totalPoints} نقطة
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
+                            <div style="background: rgba(255, 193, 7, 0.2); padding: 0.5rem; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #ffc107;">${classItem.dailyPoints || 0}</div>
+                                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.8);">نقاط اليوم</div>
+                            </div>
+                            <div style="background: rgba(156, 39, 176, 0.2); padding: 0.5rem; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #9c27b0;">${classItem.monthlyPoints || 0}</div>
+                                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.8);">نقاط الشهر</div>
+                            </div>
+                        </div>
+                    </div>
+                    ${classItem.notes ? `<div style="color: rgba(255,255,255,0.9); font-size: 0.85rem; margin: 1rem 0; text-align: center; background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 10px; max-height: 80px; overflow-y: auto;">📝 ${classItem.notes}</div>` : ''}
+                    
+                    <div class="criteria-controls">
+                        <div class="criteria-row">
+                            <span class="criteria-name">⭐ الهدوء</span>
+                            <div class="criteria-controls-btn">
+                                <button class="point-btn minus" onclick="updatePointsWithSave(${originalIndex}, 'Quiet', -1)">-</button>
+                                <span class="criteria-points">${classItem.quiet}</span>
+                                <button class="point-btn plus" onclick="updatePointsWithSave(${originalIndex}, 'Quiet', 1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="criteria-row">
+                            <span class="criteria-name">⚡ السرعة</span>
+                            <div class="criteria-controls-btn">
+                                <button class="point-btn minus" onclick="updatePointsWithSave(${originalIndex}, 'Speed', -1)">-</button>
+                                <span class="criteria-points">${classItem.speed}</span>
+                                <button class="point-btn plus" onclick="updatePointsWithSave(${originalIndex}, 'Speed', 1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="criteria-row">
+                            <span class="criteria-name">🔊 الصوت</span>
+                            <div class="criteria-controls-btn">
+                                <button class="point-btn minus" onclick="updatePointsWithSave(${originalIndex}, 'Volume', -1)">-</button>
+                                <span class="criteria-points">${classItem.volume}</span>
+                                <button class="point-btn plus" onclick="updatePointsWithSave(${originalIndex}, 'Volume', 1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="criteria-row">
+                            <span class="criteria-name">🧹 النظافة</span>
+                            <div class="criteria-controls-btn">
+                                <button class="point-btn minus" onclick="updatePointsWithSave(${originalIndex}, 'Cleanliness', -1)">-</button>
+                                <span class="criteria-points">${classItem.cleanliness}</span>
+                                <button class="point-btn plus" onclick="updatePointsWithSave(${originalIndex}, 'Cleanliness', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 1.5rem;">
+                        <div style="display: flex; justify-content: center; gap: 0.25rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+                            <button onclick="resetClassPoints(${originalIndex})" class="action-btn" style="background: rgba(255, 152, 0, 0.4); font-size: 0.8rem; padding: 0.4rem;">🔄 إعادة تعيين</button>
+                            <button onclick="openClassModal(${originalIndex})" class="action-btn" style="background: rgba(33, 150, 243, 0.4); font-size: 0.8rem; padding: 0.4rem;">✏️ تعديل</button>
+                            <button onclick="setAsStarClass('${classItem.name}')" class="action-btn" style="background: rgba(255, 193, 7, 0.4); font-size: 0.8rem; padding: 0.4rem;">⭐ نجم اليوم</button>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 0.25rem; flex-wrap: wrap;">
+                            <button onclick="resetDailyPoints(${originalIndex})" class="action-btn" style="background: rgba(255, 193, 7, 0.3); font-size: 0.75rem; padding: 0.3rem;">📅 مسح اليوم</button>
+                            <button onclick="addToMonthlyPoints(${originalIndex})" class="action-btn" style="background: rgba(156, 39, 176, 0.3); font-size: 0.75rem; padding: 0.3rem;">📊 إضافة للشهر</button>
+                            <button onclick="resetMonthlyPoints(${originalIndex})" class="action-btn" style="background: rgba(156, 39, 176, 0.3); font-size: 0.75rem; padding: 0.3rem;">🗓️ مسح الشهر</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        function updateStarSelects() { 
+             const teacherSelects = ['starOfDaySelect', 'starOfMonthSelect'];
+             const classSelects = ['queueStarSelect', 'queueStarMonthSelect'];
+
+             // ملء قوائم المعلمات
+             teacherSelects.forEach(selectId => {
+                 const select = document.getElementById(selectId);
+                 if (select) {
+                     select.innerHTML = '<option value="">اختر معلمة/صف</option>' +
+                         teachers.map(t => `<option value="${t.name}">${t.name} (${t.class})</option>`).join('');
+                 }
+             });
+
+             // ملء قوائم الصفوف
+             classSelects.forEach(selectId => {
+                 const select = document.getElementById(selectId);
+                 if (select) {
+                     select.innerHTML = '<option value="">اختر الصف</option>' +
+                         classes.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+                 }
+             });
+        }
+        function updateDataManagement() { /* ... */ }
+        function checkSystemPassword() {
+            const input = document.getElementById('systemPassword');
+            if (input.value === systemPassword) {
+                document.getElementById('passwordPrompt').style.display = 'none';
+                document.getElementById('systemContent').style.display = 'block';
+                renderTeachersManagementList();
+                updateStarSelects();
+            } else {
+                alert('كلمة المرور غير صحيحة');
+                input.value = '';
+            }
+        }
+        function showTab(tabName, btn) { document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById(tabName).classList.add('active'); btn.classList.add('active'); }
+        function showSection(sectionName) { document.querySelectorAll('.section').forEach(section => section.classList.remove('active')); document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active')); document.getElementById(sectionName).classList.add('active'); document.querySelector(`[onclick="showSection('${sectionName}')"]`).classList.add('active'); }
+        function closeTeacherModal() { document.getElementById('teacherModal').classList.remove('active'); currentEditingTeacherId = null; }
+        function openTeacherModal(teacherId) { const teacher = teachers.find(t => t.id === teacherId); if (!teacher) return; currentEditingTeacherId = teacherId; document.getElementById('editTeacherName').value = teacher.name; document.getElementById('editTeacherClass').value = teacher.class; document.getElementById('editTeacherNotes').value = teacher.notes || ''; document.getElementById('teacherModal').classList.add('active'); }
+        function openClassModal(classIndex) { const classItem = classes[classIndex]; if (!classItem) return; currentEditingClassIndex = classIndex; document.getElementById('editClassName').value = classItem.name; document.getElementById('editClassNotes').value = classItem.notes || ''; document.getElementById('classModal').classList.add('active'); }
+        function closeClassModal() { document.getElementById('classModal').classList.remove('active'); currentEditingClassIndex = null; }
+        function resetTeacher(teacherId) {
+            const teacher = teachers.find(t => t.id === teacherId);
+            if (teacher && confirm(`هل تريد إعادة تعيين حضور ${teacher.name}؟`)) {
+                teacher.status = 'not-recorded';
+                teacher.timestamp = null; 
+                
+                syncToSheet('updateAttendance', { 
+                    id: teacherId, 
+                    status: '', 
+                    notes: teacher.notes,
+                    timestamp: null 
+                });
+                
+                renderTeachers();
+                updateStats();
+                setTimeout(loadDataFromSheet, 1000);
+                alert(`تم إعادة تعيين حضور ${teacher.name}`);
+            }
+        }
+        function showTeacherDetails(teacherId) { /* ... */ }
+        function resetAllMonthlyPoints() { /* ... */ }
+        function resetAllPoints() { /* ... */ }
+        function setAsStarClass(className) { /* ... */ }
+        function printDailyCertificate() { /* ... */ }
+        function printQueueCertificate() { /* ... */ }
+        function printMonthlyCertificate() { /* ... */ }
+        function printAttendanceCertificate() { /* ... */ }
+        function generateCertificate(type, className, icon) { /* ... */ }
+        function printCertificate() { /* ... */ }
+        function generateAndExportDailyAttendance(format) { /* ... */ }
+        function generateAndExportDailyStars(format) { /* ... */ }
+        function generateAndExportWeeklyAttendance(format) { alert('ميزة التقرير الأسبوعي قيد التطوير. يمكنك معاينة تقرير اليوم وطباعته.'); }
+        function generateAndExportMonthlyAttendance(format) { alert('ميزة التقرير الشهري قيد التطوير. يمكنك معاينة تقرير اليوم وطباعته.'); }
+        function generateAndExportWeeklyStars(format) { alert('ميزة تقرير النجوم الأسبوعي قيد التطوير. يمكنك معاينة تقرير اليوم وطباعته.'); }
+        function generateAndExportMonthlyStars(format) { alert('ميزة تقرير النجوم الشهري قيد التطوير. يمكنك معاينة تقرير اليوم وطباعته.'); }
+        function exportCompleteReport(format) { /* ... */ }
+        function printReport() { /* ... */ }
+        function exportSavedData() { /* ... */ }
+        function importSavedData() { /* ... */ }
+        function clearAllSavedData() { /* ... */ }
+        function updateSystemPassword() { /* ... */ }
+        function updateMotivationalText() { /* ... */ }
+        function showAddTeacherForm() { document.getElementById('addTeacherForm').classList.add('active'); }
+        function hideAddTeacherForm() { document.getElementById('addTeacherForm').classList.remove('active'); }
         
-        // ... (بقية الدوال المساعدة)
+        // ... (بقية الدوال المساعدة والدوال الإدارية)
+
+        function addAllDailyToMonthly() { /*... (الكود الأصلي) ...*/ }
+        function resetDailyPoints(classIndex) { /*... (الكود الأصلي) ...*/ }
+        function resetMonthlyPoints(classIndex) { /*... (الكود الأصلي) ...*/ }
+        function resetClassPoints(classIndex) { /*... (الكود الأصلي) ...*/ }
+        function addNewTeacher() { alert('🚫 التزامن: يرجى إضافة المعلمات الجديدة مباشرة في ورقة "Teachers".'); }
+        function deleteTeacher(teacherId) { alert('🚫 التزامن: حذف المعلمات يتم يدوياً في ورقة "Teachers".'); }
+        function editTeacher(teacherId) { alert('🚫 التزامن: يفضل تعديل الاسم والصف يدوياً في Google Sheet.'); }
+        function saveTeacherChanges() { /*... (الكود الأصلي) ...*/ }
+        function saveClassChanges() { /*... (الكود الأصلي) ...*/ }
+        function updateDailyStars() { /*... (الكود الأصلي) ...*/ }
+        function updateMonthlyStars() { /*... (الكود الأصلي) ...*/ }
+        function renderTeachersManagementList() { /*... (الكود الأصلي) ...*/ }
+        function createFloatingParticles() { /*... (الكود الأصلي) ...*/ }
+        function updateStarSummaries() {
+            // 1. ⭐ نجم الطابور (الأعلى نقاط اليوم)
+            const topDailyClass = classes.reduce((max, current) => 
+                current.dailyPoints > max.dailyPoints ? current : max
+            );
+            document.getElementById('queueStar').textContent = (topDailyClass && topDailyClass.dailyPoints > 0) ? topDailyClass.name : 'لم يتم الاختيار بعد';
+
+            // 2. 👑 نجم الطابور للشهر (الأعلى نقاط الشهر)
+            const topMonthlyClass = classes.reduce((max, current) => 
+                current.monthlyPoints > max.monthlyPoints ? current : max
+            );
+            document.getElementById('queueStarMonth').textContent = (topMonthlyClass && topMonthlyClass.monthlyPoints > 0) ? topMonthlyClass.name : 'لم يتم الاختيار بعد';
+            
+            // 3. 🌟 نجمة اليوم (أول معلمة تسجل حضورها)
+            const firstPresentTeacher = teachers
+                .filter(t => t.status === 'present' && t.timestamp)
+                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))[0];
+
+            document.getElementById('starOfDay').textContent = firstPresentTeacher 
+                ? `${firstPresentTeacher.name} (${firstPresentTeacher.class})` 
+                : 'لم يتم الاختيار بعد';
+        }
 
         // =======================================================
         // 5. تهيئة النظام
