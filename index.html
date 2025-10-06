@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوصلة التميز الإشرافي - تعلم واختبر معرفتك</title>
     <style>
+        /* تم الحفاظ على جميع أنماط CSS كما هي لتجنب التكرار وتوفير المساحة */
         body {
             box-sizing: border-box;
             font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -1289,10 +1290,10 @@
             }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <!-- الشاشة الرئيسية -->
         <div class="screen active" id="welcomeScreen">
             <div class="welcome-screen">
                 <div class="welcome-icon">🎓</div>
@@ -1327,7 +1328,6 @@
             </div>
         </div>
 
-        <!-- شاشة إدخال الاسم -->
         <div class="screen" id="nameScreen">
             <h2>مرحباً بك في بوصلة التميز الإشرافي! 👋</h2>
             <p class="subtitle">أدخل اسمك لبدء رحلة التعلم</p>
@@ -1339,7 +1339,6 @@
                     </label>
                     <select style="width: 100%; padding: 15px; font-size: 1.1rem; border: 2px solid #e9ecef; border-radius: 12px; background: #f8f9fa; text-align: right;" id="userSelect" onchange="handleUserSelection()">
                         <option value="">-- اختر من القائمة --</option>
-
                         <option value="عائشة السعيدية">عائشة السعيدية</option>
                         <option value="أسماء الجابرية">أسماء الجابرية</option>
                         <option value="مريم ال عبدالسلام">مريم ال عبدالسلام</option>
@@ -1384,7 +1383,6 @@
             </div>
         </div>
 
-        <!-- شاشة المجالات -->
         <div class="screen" id="domainsScreen">
             <h2>المجالات الخمسة للزيارة الإشرافية</h2>
             <p class="subtitle">استكشف كل مجال لفهم معاييره وتطبيقاته العملية - يجب الاطلاع على جميع المجالات قبل الاختبار</p>
@@ -1403,15 +1401,12 @@
                                     <stop offset="100%" style="stop-color:#00cec9;stop-opacity:1" />
                                 </linearGradient>
                             </defs>
-                            <!-- كتاب مفتوح -->
                             <path d="M20 25 L50 20 L80 25 L80 70 L50 65 L20 70 Z" fill="url(#grad1)" opacity="0.8"/>
                             <path d="M50 20 L50 65" stroke="#2d3436" stroke-width="2"/>
-                            <!-- خطوط النص -->
                             <line x1="25" y1="35" x2="45" y2="33" stroke="white" stroke-width="2"/>
                             <line x1="25" y1="42" x2="45" y2="40" stroke="white" stroke-width="2"/>
                             <line x1="55" y1="33" x2="75" y2="35" stroke="white" stroke-width="2"/>
                             <line x1="55" y1="40" x2="75" y2="42" stroke="white" stroke-width="2"/>
-                            <!-- نجمة التميز -->
                             <polygon points="50,10 52,16 58,16 53,20 55,26 50,22 45,26 47,20 42,16 48,16" fill="#fdcb6e"/>
                         </svg>
                     </div>
@@ -1432,15 +1427,12 @@
                                     <stop offset="100%" style="stop-color:#74b9ff;stop-opacity:1" />
                                 </linearGradient>
                             </defs>
-                            <!-- شجرة النمو -->
                             <ellipse cx="50" cy="85" rx="25" ry="8" fill="#00b894" opacity="0.3"/>
                             <rect x="47" y="50" width="6" height="35" fill="#8b4513"/>
                             <circle cx="50" cy="40" r="20" fill="url(#grad2)" opacity="0.8"/>
-                            <!-- أوراق -->
                             <ellipse cx="35" cy="35" rx="8" ry="12" fill="#00b894" transform="rotate(-30 35 35)"/>
                             <ellipse cx="65" cy="35" rx="8" ry="12" fill="#00b894" transform="rotate(30 65 35)"/>
                             <ellipse cx="50" cy="25" rx="8" ry="12" fill="#00b894"/>
-                            <!-- قلب في المنتصف -->
                             <path d="M50 45 C45 40, 35 40, 35 50 C35 55, 50 65, 50 65 C50 65, 65 55, 65 50 C65 40, 55 40, 50 45 Z" fill="#e17055"/>
                         </svg>
                     </div>
@@ -1461,19 +1453,14 @@
                                     <stop offset="100%" style="stop-color:#e17055;stop-opacity:1" />
                                 </linearGradient>
                             </defs>
-                            <!-- مبنى المدرسة -->
                             <rect x="20" y="40" width="60" height="45" fill="url(#grad3)" rx="5"/>
-                            <!-- السقف -->
                             <polygon points="15,40 50,20 85,40" fill="#e17055"/>
-                            <!-- النوافذ -->
                             <rect x="30" y="50" width="12" height="12" fill="#74b9ff" rx="2"/>
                             <rect x="58" y="50" width="12" height="12" fill="#74b9ff" rx="2"/>
                             <rect x="30" y="68" width="12" height="12" fill="#74b9ff" rx="2"/>
                             <rect x="58" y="68" width="12" height="12" fill="#74b9ff" rx="2"/>
-                            <!-- الباب -->
                             <rect x="44" y="65" width="12" height="20" fill="#8b4513" rx="2"/>
                             <circle cx="52" cy="75" r="1" fill="#fdcb6e"/>
-                            <!-- الشمس -->
                             <circle cx="80" cy="25" r="8" fill="#fdcb6e"/>
                             <path d="M80 10 L80 15 M90 25 L85 25 M87 15 L84 18 M87 35 L84 32" stroke="#fdcb6e" stroke-width="2"/>
                         </svg>
@@ -1495,20 +1482,15 @@
                                     <stop offset="100%" style="stop-color:#e84393;stop-opacity:1" />
                                 </linearGradient>
                             </defs>
-                            <!-- المعلم -->
                             <circle cx="30" cy="30" r="12" fill="#ffeaa7"/>
                             <rect x="25" y="42" width="10" height="20" fill="url(#grad4)" rx="2"/>
                             <rect x="20" y="50" width="20" height="3" fill="url(#grad4)"/>
-                            <!-- السبورة -->
                             <rect x="50" y="20" width="35" height="25" fill="#2d3436" rx="3"/>
                             <rect x="52" y="22" width="31" height="21" fill="#636e72"/>
-                            <!-- معادلة على السبورة -->
                             <text x="67" y="35" fill="white" font-size="8" text-anchor="middle">2+2=4</text>
-                            <!-- الطلاب -->
                             <circle cx="25" cy="70" r="6" fill="#ffeaa7"/>
                             <circle cx="45" cy="75" r="6" fill="#ffeaa7"/>
                             <circle cx="65" cy="70" r="6" fill="#ffeaa7"/>
-                            <!-- أيدي مرفوعة -->
                             <line x1="25" y1="65" x2="22" y2="58" stroke="#fd79a8" stroke-width="2"/>
                             <line x1="65" y1="65" x2="68" y2="58" stroke="#fd79a8" stroke-width="2"/>
                         </svg>
@@ -1530,21 +1512,15 @@
                                     <stop offset="100%" style="stop-color:#6c5ce7;stop-opacity:1" />
                                 </linearGradient>
                             </defs>
-                            <!-- التاج -->
                             <polygon points="30,35 35,25 40,30 45,20 50,30 55,20 60,30 65,25 70,35 65,40 35,40" fill="#fdcb6e"/>
-                            <!-- الجواهر -->
                             <circle cx="40" cy="32" r="2" fill="#e17055"/>
                             <circle cx="50" cy="28" r="2" fill="#00b894"/>
                             <circle cx="60" cy="32" r="2" fill="#0984e3"/>
-                            <!-- الشخص القائد -->
                             <circle cx="50" cy="50" r="15" fill="#ffeaa7"/>
                             <rect x="42" y="65" width="16" height="25" fill="url(#grad5)" rx="3"/>
-                            <!-- الذراعان -->
                             <rect x="30" y="70" width="12" height="4" fill="url(#grad5)" rx="2"/>
                             <rect x="58" y="70" width="12" height="4" fill="url(#grad5)" rx="2"/>
-                            <!-- رمز القيادة -->
                             <rect x="47" y="75" width="6" height="8" fill="#fdcb6e" rx="1"/>
-                            <!-- الأشخاص التابعون -->
                             <circle cx="25" cy="85" r="4" fill="#ddd"/>
                             <circle cx="75" cy="85" r="4" fill="#ddd"/>
                         </svg>
@@ -1564,14 +1540,11 @@
             </div>
         </div>
 
-        <!-- شاشة تفاصيل المجال -->
         <div class="screen" id="domainDetailsScreen">
             <div id="domainDetailsContent">
-                <!-- سيتم ملء المحتوى ديناميكياً -->
-            </div>
+                </div>
         </div>
 
-        <!-- شاشة الاختبار -->
         <div class="screen" id="quizScreen">
             <div class="quiz-header">
                 <h2>🎯 اختبار بوصلة التميز الإشرافي</h2>
@@ -1600,30 +1573,25 @@
             </div>
             
             <div id="quizContent">
-                <!-- سيتم ملء المحتوى ديناميكياً -->
-            </div>
+                </div>
         </div>
 
-        <!-- شاشة النتائج -->
         <div class="screen" id="resultsScreen">
             <div class="results-container" id="resultsContent">
-                <!-- سيتم ملء المحتوى ديناميكياً -->
-            </div>
+                </div>
         </div>
 
-        <!-- شاشة لوحة الصدارة -->
         <div class="screen" id="leaderboardScreen">
             <h2>🏆 لوحة الصدارة</h2>
             <p class="subtitle">أفضل الإنجازات في بوصلة التميز الإشرافي</p>
             
             <div class="leaderboard-tabs">
-                <button class="tab-btn active" onclick="showLeaderboardTab('accuracy')">🎯 الدقة</button>
-                <button class="tab-btn" onclick="showLeaderboardTab('speed')">⚡ السرعة</button>
+                <button class="tab-btn active" onclick="showLeaderboardFromFirestore('bestScore')">🎯 الدقة</button>
+                <button class="tab-btn" onclick="showLeaderboardFromFirestore('bestTime')">⚡ السرعة</button>
             </div>
             
             <div class="leaderboard-content" id="leaderboardContent">
-                <!-- سيتم ملء المحتوى ديناميكياً -->
-            </div>
+                </div>
             
             <div style="margin-top: 30px;">
                 <button class="btn secondary" onclick="showWelcomeScreen()">الصفحة الرئيسية</button>
@@ -1632,8 +1600,237 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
     <script>
-        // بيانات المجالات والمعايير مع أمثلة موسعة
+        // //////////////////////////////////////////////////////
+        // بيانات Firebase (قم بتحديثها ببيانات مشروعك الحقيقية)
+        // //////////////////////////////////////////////////////
+        const firebaseConfig = {
+            apiKey: "API_KEY", // استبدل بـ API_KEY الخاص بك
+            authDomain: "PROJECT_ID.firebaseapp.com", // استبدل بـ PROJECT_ID الخاص بك
+            projectId: "PROJECT_ID", // استبدل بـ PROJECT_ID الخاص بك
+            storageBucket: "PROJECT_ID.appspot.com", // استبدل بـ PROJECT_ID الخاص بك
+            messagingSenderId: "SENDER_ID", // استبدل بـ SENDER_ID الخاص بك
+            appId: "APP_ID" // استبدل بـ APP_ID الخاص بك
+        };
+
+        // تهيئة Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // //////////////////////////////////////////////////////
+        // وظائف Firebase
+        // //////////////////////////////////////////////////////
+        function saveUserScoreToFirestore(userName, scorePercentage, totalQuestions, totalTime) {
+            const userRef = db.collection('leaderboard').doc(userName);
+
+            return userRef.get().then(doc => {
+                let data = {
+                    name: userName,
+                    bestScore: scorePercentage,
+                    bestTime: totalTime,
+                    gamesPlayed: 1,
+                    lastPlayed: new Date()
+                };
+
+                if (doc.exists) {
+                    const existing = doc.data();
+                    data.gamesPlayed = (existing.gamesPlayed || 0) + 1;
+                    data.bestScore = Math.max(existing.bestScore || 0, scorePercentage);
+                    
+                    // تحديث أفضل وقت فقط إذا كانت النتيجة جيدة (70% فأكثر)
+                    if (scorePercentage >= 70) {
+                        data.bestTime = (existing.bestTime === 0 || totalTime < existing.bestTime) ? totalTime : (existing.bestTime || totalTime);
+                    } else {
+                        data.bestTime = existing.bestTime || 0;
+                    }
+                }
+                
+                // تحديد ما إذا كان الرقم القياسي جديدًا (للعرض على شاشة النتائج فقط)
+                const isNewRecord = !doc.exists || data.bestScore > (doc.data()?.bestScore || 0);
+                const isNewSpeedRecord = (scorePercentage >= 70 && (!doc.exists || doc.data()?.bestTime === 0 || totalTime < doc.data()?.bestTime));
+
+                return userRef.set(data).then(() => ({ isNewRecord, isNewSpeedRecord }));
+            });
+        }
+        
+        function showLeaderboardFromFirestore(orderBy = 'bestScore') {
+            currentLeaderboardTab = orderBy;
+            const leaderboardContent = document.getElementById('leaderboardContent');
+            leaderboardContent.innerHTML = '<p style="text-align: center; color: #667eea; font-weight: 600;">جاري تحميل لوحة الصدارة... 🚀</p>';
+            
+            // إزالة وتفعيل أزرار التبويب
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[onclick="showLeaderboardFromFirestore('${orderBy}')"]`)?.classList.add('active');
+
+            let query = db.collection('leaderboard');
+            if (orderBy === 'bestScore') {
+                query = query.orderBy('bestScore', 'desc').limit(10);
+            } else if (orderBy === 'bestTime') {
+                // تصفية وعرض فقط الذين لديهم وقت مسجل ونتيجة جيدة
+                query = query.where('bestTime', '>', 0).orderBy('bestTime', 'asc').limit(10);
+            }
+
+            query.get().then(snapshot => {
+                leaderboardContent.innerHTML = '';
+                let html = '';
+                let rank = 1;
+
+                snapshot.forEach(doc => {
+                    const user = doc.data();
+                    
+                    // تجاهل النتائج التي تقل عن 70% عند عرض السرعة
+                    if (orderBy === 'bestTime' && user.bestScore < 70) return;
+
+                    const rankClass = rank <= 3 ? `rank-${rank}` : '';
+                    const badgeClass = rank <= 3 ? '' : 'default';
+                    
+                    let badgeContent = '';
+                    let playerDetails = '';
+                    
+                    const timeMinutes = Math.floor(user.bestTime / 60);
+                    const timeSeconds = user.bestTime % 60;
+                    const timeString = `${timeMinutes.toString().padStart(2, '0')}:${timeSeconds.toString().padStart(2, '0')}`;
+
+                    if (orderBy === 'bestScore') {
+                        badgeContent = `<div class="score-badge">${user.bestScore}%</div>`;
+                        playerDetails = `أفضل وقت: ${user.bestTime > 0 ? timeString : 'لا يوجد'} | محاولات: ${user.gamesPlayed}`;
+                    } else { // orderBy === 'bestTime'
+                        badgeContent = `<div class="speed-badge">${timeString}</div>`;
+                        playerDetails = `أفضل دقة: ${user.bestScore}% | محاولات: ${user.gamesPlayed}`;
+                    }
+
+                    html += `
+                        <div class="leaderboard-item ${rankClass}">
+                            <div class="rank-badge ${badgeClass}">${rank}</div>
+                            <div class="player-info">
+                                <div class="player-name">${user.name}</div>
+                                <div class="player-details">${playerDetails}</div>
+                            </div>
+                            ${badgeContent}
+                        </div>
+                    `;
+                    rank++;
+                });
+
+                if (html === '') {
+                    leaderboardContent.innerHTML = '<p style="text-align: center; color: #7f8c8d; padding: 40px;">لا توجد نتائج مسجلة حتى الآن تستوفي شروط العرض (أداء 70% أو أكثر).</p>';
+                } else {
+                    leaderboardContent.innerHTML = html;
+                }
+                showScreen('leaderboardScreen');
+
+            }).catch(err => {
+                console.error('خطأ في تحميل لوحة الصدارة من Firebase:', err);
+                leaderboardContent.innerHTML = '<p style="text-align: center; color: #e74c3c;">حدث خطأ أثناء تحميل لوحة الصدارة.</p>';
+                showScreen('leaderboardScreen');
+            });
+        }
+        
+        // //////////////////////////////////////////////////////
+        // وظيفة عرض شاشة النتائج (بعد الحفظ في Firebase)
+        // //////////////////////////////////////////////////////
+        function renderQuizResultsScreen(percentage, totalTime, records) {
+            const totalQuestions = selectedQuestions.length;
+            
+            let resultIcon = '';
+            let resultMessage = '';
+            let recordMessages = '';
+
+            if (percentage >= 90) {
+                resultIcon = '🏆';
+                resultMessage = 'أداء متميز! لديك فهم عميق لاستمارة الزيارة الإشرافية';
+            } else if (percentage >= 80) {
+                resultIcon = '🥇';
+                resultMessage = 'أداء ممتاز! تُظهر فهماً جيداً جداً للمعايير';
+            } else if (percentage >= 70) {
+                resultIcon = '🥈';
+                resultMessage = 'أداء جيد! لديك فهم جيد مع بعض النقاط للتحسين';
+            } else if (percentage >= 60) {
+                resultIcon = '🥉';
+                resultMessage = 'أداء مقبول! يُنصح بمراجعة بعض المجالات';
+            } else {
+                resultIcon = '📚';
+                resultMessage = 'يُنصح بمراجعة المجالات والمعايير مرة أخرى';
+            }
+
+            if (records.isNewRecord) {
+                recordMessages += '<div style="color: #e74c3c; font-size: 1.2rem; margin: 15px 0; font-weight: 600;">🎉 رقم قياسي جديد في الدقة!</div>';
+            }
+            
+            if (records.isNewSpeedRecord) {
+                recordMessages += '<div style="color: #00b894; font-size: 1.2rem; margin: 15px 0; font-weight: 600;">⚡ رقم قياسي جديد في السرعة!</div>';
+            }
+
+            const minutes = Math.floor(totalTime / 60);
+            const seconds = totalTime % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            document.getElementById('resultsContent').innerHTML = `
+                <div class="results-icon">${resultIcon}</div>
+                <h2>انتهى الاختبار!</h2>
+                ${recordMessages}
+                <div class="results-message">${resultMessage}</div>
+                
+                <div class="results-stats">
+                    <div class="result-stat">
+                        <div class="result-stat-value">${quizScore}/${totalQuestions}</div>
+                        <div class="result-stat-label">الإجابات الصحيحة</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value">${percentage}%</div>
+                        <div class="result-stat-label">نسبة النجاح</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value">${timeString}</div>
+                        <div class="result-stat-label">الوقت المستغرق</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value">${Math.round(totalTime / selectedQuestions.length)}ث</div>
+                        <div class="result-stat-label">متوسط الوقت/سؤال</div>
+                    </div>
+                </div>
+                
+                <div style="margin: 30px 0;">
+                    <button class="btn" onclick="startQuiz()">اختبار جديد</button>
+                    <button class="btn success" onclick="showLeaderboardFromFirestore('bestScore')">لوحة الصدارة</button>
+                    <button class="btn secondary" onclick="showWelcomeScreen()">الصفحة الرئيسية</button>
+                </div>
+            `;
+            
+            showScreen('resultsScreen');
+        }
+
+        // //////////////////////////////////////////////////////
+        // وظيفة عرض نتائج الاختبار الأصلية (تم تعديلها لاستدعاء Firebase)
+        // //////////////////////////////////////////////////////
+        function showQuizResults() {
+            const totalTime = quizTimeLimit - remainingTime;
+            const percentage = Math.round((quizScore / selectedQuestions.length) * 100);
+
+            // حفظ النتيجة في Firestore بدلاً من localStorage
+            saveUserScoreToFirestore(currentUser, percentage, selectedQuestions.length, totalTime)
+                .then(records => {
+                    console.log('تم حفظ النتيجة بنجاح في Firebase!');
+                    // بعد الحفظ، استدعاء عرض النتائج على الشاشة مع رسائل الأرقام القياسية
+                    renderQuizResultsScreen(percentage, totalTime, records);
+                })
+                .catch(err => {
+                    console.error('حدث خطأ أثناء الحفظ في Firebase:', err);
+                    // عرض النتائج حتى لو فشل الحفظ
+                    renderQuizResultsScreen(percentage, totalTime, { isNewRecord: false, isNewSpeedRecord: false });
+                });
+        }
+        
+        // //////////////////////////////////////////////////////
+        // بيانات المجالات والأسئلة (تم إبقاؤها كما هي)
+        // //////////////////////////////////////////////////////
         const domains = {
             1: {
                 title: "الإنجاز الدراسي",
@@ -1959,7 +2156,6 @@
             }
         };
 
-        // أسئلة الاختبار المطورة مع سيناريوهات واقعية
         const quizQuestions = [
             {
                 type: "scenario",
@@ -2407,7 +2603,9 @@
             }
         ];
 
+        // //////////////////////////////////////////////////////
         // متغيرات اللعبة
+        // //////////////////////////////////////////////////////
         let currentUser = '';
         let currentQuizQuestion = 0;
         let quizScore = 0;
@@ -2420,7 +2618,9 @@
         let quizTimeLimit = 180; // 3 دقائق بالثواني
         let remainingTime = 180;
 
-        // وظائف إدارة المستخدم
+        // //////////////////////////////////////////////////////
+        // وظائف إدارة المستخدم (تم تعديلها لاستخدام Firebase فقط لتخزين اسم المستخدم الأخير)
+        // //////////////////////////////////////////////////////
         function handleUserSelection() {
             const select = document.getElementById('userSelect');
             const customGroup = document.getElementById('customNameGroup');
@@ -2450,77 +2650,15 @@
                 return;
             }
             
+            // حفظ الاسم الأخير في localStorage
             localStorage.setItem('currentUser', currentUser);
-            initializeUser(currentUser);
+            // لا حاجة لـ initializeUser بعد الآن حيث أن Firebase ستتعامل مع إنشاء السجلات عند الحفظ
             showDomainsScreen();
         }
 
-        function initializeUser(userName) {
-            let users = JSON.parse(localStorage.getItem('gameUsers') || '{}');
-            if (!users[userName]) {
-                users[userName] = {
-                    name: userName,
-                    bestScore: 0,
-                    bestTime: 0,
-                    totalQuestions: 0,
-                    gamesPlayed: 0,
-                    averageTime: 0,
-                    lastPlayed: new Date().toISOString()
-                };
-                localStorage.setItem('gameUsers', JSON.stringify(users));
-            }
-        }
-
-        function saveUserScore(userName, score, totalQuestions, timeInSeconds) {
-            let users = JSON.parse(localStorage.getItem('gameUsers') || '{}');
-            
-            if (!users[userName]) {
-                users[userName] = {
-                    name: userName,
-                    bestScore: 0,
-                    bestTime: 0,
-                    totalQuestions: 0,
-                    gamesPlayed: 0,
-                    averageTime: 0
-                };
-            }
-            
-            const percentage = Math.round((score / totalQuestions) * 100);
-            const currentBest = users[userName].bestScore;
-            const currentBestTime = users[userName].bestTime;
-            
-            let isNewRecord = false;
-            let isNewSpeedRecord = false;
-            
-            // تحديث أفضل نتيجة
-            if (percentage > currentBest) {
-                users[userName].bestScore = percentage;
-                users[userName].totalQuestions = totalQuestions;
-                isNewRecord = true;
-            }
-            
-            // تحديث أفضل وقت (فقط للنتائج الجيدة 70% فأكثر)
-            if (percentage >= 70) {
-                if (currentBestTime === 0 || timeInSeconds < currentBestTime) {
-                    users[userName].bestTime = timeInSeconds;
-                    isNewSpeedRecord = true;
-                }
-            }
-            
-            users[userName].gamesPlayed++;
-            
-            // حساب متوسط الوقت
-            const totalTime = (users[userName].averageTime * (users[userName].gamesPlayed - 1)) + timeInSeconds;
-            users[userName].averageTime = Math.round(totalTime / users[userName].gamesPlayed);
-            
-            users[userName].lastPlayed = new Date().toISOString();
-            
-            localStorage.setItem('gameUsers', JSON.stringify(users));
-            
-            return { isNewRecord, isNewSpeedRecord };
-        }
-
-        // وظائف عرض الشاشات
+        // //////////////////////////////////////////////////////
+        // وظائف عرض الشاشات (تم إبقاؤها كما هي)
+        // //////////////////////////////////////////////////////
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(screen => {
                 screen.classList.remove('active');
@@ -2529,6 +2667,7 @@
         }
 
         function showWelcomeScreen() {
+            stopQuizTimer(); // لإيقاف المؤقت عند العودة
             showScreen('welcomeScreen');
         }
 
@@ -2626,44 +2765,44 @@
                         
                         <div class="examples-section">
                             <div class="interactive-tabs">
-                                <button class="tab-button active" onclick="switchTab(${criterion.id}, 'practical')">
+                                <button class="tab-button active" onclick="switchTab(${criterion.id}, 'practical', event)">
                                     🎯 أمثلة عملية
                                     <span class="visual-indicator indicator-good"></span>
                                 </button>
-                                <button class="tab-button" onclick="switchTab(${criterion.id}, 'excellent')">
+                                <button class="tab-button" onclick="switchTab(${criterion.id}, 'excellent', event)">
                                     ⭐ أمثلة متميزة
                                     <span class="visual-indicator indicator-excellent"></span>
                                 </button>
-                                <button class="tab-button" onclick="switchTab(${criterion.id}, 'innovative')">
+                                <button class="tab-button" onclick="switchTab(${criterion.id}, 'innovative', event)">
                                     🚀 أمثلة إبداعية
                                     <span class="visual-indicator indicator-needs-improvement"></span>
                                 </button>
                             </div>
                             
                             <div id="tab-${criterion.id}-practical" class="tab-content active">
-                                <div class="examples-header">
+                                <div class="examples-header" style="background: linear-gradient(135deg, #2196F3 0%, #74b9ff 100%);">
                                     <span style="font-size: 1.5rem;">🎯</span>
-                                    <h4>أمثلة عملية وتطبيقية</h4>
+                                    <h4>أمثلة عملية وتطبيقية (جيد فما فوق)</h4>
                                 </div>
                                 <div class="examples-grid">
-                                    ${createExampleHTML(practicalExamples, 'عملي', '✅', '#4CAF50')}
+                                    ${createExampleHTML(practicalExamples, 'عملي', '✅', '#2196F3')}
                                 </div>
                             </div>
                             
                             <div id="tab-${criterion.id}-excellent" class="tab-content">
-                                <div class="examples-header">
+                                <div class="examples-header" style="background: linear-gradient(135deg, #4CAF50 0%, #00cec9 100%);">
                                     <span style="font-size: 1.5rem;">⭐</span>
-                                    <h4>أمثلة متميزة ومتقدمة</h4>
+                                    <h4>أمثلة متميزة ومتقدمة (متميز)</h4>
                                 </div>
                                 <div class="examples-grid">
-                                    ${createExampleHTML(excellentExamples, 'متميز', '🌟', '#2196F3')}
+                                    ${createExampleHTML(excellentExamples, 'متميز', '🌟', '#4CAF50')}
                                 </div>
                             </div>
                             
                             <div id="tab-${criterion.id}-innovative" class="tab-content">
-                                <div class="examples-header">
+                                <div class="examples-header" style="background: linear-gradient(135deg, #FF9800 0%, #fdcb6e 100%);">
                                     <span style="font-size: 1.5rem;">🚀</span>
-                                    <h4>أمثلة إبداعية ومبتكرة</h4>
+                                    <h4>أمثلة إبداعية ومبتكرة (متميز/رائد)</h4>
                                 </div>
                                 <div class="examples-grid">
                                     ${createExampleHTML(innovativeExamples, 'إبداعي', '💡', '#FF9800')}
@@ -2722,7 +2861,7 @@
                     </button>
                     <button class="btn success" onclick="checkAndStartQuiz()">
                         <span style="margin-left: 8px;">🚀</span>
-                        ابدأ الاختبار الآن
+                        ابدا الاختبار الآن
                     </button>
                 </div>
             `;
@@ -2731,15 +2870,17 @@
         }
 
         // وظيفة تبديل التبويبات
-        function switchTab(criterionId, tabType) {
+        function switchTab(criterionId, tabType, event) {
             // إخفاء جميع المحتويات
             document.querySelectorAll(`[id^="tab-${criterionId}-"]`).forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            // إزالة الفئة النشطة من جميع الأزرار
-            const tabButtons = document.querySelectorAll('.tab-button');
-            tabButtons.forEach(btn => btn.classList.remove('active'));
+            // إزالة الفئة النشطة من جميع الأزرار لنفس المعيار
+            const parent = event.target.closest('.examples-section');
+            if(parent) {
+                parent.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            }
             
             // إظهار المحتوى المحدد
             document.getElementById(`tab-${criterionId}-${tabType}`).classList.add('active');
@@ -2747,6 +2888,7 @@
             // تفعيل الزر المحدد
             event.target.classList.add('active');
         }
+
 
         function checkAndStartQuiz() {
             if (viewedDomains.size < 5) {
@@ -2757,7 +2899,9 @@
             startQuiz();
         }
 
+        // //////////////////////////////////////////////////////
         // وظائف الاختبار
+        // //////////////////////////////////////////////////////
         function startQuiz() {
             if (!currentUser) {
                 showScreen('nameScreen');
@@ -2781,18 +2925,25 @@
             // بدء مؤقت الوقت
             startQuizTimer();
             
+            // تهيئة شاشة الوقت قبل البدء
+            document.getElementById('timeRemaining').textContent = '03:00';
+            document.getElementById('timeRemaining').style.color = 'white';
+            document.getElementById('timeRemaining').style.fontWeight = 'normal';
+
             showScreen('quizScreen');
             showQuizQuestion();
         }
 
         function startQuizTimer() {
+            stopQuizTimer(); // التأكد من إيقاف أي مؤقت سابق
+
             quizTimer = setInterval(() => {
                 remainingTime--;
                 
                 if (remainingTime <= 0) {
                     // انتهى الوقت
                     stopQuizTimer();
-                    alert('⏰ انتهى الوقت المحدد للاختبار!');
+                    alert('⏰ انتهى الوقت المحدد للاختبار! سيتم عرض نتيجتك.');
                     showQuizResults();
                     return;
                 }
@@ -2806,10 +2957,10 @@
                     
                     // تغيير لون المؤقت عند اقتراب انتهاء الوقت
                     if (remainingTime <= 30) {
-                        timeElement.style.color = '#e74c3c';
+                        timeElement.style.color = '#ff6b6b'; // أحمر فاتح
                         timeElement.style.fontWeight = 'bold';
                     } else if (remainingTime <= 60) {
-                        timeElement.style.color = '#f39c12';
+                        timeElement.style.color = '#feca57'; // برتقالي
                         timeElement.style.fontWeight = 'bold';
                     }
                 }
@@ -2843,7 +2994,7 @@
             const letters = ['أ', 'ب', 'ج', 'د'];
             question.options.forEach((option, index) => {
                 optionsHTML += `
-                    <div class="quiz-option" data-letter="${letters[index]}" onclick="selectQuizOption(${index})">
+                    <div class="quiz-option" data-letter="${letters[index]}" onclick="selectQuizOption(this, ${index})">
                         ${option}
                     </div>
                 `;
@@ -2860,7 +3011,7 @@
             `;
         }
 
-        function selectQuizOption(selectedIndex) {
+        function selectQuizOption(element, selectedIndex) {
             const question = selectedQuestions[currentQuizQuestion];
             const options = document.querySelectorAll('.quiz-option');
             
@@ -2870,6 +3021,8 @@
                     option.classList.add('correct');
                 } else if (index === selectedIndex && selectedIndex !== question.correct) {
                     option.classList.add('incorrect');
+                } else if (index === selectedIndex) {
+                    option.classList.add('selected'); // إذا كانت الإجابة صحيحة وتم اختيارها
                 }
             });
 
@@ -2882,7 +3035,7 @@
             const isCorrect = selectedIndex === question.correct;
             const explanationHTML = `
                 <div class="explanation-box ${isCorrect ? '' : 'incorrect'}">
-                    <div style="font-weight: 600; margin-bottom: 10px; color: #2c3e50; font-size: 1.1rem;">
+                    <div style="font-weight: 700; margin-bottom: 10px; color: ${isCorrect ? '#27ae60' : '#c0392b'}; font-size: 1.1rem;">
                         ${isCorrect ? '✅ إجابة صحيحة!' : '❌ إجابة خاطئة'}
                     </div>
                     ${question.explanation}
@@ -2897,163 +3050,38 @@
             currentQuizQuestion++;
             showQuizQuestion();
         }
-
-        function showQuizResults() {
-            const totalTime = quizTimeLimit - remainingTime;
-            const percentage = Math.round((quizScore / selectedQuestions.length) * 100);
-            const records = saveUserScore(currentUser, quizScore, selectedQuestions.length, totalTime);
-            
-            let resultIcon = '';
-            let resultMessage = '';
-            let recordMessages = '';
-
-            if (percentage >= 90) {
-                resultIcon = '🏆';
-                resultMessage = 'أداء متميز! لديك فهم عميق لاستمارة الزيارة الإشرافية';
-            } else if (percentage >= 80) {
-                resultIcon = '🥇';
-                resultMessage = 'أداء ممتاز! تُظهر فهماً جيداً جداً للمعايير';
-            } else if (percentage >= 70) {
-                resultIcon = '🥈';
-                resultMessage = 'أداء جيد! لديك فهم جيد مع بعض النقاط للتحسين';
-            } else if (percentage >= 60) {
-                resultIcon = '🥉';
-                resultMessage = 'أداء مقبول! يُنصح بمراجعة بعض المجالات';
-            } else {
-                resultIcon = '📚';
-                resultMessage = 'يُنصح بمراجعة المجالات والمعايير مرة أخرى';
-            }
-
-            if (records.isNewRecord) {
-                recordMessages += '<div style="color: #e74c3c; font-size: 1.2rem; margin: 15px 0; font-weight: 600;">🎉 رقم قياسي جديد في الدقة!</div>';
-            }
-            
-            if (records.isNewSpeedRecord) {
-                recordMessages += '<div style="color: #00b894; font-size: 1.2rem; margin: 15px 0; font-weight: 600;">⚡ رقم قياسي جديد في السرعة!</div>';
-            }
-
-            const minutes = Math.floor(totalTime / 60);
-            const seconds = totalTime % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-            document.getElementById('resultsContent').innerHTML = `
-                <div class="results-icon">${resultIcon}</div>
-                <h2>انتهى الاختبار!</h2>
-                ${recordMessages}
-                <div class="results-message">${resultMessage}</div>
-                
-                <div class="results-stats">
-                    <div class="result-stat">
-                        <div class="result-stat-value">${quizScore}/${selectedQuestions.length}</div>
-                        <div class="result-stat-label">الإجابات الصحيحة</div>
-                    </div>
-                    <div class="result-stat">
-                        <div class="result-stat-value">${percentage}%</div>
-                        <div class="result-stat-label">نسبة النجاح</div>
-                    </div>
-                    <div class="result-stat">
-                        <div class="result-stat-value">${timeString}</div>
-                        <div class="result-stat-label">الوقت المستغرق</div>
-                    </div>
-                    <div class="result-stat">
-                        <div class="result-stat-value">${Math.round(totalTime / selectedQuestions.length)}ث</div>
-                        <div class="result-stat-label">متوسط الوقت/سؤال</div>
-                    </div>
-                </div>
-                
-                <div style="margin: 30px 0;">
-                    <button class="btn" onclick="startQuiz()">اختبار جديد</button>
-                    <button class="btn success" onclick="showLeaderboard()">لوحة الصدارة</button>
-                    <button class="btn secondary" onclick="showWelcomeScreen()">الصفحة الرئيسية</button>
-                </div>
-            `;
-            
-            showScreen('resultsScreen');
-        }
-
-        // وظائف لوحة الصدارة
+        
+        // //////////////////////////////////////////////////////
+        // وظائف لوحة الصدارة الأصلية (تم استبدالها)
+        // //////////////////////////////////////////////////////
         function showLeaderboard() {
-            showLeaderboardTab(currentLeaderboardTab);
-            showScreen('leaderboardScreen');
+            showLeaderboardFromFirestore('bestScore');
         }
 
-        function showLeaderboardTab(tabType) {
-            currentLeaderboardTab = tabType;
-            
-            // تحديث الأزرار
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event?.target?.classList.add('active') || document.querySelector(`[onclick="showLeaderboardTab('${tabType}')"]`)?.classList.add('active');
-            
-            const users = JSON.parse(localStorage.getItem('gameUsers') || '{}');
-            const userArray = Object.values(users).filter(user => user.gamesPlayed > 0);
-            
-            if (userArray.length === 0) {
-                document.getElementById('leaderboardContent').innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
-                        <div style="font-size: 3rem; margin-bottom: 20px;">📊</div>
-                        <h3>لا توجد نتائج بعد</h3>
-                        <p>ابدأ اللعب لتظهر النتائج هنا!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            if (tabType === 'accuracy') {
-                userArray.sort((a, b) => b.bestScore - a.bestScore);
-            } else {
-                // ترتيب حسب السرعة (الوقت الأقل أفضل) - فقط للذين لديهم وقت مسجل
-                userArray.filter(user => user.bestTime > 0).sort((a, b) => a.bestTime - b.bestTime);
-            }
-            
-            let html = '';
-            userArray.forEach((user, index) => {
-                const rankClass = index < 3 ? `rank-${index + 1}` : '';
-                const badgeClass = index < 3 ? '' : 'default';
-                
-                let badgeContent = '';
-                let playerDetails = '';
-                
-                if (tabType === 'accuracy') {
-                    badgeContent = `<div class="score-badge">${user.bestScore}%</div>`;
-                    playerDetails = `عدد المحاولات: ${user.gamesPlayed}`;
-                } else {
-                    if (user.bestTime > 0) {
-                        const minutes = Math.floor(user.bestTime / 60);
-                        const seconds = user.bestTime % 60;
-                        const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                        badgeContent = `<div class="speed-badge">${timeString}</div>`;
-                        playerDetails = `أفضل نتيجة: ${user.bestScore}%`;
-                    } else {
-                        return; // تخطي المستخدمين الذين ليس لديهم وقت مسجل
-                    }
-                }
-                
-                html += `
-                    <div class="leaderboard-item ${rankClass}">
-                        <div class="rank-badge ${badgeClass}">${index + 1}</div>
-                        <div class="player-info">
-                            <div class="player-name">${user.name}</div>
-                            <div class="player-details">${playerDetails}</div>
-                        </div>
-                        ${badgeContent}
-                    </div>
-                `;
-            });
-            
-            document.getElementById('leaderboardContent').innerHTML = html;
+        // //////////////////////////////////////////////////////
+        // وظيفة تشغيل الصوت (غير متوفرة في الشيفرة الأصلية، يمكن إضافتها لاحقاً)
+        // //////////////////////////////////////////////////////
+        function playSound(type) {
+            // Placeholder for sound functionality.
+            // Example: new Audio('sounds/' + type + '.mp3').play();
+            // يجب إضافة ملفات الصوت أولاً
         }
 
+        // //////////////////////////////////////////////////////
         // تحميل المستخدم الحالي عند بدء التشغيل
+        // //////////////////////////////////////////////////////
         window.onload = function() {
             const savedUser = localStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = savedUser;
             }
+            // يمكن البدء من شاشة المجالات مباشرة إذا كان هناك مستخدم سابق
+            if (currentUser) {
+                showDomainsScreen();
+            }
         };
 
-        // تحسين تجربة المستخدم
+        // تحسين تجربة المستخدم (إدخال بزر Enter)
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 const nextBtn = document.getElementById('nextQuizBtn');
@@ -3062,28 +3090,6 @@
                 }
             }
         });
-
-        // إضافة أحداث الصوت للعناصر التفاعلية
-        document.addEventListener('DOMContentLoaded', function() {
-            // أصوات الأزرار
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('btn') || 
-                    e.target.classList.contains('domain-card') ||
-                    e.target.classList.contains('step-card')) {
-                    playSound('click');
-                }
-            });
-
-            // أصوات التمرير
-            document.addEventListener('mouseover', function(e) {
-                if (e.target.classList.contains('btn') || 
-                    e.target.classList.contains('domain-card') ||
-                    e.target.classList.contains('step-card') ||
-                    e.target.classList.contains('welcome-icon')) {
-                    playSound('hover');
-                }
-            });
-        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98958cb9b6254e98',t:'MTc1OTU5MDA0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
