@@ -1637,24 +1637,40 @@
                     lastPlayed: new Date()
                 };
 
+                // منطق تحديد الأفضل (الأعلى دقة أولاً، ثم الأسرع)
                 if (doc.exists) {
                     const existing = doc.data();
                     data.gamesPlayed = (existing.gamesPlayed || 0) + 1;
-                    data.bestScore = Math.max(existing.bestScore || 0, scorePercentage);
                     
-                    // تحديث أفضل وقت فقط إذا كانت النتيجة جيدة (70% فأكثر)
-                    if (scorePercentage >= 70) {
-                        data.bestTime = (existing.bestTime === 0 || totalTime < existing.bestTime) ? totalTime : (existing.bestTime || totalTime);
-                    } else {
-                        data.bestTime = existing.bestTime || 0;
-                    }
-                }
-                
-                // تحديد ما إذا كان الرقم القياسي جديدًا (للعرض على شاشة النتائج فقط)
-                const isNewRecord = !doc.exists || data.bestScore > (doc.data()?.bestScore || 0);
-                const isNewSpeedRecord = (scorePercentage >= 70 && (!doc.exists || doc.data()?.bestTime === 0 || totalTime < doc.data()?.bestTime));
+                    const currentBestScore = existing.bestScore || 0;
+                    const currentBestTime = existing.bestTime || 0;
 
-                return userRef.set(data).then(() => ({ isNewRecord, isNewSpeedRecord }));
+                    let isNewRecord = false;
+                    let isNewSpeedRecord = false;
+                    
+                    if (scorePercentage > currentBestScore) {
+                        // حالة 1: النتيجة الجديدة أفضل من السابقة
+                        data.bestScore = scorePercentage;
+                        data.bestTime = totalTime;
+                        isNewRecord = true;
+                        isNewSpeedRecord = true;
+                    } else if (scorePercentage === currentBestScore) {
+                        // حالة 2: النتيجة الجديدة مساوية للسابقة، نبحث عن أسرع وقت
+                        data.bestScore = scorePercentage;
+                        data.bestTime = (currentBestTime === 0 || totalTime < currentBestTime) ? totalTime : currentBestTime;
+                        if (data.bestTime === totalTime) {
+                            isNewSpeedRecord = true;
+                        }
+                    } else {
+                        // حالة 3: النتيجة الجديدة أسوأ من السابقة، لا نغير أفضل نتيجة ووقت
+                        data.bestScore = currentBestScore;
+                        data.bestTime = currentBestTime;
+                    }
+                    
+                    return userRef.set(data).then(() => ({ isNewRecord, isNewSpeedRecord }));
+                }
+
+                return userRef.set(data).then(() => ({ isNewRecord: true, isNewSpeedRecord: true }));
             });
         }
         
@@ -1671,10 +1687,11 @@
 
             let query = db.collection('leaderboard');
             if (orderBy === 'bestScore') {
-                query = query.orderBy('bestScore', 'desc').limit(10);
+                // الترتيب بالدقة تنازلياً
+                query = query.orderBy('bestScore', 'desc').orderBy('bestTime', 'asc').limit(10);
             } else if (orderBy === 'bestTime') {
-                // تصفية وعرض فقط الذين لديهم وقت مسجل ونتيجة جيدة
-                query = query.where('bestTime', '>', 0).orderBy('bestTime', 'asc').limit(10);
+                // الترتيب بالوقت تصاعدياً ثم بالدقة تنازلياً
+                query = query.orderBy('bestTime', 'asc').orderBy('bestScore', 'desc').limit(10);
             }
 
             query.get().then(snapshot => {
@@ -1685,8 +1702,9 @@
                 snapshot.forEach(doc => {
                     const user = doc.data();
                     
-                    // تجاهل النتائج التي تقل عن 70% عند عرض السرعة
-                    if (orderBy === 'bestTime' && user.bestScore < 70) return;
+                    // إذا كان الترتيب بالسرعة، وتجنب المستخدمين الذين ليس لديهم وقت مسجل
+                    if (orderBy === 'bestTime' && user.bestTime === 0) return;
+
 
                     const rankClass = rank <= 3 ? `rank-${rank}` : '';
                     const badgeClass = rank <= 3 ? '' : 'default';
@@ -1720,7 +1738,7 @@
                 });
 
                 if (html === '') {
-                    leaderboardContent.innerHTML = '<p style="text-align: center; color: #7f8c8d; padding: 40px;">لا توجد نتائج مسجلة حتى الآن تستوفي شروط العرض (أداء 70% أو أكثر).</p>';
+                    leaderboardContent.innerHTML = '<p style="text-align: center; color: #7f8c8d; padding: 40px;">لا توجد نتائج مسجلة حتى الآن.</p>';
                 } else {
                     leaderboardContent.innerHTML = html;
                 }
@@ -2619,7 +2637,7 @@
         let remainingTime = 180;
 
         // //////////////////////////////////////////////////////
-        // وظائف إدارة المستخدم (تم تعديلها لاستخدام Firebase فقط لتخزين اسم المستخدم الأخير)
+        // وظائف إدارة المستخدم
         // //////////////////////////////////////////////////////
         function handleUserSelection() {
             const select = document.getElementById('userSelect');
@@ -2652,12 +2670,11 @@
             
             // حفظ الاسم الأخير في localStorage
             localStorage.setItem('currentUser', currentUser);
-            // لا حاجة لـ initializeUser بعد الآن حيث أن Firebase ستتعامل مع إنشاء السجلات عند الحفظ
             showDomainsScreen();
         }
 
         // //////////////////////////////////////////////////////
-        // وظائف عرض الشاشات (تم إبقاؤها كما هي)
+        // وظائف عرض الشاشات
         // //////////////////////////////////////////////////////
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(screen => {
@@ -2667,8 +2684,9 @@
         }
 
         function showWelcomeScreen() {
-            stopQuizTimer(); // لإيقاف المؤقت عند العودة
-            showScreen('welcomeScreen');
+            stopQuizTimer();
+            // تأكد من عرض شاشة الترحيب بشكل صريح
+            showScreen('welcomeScreen'); 
         }
 
         function startLearningJourney() {
@@ -2679,6 +2697,12 @@
             updateDomainProgress();
             showScreen('domainsScreen');
         }
+        
+        function showLeaderboard() {
+            // البدء بالترتيب الافتراضي (الدقة)
+            showLeaderboardFromFirestore('bestScore');
+        }
+
 
         function updateDomainProgress() {
             for (let i = 1; i <= 5; i++) {
@@ -2891,6 +2915,10 @@
 
 
         function checkAndStartQuiz() {
+            if (!currentUser) {
+                showScreen('nameScreen');
+                return;
+            }
             if (viewedDomains.size < 5) {
                 alert('يجب الاطلاع على جميع المجالات الخمسة قبل البدء في الاختبار');
                 showDomainsScreen();
@@ -3050,35 +3078,24 @@
             currentQuizQuestion++;
             showQuizQuestion();
         }
-        
+
         // //////////////////////////////////////////////////////
-        // وظائف لوحة الصدارة الأصلية (تم استبدالها)
+        // وظائف لوحة الصدارة الأصلية
         // //////////////////////////////////////////////////////
         function showLeaderboard() {
             showLeaderboardFromFirestore('bestScore');
         }
 
         // //////////////////////////////////////////////////////
-        // وظيفة تشغيل الصوت (غير متوفرة في الشيفرة الأصلية، يمكن إضافتها لاحقاً)
-        // //////////////////////////////////////////////////////
-        function playSound(type) {
-            // Placeholder for sound functionality.
-            // Example: new Audio('sounds/' + type + '.mp3').play();
-            // يجب إضافة ملفات الصوت أولاً
-        }
-
-        // //////////////////////////////////////////////////////
-        // تحميل المستخدم الحالي عند بدء التشغيل
+        // تحميل المستخدم وتعديل نقطة البداية
         // //////////////////////////////////////////////////////
         window.onload = function() {
             const savedUser = localStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = savedUser;
             }
-            // يمكن البدء من شاشة المجالات مباشرة إذا كان هناك مستخدم سابق
-            if (currentUser) {
-                showDomainsScreen();
-            }
+            // **هذا يضمن البدء دائمًا من الشاشة الترحيبية**
+            showScreen('welcomeScreen'); 
         };
 
         // تحسين تجربة المستخدم (إدخال بزر Enter)
