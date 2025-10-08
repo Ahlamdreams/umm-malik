@@ -1602,7 +1602,7 @@
 
     <script>
         // //////////////////////////////////////////////////////
-        // ⚠️ رابط Apps Script الجديد المدمج
+        // ⚠️ رابط Apps Script الجديد والمدمج
         // //////////////////////////////////////////////////////
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyyJT7X0M7YOck1nKiaZv54CFAuK44cr85Mcv5Besvv1xlJ9OoWT0BJHpHnDOLw2rM7/exec'; 
 
@@ -1610,34 +1610,36 @@
         // وظائف Google Sheets (تستخدم Apps Script كوسيط)
         // //////////////////////////////////////////////////////
         function saveUserScoreToSheets(userName, scorePercentage, totalQuestions, totalTime) {
-            const payload = {
+            
+            // 1. إنشاء معلمات URL لطلب GET/POST البسيط
+            const params = new URLSearchParams({
+                action: 'saveScore',
                 name: userName,
                 bestScore: scorePercentage,
                 bestTime: totalTime
-            };
+            });
             
-            // تحقق من وجود الرابط قبل الإرسال
-            if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL') {
+            const url = `${APPS_SCRIPT_URL}?${params.toString()}`;
+
+            // 2. التحقق من وجود الرابط قبل الإرسال
+            if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_APPS_SCRIPT_URL')) {
                 console.error("APPS_SCRIPT_URL is not configured.");
                 return Promise.resolve({ isNewRecord: false, isNewSpeedRecord: false });
             }
 
-            return fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
+            // 3. إرسال طلب GET/POST (استخدام GET لإرسال البيانات أسهل في Apps Script عند استخدام معلمات URL)
+            return fetch(url, {
+                method: 'GET', // استخدام GET للإرسال أسهل في تطبيقات الويب البسيطة
                 mode: 'cors',
                 cache: 'no-cache',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'error') {
                     console.error('Error saving to Sheets:', data.message);
-                    // في حالة عدم تمكن Apps Script من الحفظ، لكنه أرسل رسالة خطأ واضحة
                     return { isNewRecord: data.isNewRecord || false, isNewSpeedRecord: data.isNewSpeedRecord || false };
                 }
+                // Apps Script يجب أن يعيد هذه القيم
                 return { 
                     isNewRecord: data.isNewRecord, 
                     isNewSpeedRecord: data.isNewSpeedRecord 
@@ -1661,20 +1663,19 @@
             document.querySelector(`[onclick="showLeaderboardFromSheets('${orderBy}')"]`)?.classList.add('active');
 
             // تحقق من وجود الرابط قبل الإرسال
-             if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL') {
+             if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_APPS_SCRIPT_URL')) {
                 leaderboardContent.innerHTML = '<p style="text-align: center; color: #e74c3c;">⚠️ خطأ: رابط Apps Script غير متاح. يرجى التأكد من إعداده.</p>';
                 return;
             }
 
+            // 4. جلب البيانات (Apps Script يجب أن يدعم طلب GET بدون معلمات لرد البيانات)
             fetch(APPS_SCRIPT_URL, {
                 method: 'GET',
                 mode: 'cors'
             })
             .then(response => {
-                // قد يفشل الاستجابة إذا كانت إعدادات Apps Script غير صحيحة
                 if (!response.ok) {
-                     // محاولة قراءة النص كرسالة خطأ إذا لم تكن الاستجابة JSON صالحة
-                    return response.text().then(text => {
+                     return response.text().then(text => {
                         console.error('Apps Script Response:', text);
                         throw new Error(`Apps Script did not return JSON. Check deployment permissions.`);
                     });
@@ -1690,17 +1691,15 @@
                     gamesPlayed: parseInt(user.GamesPlayed) || 0,
                 }));
                 
-                // ترتيب البيانات محلياً بناءً على الطلب (بدون شروط على النسبة)
+                // ترتيب البيانات محلياً بناءً على الطلب (الأعلى دقة ثم الأقل وقت)
                 if (orderBy === 'bestScore') {
-                    // الأفضل هو الأعلى سكور، ثم الأقل وقت
                     users.sort((a, b) => {
                         if (b.bestScore !== a.bestScore) return b.bestScore - a.bestScore;
                         return a.bestTime - b.bestTime;
                     });
                 } else if (orderBy === 'bestTime') {
-                    // الأفضل هو الأقل وقت (مع استبعاد الوقت 0)، ثم الأعلى سكور
+                    // الأفضل هو الأقل وقت (مع وضع الوقت 0 في النهاية)، ثم الأعلى سكور
                     users.sort((a, b) => {
-                        // وضع الوقت 0 في النهاية ليكون غير مسجل
                         const timeA = a.bestTime === 0 ? Infinity : a.bestTime;
                         const timeB = b.bestTime === 0 ? Infinity : b.bestTime;
                         
