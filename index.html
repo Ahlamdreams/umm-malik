@@ -1,2358 +1,645 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوصلة التميز الإشرافي - تعلم واختبر معرفتك</title>
-    <style>
-        /* تم الحفاظ على جميع أنماط CSS كما هي لتجنب التكرار وتوفير المساحة */
-        body {
-            box-sizing: border-box;
-            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-            background-size: 400% 400%;
-            background-attachment: fixed;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            animation: gradientShift 15s ease infinite;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(116, 185, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 60% 60%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 1;
-            animation: floatBubbles 20s ease-in-out infinite;
-        }
-
-        @keyframes floatBubbles {
-            0%, 100% { 
-                background: 
-                    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 40% 40%, rgba(116, 185, 255, 0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 60% 60%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
-            }
-            25% { 
-                background: 
-                    radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 50% 30%, rgba(116, 185, 255, 0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 50% 70%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
-            }
-            50% { 
-                background: 
-                    radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 60% 20%, rgba(116, 185, 255, 0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 40% 80%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
-            }
-            75% { 
-                background: 
-                    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 70% 10%, rgba(116, 185, 255, 0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 30% 90%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
-            }
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), transparent),
-                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.2), transparent),
-                radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.4), transparent),
-                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.3), transparent),
-                radial-gradient(2px 2px at 160px 30px, rgba(255,255,255,0.2), transparent);
-            background-repeat: repeat;
-            background-size: 200px 100px;
-            pointer-events: none;
-            z-index: 1;
-            animation: sparkle 8s linear infinite;
-        }
-
-        @keyframes sparkle {
-            0% { transform: translateY(0px) rotate(0deg); opacity: 1; }
-            50% { transform: translateY(-10px) rotate(180deg); opacity: 0.8; }
-            100% { transform: translateY(0px) rotate(360deg); opacity: 1; }
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 25px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            padding: 40px;
-            max-width: 1200px;
-            width: 95%;
-            text-align: center;
-            position: relative;
-            z-index: 2;
-            min-height: 600px;
-            animation: containerFloat 6s ease-in-out infinite;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        @keyframes containerFloat {
-            0%, 100% { 
-                transform: translateY(0px) scale(1);
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            }
-            50% { 
-                transform: translateY(-10px) scale(1.01);
-                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
-            }
-        }
-
-        .container:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        h1 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            font-weight: 800;
-            animation: titleGradient 8s ease infinite, titlePulse 3s ease-in-out infinite;
-            text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
-            position: relative;
-        }
-
-        @keyframes titleGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        @keyframes titlePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        h1:hover {
-            animation: titleGradient 2s ease infinite, titleGlow 1s ease-in-out infinite;
-        }
-
-        @keyframes titleGlow {
-            0%, 100% { 
-                filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
-                transform: scale(1);
-            }
-            50% { 
-                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.8));
-                transform: scale(1.08);
-            }
-        }
-
-        .subtitle {
-            color: #4a5568;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        /* شاشات اللعبة */
-        .screen {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* الشاشة الرئيسية */
-        .welcome-screen {
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .welcome-icon {
-            font-size: 5rem;
-            margin-bottom: 30px;
-            animation: iconFloat 4s ease-in-out infinite, iconRotate 8s linear infinite;
-            filter: drop-shadow(0 10px 20px rgba(255, 215, 0, 0.3));
-            transition: all 0.3s ease;
-        }
-
-        @keyframes iconFloat {
-            0%, 100% { 
-                transform: translateY(0px) scale(1);
-                filter: drop-shadow(0 10px 20px rgba(255, 215, 0, 0.3));
-            }
-            50% { 
-                transform: translateY(-15px) scale(1.1);
-                filter: drop-shadow(0 20px 40px rgba(255, 215, 0, 0.5));
-            }
-        }
-
-        @keyframes iconRotate {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(5deg); }
-            50% { transform: rotate(0deg); }
-            75% { transform: rotate(-5deg); }
-            100% { transform: rotate(0deg); }
-        }
-
-        .welcome-icon:hover {
-            animation: iconHover 0.6s ease-in-out infinite, iconSpin 2s linear infinite;
-            cursor: pointer;
-        }
-
-        @keyframes iconHover {
-            0%, 100% { 
-                transform: scale(1) rotate(0deg);
-                filter: drop-shadow(0 15px 30px rgba(255, 215, 0, 0.6));
-            }
-            50% { 
-                transform: scale(1.2) rotate(10deg);
-                filter: drop-shadow(0 25px 50px rgba(255, 215, 0, 0.8));
-            }
-        }
-
-        @keyframes iconSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .journey-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin: 40px 0;
-        }
-
-        .step-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 20px;
-            padding: 30px 20px;
-            transition: all 0.4s ease;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-            animation: cardFloat 6s ease-in-out infinite;
-        }
-
-        @keyframes cardFloat {
-            0%, 100% { 
-                transform: translateY(0px) rotateX(0deg);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
-            50% { 
-                transform: translateY(-8px) rotateX(2deg);
-                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-            }
-        }
-
-        .step-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
-            background-size: 300% 100%;
-            transform: scaleX(0);
-            transition: all 0.4s ease;
-            animation: gradientMove 3s ease infinite;
-        }
-
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .step-card:hover {
-            transform: translateY(-10px) scale(1.05) rotateX(5deg);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
-            border-color: rgba(102, 126, 234, 0.3);
-        }
-
-        .step-card:hover::before {
-            transform: scaleX(1);
-            height: 6px;
-        }
-
-        .step-card:nth-child(1) { animation-delay: 0s; }
-        .step-card:nth-child(2) { animation-delay: 2s; }
-        .step-card:nth-child(3) { animation-delay: 4s; }
-
-        .step-number {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            background-size: 200% 200%;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin: 0 auto 15px;
-            animation: numberPulse 3s ease-in-out infinite, numberGradient 4s ease infinite;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        @keyframes numberPulse {
-            0%, 100% { 
-                transform: scale(1) rotate(0deg);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            }
-            50% { 
-                transform: scale(1.1) rotate(5deg);
-                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-            }
-        }
-
-        @keyframes numberGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .step-card:hover .step-number {
-            transform: scale(1.2) rotate(360deg);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.8);
-            animation: numberSpin 1s ease-in-out infinite;
-        }
-
-        @keyframes numberSpin {
-            0%, 100% { transform: scale(1.2) rotate(0deg); }
-            50% { transform: scale(1.3) rotate(180deg); }
-        }
-
-        .step-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
-        .step-description {
-            color: #7f8c8d;
-            line-height: 1.5;
-        }
-
-        /* أزرار */
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            background-size: 300% 300%;
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            font-size: 1.1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-            font-weight: 600;
-            margin: 10px;
-            position: relative;
-            overflow: hidden;
-            animation: buttonPulse 4s ease-in-out infinite, buttonGradient 6s ease infinite;
-            border: 2px solid transparent;
-        }
-
-        @keyframes buttonPulse {
-            0%, 100% { 
-                transform: scale(1);
-                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-            }
-            50% { 
-                transform: scale(1.02);
-                box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
-            }
-        }
-
-        @keyframes buttonGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.6s ease;
-        }
-
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: all 0.4s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 45px rgba(102, 126, 234, 0.5);
-            border-color: rgba(255, 255, 255, 0.3);
-            animation: buttonHover 0.8s ease-in-out infinite;
-        }
-
-        @keyframes buttonHover {
-            0%, 100% { 
-                box-shadow: 0 15px 45px rgba(102, 126, 234, 0.5);
-            }
-            50% { 
-                box-shadow: 0 20px 60px rgba(102, 126, 234, 0.7);
-            }
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:hover::after {
-            width: 100%;
-            height: 100%;
-        }
-
-        .btn:active {
-            transform: translateY(-2px) scale(0.98);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn.secondary {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-            box-shadow: 0 8px 25px rgba(116, 185, 255, 0.3);
-        }
-
-        .btn.success {
-            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-            box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3);
-        }
-
-        .btn:disabled {
-            background: #95a5a6;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* شاشة المجالات */
-        .domains-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin: 30px 0;
-        }
-
-        .domain-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            cursor: pointer;
-            transition: all 0.5s ease;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid #e9ecef;
-            text-align: right;
-            animation: domainFloat 8s ease-in-out infinite;
-        }
-
-        @keyframes domainFloat {
-            0%, 100% { 
-                transform: translateY(0px) rotateY(0deg);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
-            50% { 
-                transform: translateY(-5px) rotateY(2deg);
-                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-            }
-        }
-
-        .domain-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            transition: all 0.5s ease;
-            background-size: 300% 100%;
-            animation: rainbowMove 4s ease infinite;
-        }
-
-        @keyframes rainbowMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .domain-card.domain-1::before { 
-            background: linear-gradient(90deg, #00b894, #00cec9, #55efc4, #00b894);
-            background-size: 300% 100%;
-        }
-        .domain-card.domain-2::before { 
-            background: linear-gradient(90deg, #0984e3, #74b9ff, #a29bfe, #0984e3);
-            background-size: 300% 100%;
-        }
-        .domain-card.domain-3::before { 
-            background: linear-gradient(90deg, #fdcb6e, #e17055, #fd79a8, #fdcb6e);
-            background-size: 300% 100%;
-        }
-        .domain-card.domain-4::before { 
-            background: linear-gradient(90deg, #fd79a8, #e84393, #f093fb, #fd79a8);
-            background-size: 300% 100%;
-        }
-        .domain-card.domain-5::before { 
-            background: linear-gradient(90deg, #a29bfe, #6c5ce7, #667eea, #a29bfe);
-            background-size: 300% 100%;
-        }
-
-        .domain-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-            transform: translateX(-100%);
-            transition: transform 0.8s ease;
-        }
-
-        .domain-card:hover {
-            transform: translateY(-15px) scale(1.03) rotateY(5deg);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-            border-color: #667eea;
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
-        }
-
-        .domain-card:hover::before {
-            height: 10px;
-            animation: rainbowMove 1s ease infinite;
-        }
-
-        .domain-card:hover::after {
-            transform: translateX(100%);
-        }
-
-        .domain-card:nth-child(1) { animation-delay: 0s; }
-        .domain-card:nth-child(2) { animation-delay: 1.6s; }
-        .domain-card:nth-child(3) { animation-delay: 3.2s; }
-        .domain-card:nth-child(4) { animation-delay: 4.8s; }
-        .domain-card:nth-child(5) { animation-delay: 6.4s; }
-
-        .domain-card.viewed {
-            border-color: #00b894;
-            background: linear-gradient(135deg, rgba(0, 184, 148, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
-        }
-
-        .domain-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-
-        .domain-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-
-        .domain-description {
-            color: #7f8c8d;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .criteria-count {
-            background: #f8f9fa;
-            padding: 10px 15px;
-            border-radius: 10px;
-            color: #495057;
-            font-weight: 600;
-            border-right: 4px solid #667eea;
-        }
-
-        .progress-indicator {
-            background: #e9ecef;
-            height: 8px;
-            border-radius: 10px;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, #00b894, #00cec9);
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-
-        .completion-badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: #00b894;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        /* شاشة تفاصيل المجال */
-        .domain-detail-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 25px;
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
-        }
-
-        .domain-detail-header::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 150px;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .domain-detail-header::after {
-            content: '';
-            position: absolute;
-            bottom: -30px;
-            left: -30px;
-            width: 100px;
-            height: 100px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            animation: float 4s ease-in-out infinite reverse;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
-        }
-
-        .domain-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin: 25px 0;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-box {
-            text-align: center;
-            padding: 15px;
-        }
-
-        .stat-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .criterion-card {
-            background: white;
-            border: 2px solid #e9ecef;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            transition: all 0.4s ease;
-            text-align: right;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .criterion-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transform: scaleY(0);
-            transition: transform 0.4s ease;
-        }
-
-        .criterion-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
-            transform: translateY(-5px);
-        }
-
-        .criterion-card:hover::before {
-            transform: scaleY(1);
-        }
-
-        .criterion-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f8f9fa;
-        }
-
-        .criterion-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .criterion-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #2c3e50;
-            flex: 1;
-        }
-
-        .criterion-number {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .criterion-explanation {
-            background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
-            padding: 25px;
-            border-radius: 15px;
-            border-right: 5px solid #667eea;
-            margin-bottom: 25px;
-            line-height: 1.7;
-            font-size: 1.05rem;
-            position: relative;
-        }
-
-        .criterion-explanation::before {
-            content: '💡';
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            font-size: 1.5rem;
-        }
-
-        .examples-section {
-            margin-top: 25px;
-        }
-
-        .examples-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            padding: 15px 20px;
-            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-            color: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
-        }
-
-        .examples-header h4 {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        .examples-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-
-        .example-item {
-            background: linear-gradient(135deg, #e8f5e8 0%, #f0f9f0 100%);
-            border: 2px solid #4CAF50;
-            border-radius: 15px;
-            padding: 20px;
-            font-size: 1rem;
-            line-height: 1.6;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .example-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #4CAF50, #81C784);
-        }
-
-        .example-item:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.25);
-            border-color: #2E7D32;
-        }
-
-        .example-icon {
-            font-size: 1.3rem;
-            margin-left: 10px;
-            display: inline-block;
-        }
-
-        .example-category {
-            display: inline-block;
-            background: #4CAF50;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .interactive-tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 5px;
-            margin-bottom: 25px;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .tab-button {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            color: #7f8c8d;
-            position: relative;
-        }
-
-        .tab-button.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeInUp 0.5s ease;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .visual-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-left: 8px;
-            animation: pulse 2s infinite;
-        }
-
-        .indicator-excellent { background: #4CAF50; }
-        .indicator-good { background: #2196F3; }
-        .indicator-needs-improvement { background: #FF9800; }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* شاشة الاختبار */
-        .quiz-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            position: relative;
-        }
-
-        .quiz-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .quiz-progress {
-            background: rgba(255,255,255,0.2);
-            height: 10px;
-            border-radius: 10px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .quiz-progress-bar {
-            background: linear-gradient(90deg, #00cec9, #55efc4);
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-
-        .quiz-question {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            text-align: right;
-            font-size: 1.2rem;
-            line-height: 1.6;
-            border-right: 5px solid #667eea;
-        }
-
-        .quiz-options {
-            display: grid;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .quiz-option {
-            background: white;
-            border: 2px solid #e9ecef;
-            padding: 20px;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: right;
-            font-size: 1.1rem;
-            position: relative;
-        }
-
-        .quiz-option::before {
-            content: attr(data-letter);
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 30px;
-            height: 30px;
-            background: #e9ecef;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .quiz-option:hover {
-            border-color: #667eea;
-            background: #f8f9ff;
-            transform: translateX(-5px);
-        }
-
-        .quiz-option.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .quiz-option.correct {
-            border-color: #00b894;
-            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-            color: white;
-        }
-
-        .quiz-option.incorrect {
-            border-color: #e17055;
-            background: linear-gradient(135deg, #e17055 0%, #fd79a8 100%);
-            color: white;
-        }
-
-        .quiz-option.correct::before,
-        .quiz-option.incorrect::before,
-        .quiz-option.selected::before {
-            background: rgba(255,255,255,0.3);
-            color: white;
-        }
-
-        .explanation-box {
-            background: #e8f5e8;
-            border: 2px solid #4CAF50;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: right;
-        }
-
-        .explanation-box.incorrect {
-            background: #ffeaea;
-            border-color: #e74c3c;
-        }
-
-        /* شاشة النتائج */
-        .results-container {
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .results-icon {
-            font-size: 5rem;
-            margin-bottom: 20px;
-        }
-
-        .results-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 25px;
-            margin: 30px 0;
-        }
-
-        .result-stat {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .result-stat-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .result-stat-label {
-            color: #7f8c8d;
-            font-weight: 600;
-        }
-
-        /* لوحة الصدارة */
-        .leaderboard-tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 5px;
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            color: #7f8c8d;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .leaderboard-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        /* تنسيق الجدول داخل لوحة الصدارة */
-        .leaderboard-content table { 
-            border-collapse: collapse; 
-            width: 100%; 
-            margin-top: 20px; 
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            border-radius: 15px;
-            overflow: hidden;
-        }
-        .leaderboard-content th, .leaderboard-content td { 
-            border: 1px solid #eee; 
-            padding: 12px 8px; 
-            text-align: center; 
-            font-size: 0.95rem;
-        }
-        .leaderboard-content th { 
-            background-color: #f0f4ff; 
-            color: #4a5568; 
-            font-weight: 700;
-        }
-        .leaderboard-content tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .leaderboard-content tr:hover {
-            background-color: #f0f0f0;
-        }
-
-        .rank-1 td { background: #fff3cd !important; font-weight: bold; color: #856404; }
-        .rank-2 td { background: #e2e6ea !important; font-weight: bold; color: #495057; }
-        .rank-3 td { background: #f7e0d3 !important; font-weight: bold; color: #583c27; }
-        /* نهاية تنسيق الجدول */
-
-        .rank-badge {
-            font-size: 1.2rem;
-            font-weight: bold;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .rank-1 .rank-badge { background: #FFD700; color: #333; }
-        .rank-2 .rank-badge { background: #C0C0C0; color: #333; }
-        .rank-3 .rank-badge { background: #CD7F32; color: white; }
-        .rank-badge.default { background: #6c757d; }
-
-        .player-info {
-            flex: 1;
-            text-align: right;
-            margin: 0 20px;
-        }
-
-        .player-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        .player-details {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-
-        .score-badge {
-            background: #667eea;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .speed-badge {
-            background: #00b894;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .requirement-notice {
-            background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        /* تحسينات الاستجابة */
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-                margin: 10px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .journey-steps {
-                grid-template-columns: 1fr;
-            }
-            
-            .domains-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .quiz-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .results-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .examples-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>بوصلة التميز الإشرافي - تعلم واختبر معرفتك</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ====== تنسيقات عامة (مختصرة) ====== */
+    *{box-sizing:border-box} body{font-family:'Cairo',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#667eea,#764ba2,#f093fb,#f5576c,#4facfe);background-size:400% 400%;animation:gradientShift 15s ease infinite}
+    @keyframes gradientShift{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+    .container{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:25px;box-shadow:0 20px 60px rgba(0,0,0,.2);padding:30px;max-width:1200px;width:95%;position:relative}
+    h1{font-size:2.2rem;margin:0 0 10px;background:linear-gradient(135deg,#667eea,#764ba2,#f093fb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+    .subtitle{color:#4a5568;margin-top:6px}
+    .btn{background:linear-gradient(135deg,#667eea,#764ba2,#f093fb);color:#fff;border:0;padding:12px 24px;border-radius:50px;font-weight:700;cursor:pointer;margin:6px}
+    .btn.secondary{background:linear-gradient(135deg,#74b9ff,#0984e3)}
+    .btn.success{background:linear-gradient(135deg,#00b894,#00cec9)}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .screen{display:none;animation:fadeIn .4s ease} .screen.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    .journey-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:20px}
+    .step-card{background:#fff;border:2px solid #eee;border-radius:16px;padding:20px}
+    .domains-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+    .domain-card{background:#fff;border:2px solid #e9ecef;border-radius:16px;padding:22px;cursor:pointer}
+    .progress-indicator{height:8px;background:#eee;border-radius:10px;margin-top:10px;overflow:hidden}
+    .progress-bar{height:100%;background:linear-gradient(90deg,#00b894,#00cec9);width:0}
+    .requirement-notice{background:linear-gradient(135deg,#fd79a8,#fdcb6e);color:#fff;border-radius:12px;padding:12px;margin:12px 0}
+    .quiz-header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:16px;padding:20px;margin-bottom:16px}
+    .quiz-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+    .quiz-question{background:#fff;border-radius:12px;border-right:5px solid #667eea;padding:18px;margin-bottom:12px}
+    .quiz-options{display:grid;gap:10px}
+    .quiz-option{background:#fff;border:2px solid #e9ecef;border-radius:12px;padding:14px;cursor:pointer;position:relative}
+    .quiz-option.selected{border-color:#667eea;background:#f3f4ff}
+    .quiz-option.correct{border-color:#00b894;background:#eafff8}
+    .quiz-option.incorrect{border-color:#e17055;background:#fff1f1}
+    .leaderboard-content table{border-collapse:collapse;width:100%}
+    .leaderboard-content th,.leaderboard-content td{border:1px solid #eee;padding:10px;text-align:center}
+    .leaderboard-content th{background:#f0f4ff}
+    .rank-1 td{background:#fff3cd!important;font-weight:700;color:#856404}
+    .rank-2 td{background:#e2e6ea!important;font-weight:700;color:#495057}
+    .rank-3 td{background:#f7e0d3!important;font-weight:700;color:#583c27}
+    @media(max-width:768px){.container{padding:18px}}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="screen active" id="welcomeScreen">
-            <div class="welcome-screen">
-                <div class="welcome-icon">🎓</div>
-                <h1>بوصلة التميز الإشرافي</h1>
-                <p class="subtitle">رحلة تعليمية تفاعلية لإتقان معايير التقييم التربوي<br>
-                <span style="font-size: 0.9rem; color: #667eea; font-weight: 600; margin-top: 10px; display: inline-block;">فكرة وإعداد: أ. أحلام بنت علي الحمدانية</span></p>
-                
-                <div class="journey-steps">
-                    <div class="step-card">
-                        <div class="step-number">1</div>
-                        <div class="step-title">📚 تعلم المجالات</div>
-                        <div class="step-description">استكشف المجالات الخمسة وتعرف على معاييرها بالتفصيل مع أمثلة عملية شاملة</div>
-                    </div>
-                    
-                    <div class="step-card">
-                        <div class="step-number">2</div>
-                        <div class="step-title">🎯 اختبر معرفتك</div>
-                        <div class="step-description">تحدى نفسك في اختبار شامل مع تتبع الوقت والدقة (يتطلب الاطلاع على جميع المعايير)</div>
-                    </div>
-                    
-                    <div class="step-card">
-                        <div class="step-number">3</div>
-                        <div class="step-title">🏆 تنافس وتطور</div>
-                        <div class="step-description">قارن أداءك مع الآخرين في لوحة الصدارة وحقق أرقاماً قياسية جديدة</div>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 40px;">
-                    <button class="btn success" onclick="startLearningJourney()">ابدأ رحلة التعلم</button>
-                    <button class="btn secondary" onclick="showLeaderboard()">لوحة الصدارة</button>
-                </div>
-            </div>
+  <div class="container">
+    <!-- شاشة الترحيب -->
+    <div class="screen active" id="welcomeScreen">
+      <div class="welcome-screen" style="text-align:center">
+        <div style="font-size:4rem;margin-bottom:10px">🎓</div>
+        <h1>بوصلة التميز الإشرافي</h1>
+        <p class="subtitle">
+          رحلة تعليمية تفاعلية لإتقان معايير التقييم التربوي<br>
+          <span style="font-size:.9rem;color:#667eea;font-weight:700">فكرة وإعداد: أ. أحلام بنت علي الحمدانية</span>
+        </p>
+        <div class="journey-steps">
+          <div class="step-card"><div style="font-weight:800;margin-bottom:6px">📚 تعلم المجالات</div><div>استكشف المجالات الخمسة وتعرف على معاييرها بالتفصيل</div></div>
+          <div class="step-card"><div style="font-weight:800;margin-bottom:6px">🎯 اختبر معرفتك</div><div>اختبار شامل مع تتبع الوقت والدقة</div></div>
+          <div class="step-card"><div style="font-weight:800;margin-bottom:6px">🏆 تنافس وتطور</div><div>قارن أداءك مع الآخرين في لوحة الصدارة</div></div>
         </div>
-
-        <div class="screen" id="nameScreen">
-            <h2>مرحباً بك في بوصلة التميز الإشرافي! 👋</h2>
-            <p class="subtitle">أدخل اسمك لبدء رحلة التعلم</p>
-            
-            <div style="max-width: 400px; margin: 0 auto; text-align: right;">
-                <div style="margin-bottom: 25px;">
-                    <label style="display: block; font-size: 1.2rem; font-weight: 600; color: #2c3e50; margin-bottom: 10px;">
-                        اختر اسمك أو أدخل اسماً جديداً:
-                    </label>
-                    <select style="width: 100%; padding: 15px; font-size: 1.1rem; border: 2px solid #e9ecef; border-radius: 12px; background: #f8f9fa; text-align: right;" id="userSelect" onchange="handleUserSelection()">
-                        <option value="">-- اختر من القائمة --</option>
-                        <option value="عائشة السعيدية">عائشة السعيدية</option>
-                        <option value="أسماء الجابرية">أسماء الجابرية</option>
-                        <option value="مريم ال عبدالسلام">مريم ال عبدالسلام</option>
-                        <option value="رويدا الشيزاوية">رويدا الشيزاوية</option>
-                        <option value="منال القرية">منال القرية</option>
-                        <option value="أمنه القاسمية">أمنه القاسمية</option>
-                        <option value="ثريا حمد المعمرية">ثريا حمد المعمرية</option>
-                        <option value="منار">منار</option>
-                        <option value="بشرى المزروعية">بشرى المزروعية</option>
-                        <option value="كريمة ال عبدالسلام">كريمة ال عبدالسلام</option>
-                        <option value="مريم الزعابية">مريم الزعابية</option>
-                        <option value="أماني الشيدية">أماني الشيدية</option>
-                        <option value="أمل العجمية">أمل العجمية</option>
-                        <option value="نورة البريكية">نورة البريكية</option>
-                        <option value="شيخة البريكية">شيخة البريكية</option>
-                        <option value="مريم القايدية">مريم القايدية</option>
-                        <option value="شيخة المسنية">شيخة المسنية</option>
-                        <option value="وفاء السنانية">وفاء السنانية</option>
-                        <option value="فاطمة البادية">فاطمة البادية</option>
-                        <option value="فاطمة لغة عربية">فاطمة لغة عربية</option>
-                        <option value="ضنينة الفزارية">ضنينة الفزارية</option>
-                        <option value="سميرة النخيلية">سميرة النخيلية</option>
-                        <option value="أسماء المرزوقية">أسماء المرزوقية</option>
-                        <option value="أمل الكحالية">أمل الكحالية</option>
-                        <option value="حليمة الفزارية">حليمة الفزارية</option>
-                        <option value="ايمان البريكية">ايمان البريكية</option>
-                        <option value="حسناء المسعودية">حسناء المسعودية</option>
-                        <option value="رقية المقبالية">رقية المقبالية</option>
-                        <option value="رفيدة الفزارية">رفيدة الفزارية</option>
-                        <option value="custom">إدخال اسم جديد</option>
-                    </select>
-                </div>
-                
-                <div id="customNameGroup" style="display: none; margin-bottom: 25px;">
-                    <label style="display: block; font-size: 1.2rem; font-weight: 600; color: #2c3e50; margin-bottom: 10px;">
-                        أدخل اسمك:
-                    </label>
-                    <input type="text" style="width: 100%; padding: 15px; font-size: 1.1rem; border: 2px solid #e9ecef; border-radius: 12px; background: #f8f9fa; text-align: right;" id="customNameInput" placeholder="اكتب اسمك هنا...">
-                </div>
-                
-                <button class="btn" onclick="confirmName()">متابعة</button>
-            </div>
+        <div style="margin-top:20px">
+          <button class="btn success" onclick="startLearningJourney()">ابدأ رحلة التعلم</button>
+          <button class="btn secondary" onclick="showLeaderboard()">لوحة الصدارة</button>
         </div>
-
-        <div class="screen" id="domainsScreen">
-            <h2>المجالات الخمسة للزيارة الإشرافية</h2>
-            <p class="subtitle">استكشف كل مجال لفهم معاييره وتطبيقاته العملية - يجب الاطلاع على جميع المجالات قبل الاختبار</p>
-            
-            <div id="requirementNotice" class="requirement-notice" style="display: none;">
-                ⚠️ يجب الاطلاع على جميع المجالات الخمسة قبل البدء في الاختبار
-            </div>
-            
-            <div class="domains-grid">
-                <div class="domain-card domain-1" onclick="showDomainDetails(1)" id="domain-1">
-                    <div class="domain-icon">
-                        <svg width="80" height="80" viewBox="0 0 100 100" style="margin-bottom: 10px;">
-                            <defs>
-                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00b894;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#00cec9;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M20 25 L50 20 L80 25 L80 70 L50 65 L20 70 Z" fill="url(#grad1)" opacity="0.8"/>
-                            <path d="M50 20 L50 65" stroke="#2d3436" stroke-width="2"/>
-                            <line x1="25" y1="35" x2="45" y2="33" stroke="white" stroke-width="2"/>
-                            <line x1="25" y1="42" x2="45" y2="40" stroke="white" stroke-width="2"/>
-                            <line x1="55" y1="33" x2="75" y2="35" stroke="white" stroke-width="2"/>
-                            <line x1="55" y1="40" x2="75" y2="42" stroke="white" stroke-width="2"/>
-                            <polygon points="50,10 52,16 58,16 53,20 55,26 50,22 45,26 47,20 42,16 48,16" fill="#fdcb6e"/>
-                        </svg>
-                    </div>
-                    <div class="domain-title">الإنجاز الدراسي</div>
-                    <div class="domain-description">تقييم مستوى تحصيل الطلبة وتقدمهم الأكاديمي</div>
-                    <div class="criteria-count">3 معايير أساسية</div>
-                    <div class="progress-indicator">
-                        <div class="progress-bar" style="width: 0%" id="progress-1"></div>
-                    </div>
-                </div>
-                
-                <div class="domain-card domain-2" onclick="showDomainDetails(2)" id="domain-2">
-                    <div class="domain-icon">
-                        <svg width="80" height="80" viewBox="0 0 100 100" style="margin-bottom: 10px;">
-                            <defs>
-                                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#0984e3;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#74b9ff;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <ellipse cx="50" cy="85" rx="25" ry="8" fill="#00b894" opacity="0.3"/>
-                            <rect x="47" y="50" width="6" height="35" fill="#8b4513"/>
-                            <circle cx="50" cy="40" r="20" fill="url(#grad2)" opacity="0.8"/>
-                            <ellipse cx="35" cy="35" rx="8" ry="12" fill="#00b894" transform="rotate(-30 35 35)"/>
-                            <ellipse cx="65" cy="35" rx="8" ry="12" fill="#00b894" transform="rotate(30 65 35)"/>
-                            <ellipse cx="50" cy="25" rx="8" ry="12" fill="#00b894"/>
-                            <path d="M50 45 C45 40, 35 40, 35 50 C35 55, 50 65, 50 65 C50 65, 65 55, 65 50 C65 40, 55 40, 50 45 Z" fill="#e17055"/>
-                        </svg>
-                    </div>
-                    <div class="domain-title">النمو الشخصي</div>
-                    <div class="domain-description">تطوير شخصية الطلبة وقيمهم وسلوكياتهم</div>
-                    <div class="criteria-count">معيار واحد شامل</div>
-                    <div class="progress-indicator">
-                        <div class="progress-bar" style="width: 0%" id="progress-2"></div>
-                    </div>
-                </div>
-                
-                <div class="domain-card domain-3" onclick="showDomainDetails(3)" id="domain-3">
-                    <div class="domain-icon">
-                        <svg width="80" height="80" viewBox="0 0 100 100" style="margin-bottom: 10px;">
-                            <defs>
-                                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#fdcb6e;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#e17055;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect x="20" y="40" width="60" height="45" fill="url(#grad3)" rx="5"/>
-                            <polygon points="15,40 50,20 85,40" fill="#e17055"/>
-                            <rect x="30" y="50" width="12" height="12" fill="#74b9ff" rx="2"/>
-                            <rect x="58" y="50" width="12" height="12" fill="#74b9ff" rx="2"/>
-                            <rect x="30" y="68" width="12" height="12" fill="#74b9ff" rx="2"/>
-                            <rect x="58" y="68" width="12" height="12" fill="#74b9ff" rx="2"/>
-                            <rect x="44" y="65" width="12" height="20" fill="#8b4513" rx="2"/>
-                            <circle cx="52" cy="75" r="1" fill="#fdcb6e"/>
-                            <circle cx="80" cy="25" r="8" fill="#fdcb6e"/>
-                            <path d="M80 10 L80 15 M90 25 L85 25 M87 15 L84 18 M87 35 L84 32" stroke="#fdcb6e" stroke-width="2"/>
-                        </svg>
-                    </div>
-                    <div class="domain-title">مناخ المدرسة وبيئة التعلم</div>
-                    <div class="domain-description">جودة البيئة التعليمية وتخطيط المنهاج</div>
-                    <div class="criteria-count">معياران أساسيان</div>
-                    <div class="progress-indicator">
-                        <div class="progress-bar" style="width: 0%" id="progress-3"></div>
-                    </div>
-                </div>
-                
-                <div class="domain-card domain-4" onclick="showDomainDetails(4)" id="domain-4">
-                    <div class="domain-icon">
-                        <svg width="80" height="80" viewBox="0 0 100 100" style="margin-bottom: 10px;">
-                            <defs>
-                                <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#fd79a8;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#e84393;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="30" cy="30" r="12" fill="#ffeaa7"/>
-                            <rect x="25" y="42" width="10" height="20" fill="url(#grad4)" rx="2"/>
-                            <rect x="20" y="50" width="20" height="3" fill="url(#grad4)"/>
-                            <rect x="50" y="20" width="35" height="25" fill="#2d3436" rx="3"/>
-                            <rect x="52" y="22" width="31" height="21" fill="#636e72"/>
-                            <text x="67" y="35" fill="white" font-size="8" text-anchor="middle">2+2=4</text>
-                            <circle cx="25" cy="70" r="6" fill="#ffeaa7"/>
-                            <circle cx="45" cy="75" r="6" fill="#ffeaa7"/>
-                            <circle cx="65" cy="70" r="6" fill="#ffeaa7"/>
-                            <line x1="25" y1="65" x2="22" y2="58" stroke="#fd79a8" stroke-width="2"/>
-                            <line x1="65" y1="65" x2="68" y2="58" stroke="#fd79a8" stroke-width="2"/>
-                        </svg>
-                    </div>
-                    <div class="domain-title">التدريس والتقويم</div>
-                    <div class="domain-description">فعالية الممارسات التدريسية وأساليب التقويم</div>
-                    <div class="criteria-count">4 معايير متقدمة</div>
-                    <div class="progress-indicator">
-                        <div class="progress-bar" style="width: 0%" id="progress-4"></div>
-                    </div>
-                </div>
-                
-                <div class="domain-card domain-5" onclick="showDomainDetails(5)" id="domain-5">
-                    <div class="domain-icon">
-                        <svg width="80" height="80" viewBox="0 0 100 100" style="margin-bottom: 10px;">
-                            <defs>
-                                <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#a29bfe;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#6c5ce7;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <polygon points="30,35 35,25 40,30 45,20 50,30 55,20 60,30 65,25 70,35 65,40 35,40" fill="#fdcb6e"/>
-                            <circle cx="40" cy="32" r="2" fill="#e17055"/>
-                            <circle cx="50" cy="28" r="2" fill="#00b894"/>
-                            <circle cx="60" cy="32" r="2" fill="#0984e3"/>
-                            <circle cx="50" cy="50" r="15" fill="#ffeaa7"/>
-                            <rect x="42" y="65" width="16" height="25" fill="url(#grad5)" rx="3"/>
-                            <rect x="30" y="70" width="12" height="4" fill="url(#grad5)" rx="2"/>
-                            <rect x="58" y="70" width="12" height="4" fill="url(#grad5)" rx="2"/>
-                            <rect x="47" y="75" width="6" height="8" fill="#fdcb6e" rx="1"/>
-                            <circle cx="25" cy="85" r="4" fill="#ddd"/>
-                            <circle cx="75" cy="85" r="4" fill="#ddd"/>
-                        </svg>
-                    </div>
-                    <div class="domain-title">القيادة والإدارة والحوكمة</div>
-                    <div class="domain-description">قيادة التغيير وتطبيق السياسات والمبادرات</div>
-                    <div class="criteria-count">3 معايير قيادية</div>
-                    <div class="progress-indicator">
-                        <div class="progress-bar" style="width: 0%" id="progress-5"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="margin-top: 40px;">
-                <button class="btn secondary" onclick="showWelcomeScreen()">الصفحة الرئيسية</button>
-                <button class="btn success" onclick="startQuiz()" id="startQuizBtn" disabled>ابدأ الاختبار الآن!</button>
-            </div>
-        </div>
-
-        <div class="screen" id="domainDetailsScreen">
-            <div id="domainDetailsContent">
-                </div>
-        </div>
-
-        <div class="screen" id="quizScreen">
-            <div class="quiz-header">
-                <h2>🎯 اختبار بوصلة التميز الإشرافي</h2>
-                <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 10px;">⏰ لديك 3 دقائق لإكمال الاختبار</p>
-                <div class="quiz-stats">
-                    <div class="stat-item">
-                        <div class="stat-value" id="currentQuestionNum">1</div>
-                        <div class="stat-label">السؤال الحالي</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="totalQuestions">20</div>
-                        <div class="stat-label">إجمالي الأسئلة</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="currentScore">0</div>
-                        <div class="stat-label">النقاط</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="timeRemaining">03:00</div>
-                        <div class="stat-label">الوقت المتبقي</div>
-                    </div>
-                </div>
-                <div class="quiz-progress">
-                    <div class="quiz-progress-bar" id="quizProgressBar"></div>
-                </div>
-            </div>
-            
-            <div id="quizContent">
-                </div>
-        </div>
-
-        <div class="screen" id="resultsScreen">
-            <div class="results-container" id="resultsContent">
-                </div>
-        </div>
-
-        <div class="screen" id="leaderboardScreen">
-            <h2>🏆 لوحة الصدارة</h2>
-            <p class="subtitle">أفضل الإنجازات في بوصلة التميز الإشرافي</p>
-            
-            <div class="leaderboard-tabs">
-                <button class="tab-btn active" onclick="showLeaderboardFromSheets('bestScore')">🎯 الدقة</button>
-                <button class="tab-btn" onclick="showLeaderboardFromSheets('bestTime')">⚡ السرعة</button>
-            </div>
-            
-            <div class="leaderboard-content" id="leaderboardContent">
-                 <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                    <thead>
-                        <tr>
-                            <th style="background-color: #f0f4ff; border: 1px solid #eee; padding: 12px 8px;">الترتيب</th>
-                            <th style="background-color: #f0f4ff; border: 1px solid #eee; padding: 12px 8px;">الاسم</th>
-                            <th style="background-color: #f0f4ff; border: 1px solid #eee; padding: 12px 8px;">الدقة (%)</th>
-                            <th style="background-color: #f0f4ff; border: 1px solid #eee; padding: 12px 8px;">الوقت</th>
-                            <th style="background-color: #f0f4ff; border: 1px solid #eee; padding: 12px 8px;">المحاولات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboardBody">
-                        <tr><td colspan="5">جاري التحميل...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div style="margin-top: 30px;">
-                <button class="btn secondary" onclick="showWelcomeScreen()">الصفحة الرئيسية</button>
-                <button class="btn" onclick="startQuiz()">اختبار جديد</button>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <script>
-        // //////////////////////////////////////////////////////
-        // ⚠️ رابط Apps Script الجديد المدمج
-        // //////////////////////////////////////////////////////
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyyJT7X0M7YOck1nKiaZv54CFAuK44cr85Mcv5Besvv1xlJ9OoWT0BJHpHnDOLw2rM7/exec'; 
+    <!-- شاشة الاسم -->
+    <div class="screen" id="nameScreen">
+      <h2>مرحباً بك 👋</h2>
+      <p class="subtitle">اختر اسمك أو أدخل اسماً جديداً</p>
+      <div style="max-width:420px;margin:0 auto;text-align:right">
+        <select id="userSelect" style="width:100%;padding:12px;border:2px solid #e9ecef;border-radius:12px;margin-bottom:12px" onchange="handleUserSelection()">
+          <option value="">-- اختر من القائمة --</option>
+          <option value="عائشة السعيدية">عائشة السعيدية</option>
+          <option value="أسماء الجابرية">أسماء الجابرية</option>
+          <option value="مريم ال عبدالسلام">مريم ال عبدالسلام</option>
+          <option value="رويدا الشيزاوية">رويدا الشيزاوية</option>
+          <option value="custom">إدخال اسم جديد</option>
+        </select>
+        <div id="customNameGroup" style="display:none;margin-bottom:12px">
+          <input id="customNameInput" type="text" placeholder="اكتب اسمك هنا..." style="width:100%;padding:12px;border:2px solid #e9ecef;border-radius:12px">
+        </div>
+        <button class="btn" onclick="confirmName()">متابعة</button>
+      </div>
+    </div>
 
-        // //////////////////////////////////////////////////////
-        // بيانات اللعبة
-        // //////////////////////////////////////////////////////
-        const domains = {
-            1: {
-                title: "الإنجاز الدراسي",
-                icon: "📊",
-                description: "الأساليب المنفذة التي تعكس عمليات التدريس والتقويم المتابعة وتعزيز التقدم الذي يحرزه الطلبة، وبما يتقنونه من مفاهيم ومعارف ومهارات أساسية ومكتسبة، وما يحققونه من نمو وتطور في المهارات الداعمة للتعليم (كالقرائية والكتابية والحسابية والتقنية).",
-                criteria: [
-                    { id: 1, title: "التحصيل الدراسي", explanation: "مستوى تحصيل الطلبة في الأعمال الصفية وغير الصفية، ومدى اكتسابهم للمهارات الأساسية والمعارف والمفاهيم.", examples: ["في درس الكسور: جميع الطلبة نجحوا في تحويل الكسور العادية إلى عشرية وحل مسائل حياتية (تقسيم البيتزا، حساب المسافات)", "في درس التمثيل الضوئي: الطلبة فسروا العملية بكلماتهم الخاصة وربطوها بأهمية النباتات في البيئة العمانية", "في اختبار اللغة العربية: 95% من الطلبة حصلوا على درجات ممتازة في فهم النص وتحليل الشخصيات", "مشروع 'تراثنا العماني': جميع الطلبة سلموا مشاريعهم في الوقت المحدد بجودة عالية وإبداع واضح", "في درس الأنظمة البيئية: الطلبة ربطوا معلومات جديدة عن السلاسل الغذائية بما تعلموه سابقاً عن الكائنات الحية", "تفوق الطلبة في الاختبارات التشخيصية والتكوينية والختامية بنسب عالية", "إتقان الطلبة للمهارات الأساسية في القراءة والكتابة والحساب بطلاقة", "تطبيق الطلبة للمفاهيم النظرية في الأنشطة العملية والتجارب بنجاح", "قدرة الطلبة على تلخيص وتحليل المحتوى التعليمي بدقة ووضوح", "استخدام الطلبة للمصطلحات العلمية والأكاديمية بطريقة صحيحة ومناسبة", "إظهار الطلبة لمستوى عالٍ من الفهم والتفاعل في المناقشات الصفية", "تميز الطلبة في حل المسائل والتمارين المعقدة بطرق إبداعية", "قدرة الطلبة على تفسير النتائج والاستنتاجات بطريقة منطقية", "إظهار الطلبة لمهارات التفكير التحليلي في دراسة النصوص والمواد", "تطبيق الطلبة للمعرفة المكتسبة في حل مشكلات حياتية واقعية", "قدرة الطلبة على إنتاج أعمال إبداعية تعكس فهمهم العميق للمحتوى", "استخدام الطلبة لاستراتيجيات متنوعة لحل المشكلات والتحديات", "إظهار الطلبة لقدرة على التعلم الذاتي واكتشاف المعلومات الجديدة", "تطبيق الطلبة لمهارات البحث والاستقصاء في المشاريع الدراسية", "قدرة الطلبة على تقييم مصادر المعلومات والحكم على مصداقيتها"] },
-                    { id: 2, title: "التقدم الدراسي", explanation: "تقدم الطلبة دراسياً أثناء الحصة، بما فيهم الطلبة ذوي الإعاقة والاحتياجات التعليمية الخاصة.", examples: ["في حصة الرياضيات: بدأ الطلبة بصعوبة في ضرب الأعداد العشرية، وبنهاية الحصة حلوا 8 مسائل بثقة واستقلالية", "حصة اللغة الإنجليزية: طالب خجول بدأ بكلمة واحدة، وانتهى بتكوين جملة كاملة عن هوايته المفضلة", "في التجربة العلمية: الطلبة انتقلوا من مجرد المشاهدة إلى التنبؤ بالنتائج وتفسير الظواهر بأنفسهم", "حصة التاريخ: من عدم معرفة أسماء الحكام العمانيين إلى ربط إنجازاتهم بالتطور الحضاري الحالي", "طالب ذو صعوبات تعلم: تقدم من كتابة حرف واحد إلى كتابة كلمة كاملة بخط واضح خلال الحصة", "انتقال الطلبة من مستوى تعليمي إلى مستوى أعلى بوضوح وثقة", "تطوير مهارات الطلبة التدريجي عبر الأنشطة المتدرجة والمتسلسلة", "زيادة مستوى الثقة والاستقلالية في التعلم لدى جميع الطلبة", "تحسن واضح في جودة إجابات الطلبة ومشاركاتهم الصفية", "قدرة الطلبة على بناء المعرفة الجديدة على أساس التعلم السابق بفعالية", "تطور مهارات التفكير العليا لدى الطلبة تدريجياً وبشكل ملحوظ", "إظهار الطلبة لتحسن مستمر في الأداء العملي والتطبيقي", "تقدم الطلبة في استخدام المفردات والمصطلحات الجديدة بطلاقة", "تطور قدرة الطلبة على طرح أسئلة أكثر عمقاً وتعقيداً", "تحسن مهارات الطلبة في التعبير عن أفكارهم بوضوح ودقة", "زيادة قدرة الطلبة على ربط المفاهيم ببعضها البعض", "تطور مهارات الطلبة في العمل الجماعي والتعاوني", "تحسن قدرة الطلبة على تطبيق ما تعلموه في مواقف جديدة", "زيادة مستوى المشاركة والتفاعل الإيجابي للطلبة", "تطور قدرة الطلبة على التقييم الذاتي لتعلمهم وأدائهم"] },
-                    { id: 3, title: "مهارات التعلم", explanation: "تطبيق الطلبة لمهارات التعلم (الذاتي، التعاوني، الرقمي، التفكير العليا) وربطها بالواقع.", examples: ["في مشروع البيئة: الطلبة بحثوا ذاتياً، تعاونوا في جمع البيانات، استخدموا تطبيقات لتحليل التلوث، وقدموا حلولاً إبداعية", "حل مشكلة نقص المياه في المدرسة: الطلبة حللوا الأسباب، اقترحوا حلولاً متعددة، وقيموا فعالية كل حل بطريقة منطقية", "استخدام منصة 'نيربود' لإنشاء اختبارات تفاعلية، و'كانفا' لتصميم ملصقات، و'سكراتش' لبرمجة لعبة تعليمية", "مشروع جماعي عن التراث: توزيع الأدوار بعدالة، تبادل الأفكار، دعم الأعضاء الأضعف، وتقديم عمل متكامل", "طالبة تعلمت بنفسها استخدام برنامج جديد لتحرير الفيديو لتقديم مشروعها بطريقة مبتكرة", "استخدام مهارات التفكير الإبداعي في إنتاج أفكار جديدة ومبتكرة", "ربط التعلم بالحياة العملية والمواقف الواقعية بطريقة ذكية ومنطقية", "تطبيق مهارات البحث والاستقصاء العلمي بدقة ومنهجية", "استخدام مهارات التواصل الفعال في التعبير عن الأفكار بوضوح وإقناع", "تطبيق مهارات إدارة الوقت والتنظيم في التعلم بكفاءة عالية", "قدرة متميزة على تقييم مصادر المعلومات والتمييز بين الموثوق وغير الموثوق", "استخدام مهارات التفكير التحليلي في دراسة الظواهر والمشكلات بعمق", "تطبيق مهارات التعلم الرقمي واستخدام المنصات التعليمية بفعالية", "إظهار قدرة على التفكير الاستراتيجي والتخطيط للمهام التعليمية", "استخدام مهارات التفكير المنطقي في تحليل المعلومات والبيانات", "تطبيق مهارات حل المشكلات الإبداعي في المواقف التعليمية المختلفة", "قدرة على التعلم من الأخطاء وتطوير استراتيجيات تحسين الأداء", "استخدام مهارات التفكير النقدي في تقييم الأفكار والمعلومات", "تطبيق مهارات التعلم التشاركي والاستفادة من خبرات الآخرين", "إظهار قدرة على ربط المعرفة النظرية بالتطبيق العملي بإتقان"] }
-                ]
-            },
-            2: {
-                title: "النمو الشخصي",
-                icon: "🌱",
-                description: "تعزيز العلاقات الإيجابية التي يسودها الاحترام والتفاهم بين المعلم وطلبته، وكذلك تواصل الطلبة معاً بالاحترام المتبادل، وتقدير التباين فيما بينهم.",
-                criteria: [
-                    { id: 4, title: "القيم والسلوك", explanation: "تمسك الطلبة بالهوية العمانية والقيم الإنسانية، والاعتزاز بالهوية والانتماء.", examples: ["في اليوم الوطني: الطلبة ارتدوا الزي التقليدي بفخر، قدموا عروضاً عن إنجازات عمان، وعبروا عن حبهم للوطن بصدق", "طالب هندي ساعد زميله العماني في فهم الرياضيات، والعماني علمه كلمات عربية، في جو من الاحترام والتقدير المتبادل", "عند سماع النشيد الوطني: جميع الطلبة وقفوا باحترام، رددوا الكلمات بحماس، وأظهروا فخراً واضحاً بهويتهم العمانية", "طالبة من جنسية أخرى شاركت في مسابقة الشعر العربي، والطلبة العمانيون شجعوها وقدروا جهدها دون تمييز", "في الاختبار: طالب وجد ورقة إجابة زميله على الأرض فسلمها للمعلم دون النظر فيها، مطبقاً قيمة الأمانة", "إظهار روح المسؤولية العالية والالتزام الكامل بالقوانين والأنظمة", "التعبير عن الآراء بأدب رفيع واحترام كامل للآراء المختلفة", "المشاركة الإيجابية والفعالة في الأنشطة الوطنية والاجتماعية", "إظهار قيم التسامح والتعايش السلمي مع الآخرين في جميع المواقف", "الاعتزاز الواضح بالتراث العماني والمحافظة على العادات الأصيلة", "تطبيق قيم العمل الجماعي والتعاون البناء في جميع المشاريع", "إظهار الاحترام العميق للمعلم والزملاء والبيئة المدرسية", "التمسك الثابت بالقيم الأخلاقية في جميع المواقف التعليمية والحياتية", "إظهار قيم الإيثار ومساعدة الآخرين في المواقف المختلفة", "تطبيق مبادئ الحوار الحضاري والنقاش البناء مع الآخرين", "إظهار قيم الصبر والمثابرة في مواجهة التحديات التعليمية", "تطبيق قيم النزاهة والشفافية في جميع الأعمال والتكليفات", "إظهار روح القيادة الإيجابية والمبادرة في الأنشطة الجماعية", "تطبيق قيم احترام البيئة والمحافظة على الموارد الطبيعية", "إظهار قيم التواضع وتقبل النقد البناء من الآخرين"] }
-                ]
-            },
-            3: {
-                title: "مناخ المدرسة وبيئة التعلم",
-                icon: "🏫",
-                description: "الإطار الشامل الذي يوفره المجتمع المدرسي لضمان جودة العملية التعليمية وتلبية احتياجات جميع الطلبة، بحيث يشمل الاهتمام بتوفير بيئة تعليمية آمنة وداعمة.",
-                criteria: [
-                    { id: 5, title: "جودة بيئة التعلم", explanation: "متابعة جوانب الأمن والسلامة والنظافة في بيئة التعلم.", examples: ["يتابع المعلم جوانب الأمن والسلامة والنظافة في بيئة التعلم بصورة مستمرة ومتميزة وشاملة", "توفير بيئة تعليمية آمنة وصحية ومحفزة تدعم التعلم الفعال والإبداعي", "تنظيم الصف والمواد التعليمية بطريقة مثلى تعزز من جودة التعلم والتفاعل", "ضمان توفر الإضاءة الطبيعية والاصطناعية والتهوية المناسبة للتعلم الأمثل", "تطبيق إجراءات السلامة والأمان الشاملة في جميع الأنشطة التعليمية والعملية", "المحافظة على نظافة وترتيب البيئة الصفية باستمرار وبمعايير عالية", "توفير مساحات مناسبة ومرنة لحركة الطلبة والأنشطة التعليمية المختلفة", "استخدام الألوان والديكورات التربوية التي تحفز على التعلم والإبداع", "توفير بيئة هادئة ومركزة خالية من المشتتات والضوضاء المزعجة", "ضمان سهولة الوصول الآمن للمواد والأدوات التعليمية لجميع الطلبة", "تطبيق معايير الصحة والسلامة المهنية العالية في المختبرات والورش", "توفير بيئة تعليمية شاملة ومتاحة تراعي احتياجات جميع الطلبة بما فيهم ذوي الاحتياجات الخاصة", "تهيئة مناخ صفي إيجابي يشجع على التعلم والمشاركة الفعالة", "توفير أثاث مدرسي مناسب ومريح يدعم عملية التعلم", "ضمان توفر التقنيات والأدوات التعليمية الحديثة والآمنة", "تطبيق معايير النظافة والتعقيم خاصة في الظروف الصحية الاستثنائية", "توفير مساحات للعرض والتعلم التفاعلي داخل الصف", "ضمان توفر مصادر التعلم المتنوعة والمناسبة لجميع المستويات", "تطبيق إجراءات الطوارئ والإخلاء بطريقة واضحة ومدروسة", "توفير بيئة تعليمية تحترم الخصوصية وتعزز الثقة بالنفس"] },
-                    { id: 6, title: "تخطيط المنهاج الدراسي", explanation: "تخطيط المنهاج الدراسي لتحقيق نواتج التعلم، وتوافق التخطيط مع الخطة الفصلية، والتنوع في الأهداف والاستراتيجيات.", examples: ["يخطط المعلم المنهاج الدراسي بصورة شاملة ومتميزة لتحقيق نواتج التعلم", "التوافق التام بين التخطيط والخطة الفصلية مع تنوع في الأهداف والاستراتيجيات", "ربط واضح ومحكم بين جميع عناصر التخطيط والتنفيذ والتقويم", "تحديد أهداف تعليمية واضحة وقابلة للقياس والتحقيق", "تنويع الاستراتيجيات التدريسية لتناسب أنماط التعلم المختلفة", "تخطيط الأنشطة التعليمية بما يحقق التكامل بين المواد", "مراعاة التسلسل المنطقي في عرض المحتوى التعليمي", "تخطيط أساليب التقويم المتنوعة والمناسبة لكل هدف", "تحديد المصادر والوسائل التعليمية المطلوبة مسبقاً", "مراعاة الفروق الفردية في التخطيط والتنفيذ", "ربط المحتوى التعليمي بالحياة العملية والواقع المحلي", "تخطيط الأنشطة الإثرائية والعلاجية حسب احتياجات الطلبة"] }
-                ]
-            },
-            4: {
-                title: "التدريس والتقويم",
-                icon: "🎓",
-                description: "الإجراءات التدريسية التي ينفذها المعلم لتحقيق ما هو متوقع من الطالب اكتسابه من معارف ومهارات وخبرات مختلفة.",
-                criteria: [
-                    { id: 7, title: "إدارة الصف", explanation: "فاعلية الإدارة الصفية (إدارة زمن التعلم، إدارة سلوك الطلبة، إثارة الدافعية).", examples: ["يدير المعلم الصف بفاعلية عالية (زمن التعلم، سلوك الطلبة، إثارة الدافعية)", "استغلال أمثل لوقت التعلم مع إشراك جميع أو معظم الطلبة بفاعلية", "تطبيق استراتيجيات متنوعة لإدارة السلوك وتحفيز المشاركة الإيجابية", "إنشاء بيئة صفية منظمة تشجع على التعلم والمشاركة", "استخدام تقنيات فعالة لجذب انتباه الطلبة والحفاظ عليه", "تطبيق قواعد صفية واضحة ومتفق عليها مع الطلبة", "التعامل مع السلوكيات غير المرغوبة بطريقة إيجابية وبناءة", "توزيع الأدوار والمسؤوليات على الطلبة بعدالة", "استخدام أساليب التعزيز الإيجابي لتحفيز الطلبة", "إدارة الانتقالات بين الأنشطة بسلاسة وفعالية", "تنظيم المجموعات والأنشطة الصفية بطريقة مثلى", "الحفاظ على بيئة تعليمية هادئة ومحفزة للتعلم"] },
-                    { id: 8, title: "فاعلية التدريس", explanation: "توظيف استراتيجيات التدريس الفعالة، بحيث يستفيد منها جميع أو معظم الطلبة في تعميق تعلمهم.", examples: ["يوظف المعلم استراتيجيات التدريس الفعالة بحيث يستفيد منها جميع أو معظم الطلبة في تعميق تعلمهم", "تنويع الاستراتيجيات التدريسية لتلبية أنماط التعلم المختلفة", "ربط فعال بين المحتوى التعليمي وخبرات الطلبة الحياتية", "استخدام استراتيجيات التعلم النشط والتفاعلي بفعالية", "تطبيق التعلم القائم على حل المشكلات والاستقصاء", "استخدام القصص والأمثلة الواقعية لتوضيح المفاهيم", "تطبيق استراتيجيات التعلم التعاوني والتشاركي", "استخدام أساليب العصف الذهني وتوليد الأفكار", "تطبيق استراتيجيات التفكير الناقد والإبداعي", "استخدام المحاكاة والألعاب التعليمية المناسبة", "تطبيق التعلم المتمايز لمراعاة الفروق الفردية", "استخدام استراتيجيات التقويم التكويني أثناء التدريس"] },
-                    { id: 9, title: "تفعيل المصادر والموارد التعليمية", explanation: "تفعيل التقنيات الرقمية (المنصات، السبورات التفاعلية، الذكاء الاصطناعي) والمختبرات والمصادر الأخرى.", examples: ["يفعل المعلم التقنيات الرقمية والمختبرات والمصادر الأخرى بصورة متميزة", "الاستخدام الإبداعي للتقنيات المتاحة لتعزيز التعلم", "توظيف متقدم للذكاء الاصطناعي والمنصات الرقمية في التدريس", "استخدام السبورات التفاعلية والعروض التقديمية بفعالية", "توظيف المختبرات والأدوات العملية في التعلم التطبيقي", "استخدام الفيديوهات التعليمية والمحتوى الرقمي المتنوع", "تفعيل المكتبة الرقمية والمصادر الإلكترونية", "استخدام تطبيقات الهواتف الذكية في التعلم", "توظيف الواقع المعزز والافتراضي في التدريس", "استخدام منصات التعلم الإلكتروني والفصول الافتراضية", "تفعيل أدوات التقييم الرقمي والتفاعلي", "استخدام المصادر المجتمعية والبيئية في التعلم"] },
-                    { id: 10, title: "التقويم ومساندة التقدم", explanation: "توظيف أساليب تقويم متنوعة تراعي التمايز بين الطلبة.", examples: ["يوظف المعلم أساليب تقويم متنوعة تراعي التمايز بين الطلبة بصورة فعالة", "تقديم تغذية راجعة فورية وبناءة تدعم تقدم جميع الطلبة", "استخدام نتائج التقويم لتطوير وتحسين عمليات التعلم", "تطبيق التقويم التشخيصي لتحديد نقاط القوة والضعف", "استخدام التقويم التكويني المستمر أثناء التعلم", "تطبيق التقويم الختامي الشامل لقياس تحقق الأهداف", "استخدام ملفات الإنجاز (البورتفوليو) لتوثيق التقدم", "تطبيق التقويم الذاتي وتقويم الأقران", "استخدام أساليب التقويم الأدائي والعملي", "تطبيق التقويم القائم على المشاريع والمهام الحقيقية", "استخدام أدوات التقويم الرقمية والتفاعلية", "تقديم خطط علاجية وإثرائية بناءً على نتائج التقويم"] }
-                ]
-            },
-            5: {
-                title: "القيادة والإدارة والحوكمة",
-                icon: "👑",
-                description: "المشاركات والأنشطة المهنية التي تمكن المعلم من رفع كفاءته، وكذلك إبراز دوره كفرد متفاعل مع زملائه المعلمين وأنشطة المدرسة المختلفة.",
-                criteria: [
-                    { id: 11, title: "قيادة التغيير", explanation: "توظيف التقويم الذاتي والتطوير المهني في تحسين الأداء.", examples: ["المعلم يجري تقويماً لأدائه ذاتياً ويوظفه في تحسين تعلم جميع أو معظم الطلبة", "المشاركة الفاعلة في ورش العمل والتدريب لتطوير المهارات", "تطبيق ما تم تعلمه من التطوير المهني في الممارسة الصفية", "إجراء بحوث إجرائية لحل المشكلات التعليمية", "تبادل الخبرات والممارسات الجيدة مع الزملاء", "قيادة مجتمعات التعلم المهنية في المدرسة", "تطوير أدوات ومواد تعليمية مبتكرة", "المبادرة في تطبيق الاتجاهات التربوية الحديثة", "تقديم الاستشارة والدعم للمعلمين الجدد", "المشاركة في لجان التطوير والتحسين المدرسي", "تطوير مهارات القيادة والتأثير الإيجابي", "تطبيق مبادئ التعلم مدى الحياة والتطوير المستمر"] },
-                    { id: 12, title: "الحوكمة", explanation: "تطبيق السياسات والأنظمة واللوائح المنظمة للعمل.", examples: ["المعلم يطبق السياسات والأنظمة واللوائح المنظمة للعمل بصورة فعالة", "الالتزام بالمعايير المهنية والأخلاقية في جميع جوانب العمل", "تطبيق إجراءات التقويم والتوثيق وفقاً للأنظمة المعتمدة", "الالتزام بمواعيد العمل والحضور والانصراف", "تطبيق سياسات الأمن والسلامة في البيئة المدرسية", "الالتزام بأخلاقيات المهنة والسلوك المهني", "تطبيق إجراءات حماية الطلبة ورعايتهم", "الالتزام بسرية المعلومات والبيانات الطلابية", "تطبيق سياسات التقويم والامتحانات بدقة", "الالتزام بالتطوير المهني المستمر المطلوب", "تطبيق معايير الجودة في جميع الممارسات التعليمية", "الالتزام بالشفافية والمساءلة في الأداء المهني"] },
-                    { id: 13, title: "تنفيذ مبادرات وأنشطة تربوية", explanation: "تنفيذ مبادرات وأنشطة تربوية ذات أثر في المجتمع المدرسي والمحلي.", examples: ["تقديم مبادرات فعالة لدعم وتحسين العملية التعليمية", "التميز بالتفاعل الإيجابي في جميع الأنشطة التربوية والمجتمع المحلي", "قيادة مشاريع تطويرية تخدم المجتمع المدرسي والمحلي", "تنظيم فعاليات تعليمية وثقافية متنوعة", "المشاركة في الأنشطة اللاصفية والنوادي العلمية", "تطوير برامج إرشادية ودعم نفسي للطلبة", "تنفيذ مشاريع خدمة المجتمع والعمل التطوعي", "تنظيم رحلات تعليمية وزيارات ميدانية هادفة", "المشاركة في المعارض والمسابقات التعليمية", "تطوير شراكات مع المؤسسات المجتمعية", "تنفيذ برامج توعوية في مختلف المجالات", "قيادة مبادرات الاستدامة والحفاظ على البيئة"] }
-                ]
-            }
-        };
+    <!-- شاشة المجالات -->
+    <div class="screen" id="domainsScreen">
+      <h2>المجالات الخمسة للزيارة الإشرافية</h2>
+      <p class="subtitle">يجب الاطلاع على جميع المجالات قبل البدء في الاختبار</p>
+      <div id="requirementNotice" class="requirement-notice" style="display:none">⚠️ يجب الاطلاع على جميع المجالات الخمسة قبل البدء في الاختبار</div>
+      <div class="domains-grid">
+        <div class="domain-card" id="domain-1" onclick="showDomainDetails(1)">
+          <div style="font-weight:800;margin-bottom:6px">الإنجاز الدراسي</div>
+          <div>تقييم مستوى تحصيل الطلبة وتقدمهم الأكاديمي</div>
+          <div class="progress-indicator"><div id="progress-1" class="progress-bar"></div></div>
+        </div>
+        <div class="domain-card" id="domain-2" onclick="showDomainDetails(2)">
+          <div style="font-weight:800;margin-bottom:6px">النمو الشخصي</div>
+          <div>تطوير شخصية الطلبة وقيمهم وسلوكياتهم</div>
+          <div class="progress-indicator"><div id="progress-2" class="progress-bar"></div></div>
+        </div>
+        <div class="domain-card" id="domain-3" onclick="showDomainDetails(3)">
+          <div style="font-weight:800;margin-bottom:6px">مناخ المدرسة وبيئة التعلم</div>
+          <div>جودة البيئة التعليمية وتخطيط المنهاج</div>
+          <div class="progress-indicator"><div id="progress-3" class="progress-bar"></div></div>
+        </div>
+        <div class="domain-card" id="domain-4" onclick="showDomainDetails(4)">
+          <div style="font-weight:800;margin-bottom:6px">التدريس والتقويم</div>
+          <div>فعالية الممارسات التدريسية وأساليب التقويم</div>
+          <div class="progress-indicator"><div id="progress-4" class="progress-bar"></div></div>
+        </div>
+        <div class="domain-card" id="domain-5" onclick="showDomainDetails(5)">
+          <div style="font-weight:800;margin-bottom:6px">القيادة والإدارة والحوكمة</div>
+          <div>قيادة التغيير وتطبيق السياسات والمبادرات</div>
+          <div class="progress-indicator"><div id="progress-5" class="progress-bar"></div></div>
+        </div>
+      </div>
+      <div style="margin-top:20px">
+        <button class="btn secondary" onclick="showWelcomeScreen()">الصفحة الرئيسية</button>
+        <button class="btn success" id="startQuizBtn" onclick="startQuiz()" disabled>ابدأ الاختبار الآن!</button>
+      </div>
+    </div>
 
-        const quizQuestions = [
-            { question: "في حصة رياضيات عن الكسور، بدأ المعلم بسؤال الطلبة عن تقسيم البيتزا، ثم استخدم قطع الكسور الملموسة، وانتهى بحل مسائل رقمية. جميع الطلبة شاركوا وحلوا المسائل بنجاح. أي معيار يحصل على تقدير متميز؟", options: [ "التحصيل الدراسي", "فاعلية التدريس", "تفعيل المصادر والموارد التعليمية", "إدارة الصف" ], correct: 0, explanation: "نجاح جميع الطلبة في اكتساب مفهوم الكسور وحل المسائل يدل على تحصيل دراسي متميز، حيث اكتسبوا المهارات والمفاهيم بصورة متميزة." },
-            { question: "معلمة لغة عربية في درس 'الوصف'، طلبت من الطلبة وصف زميل لهم دون ذكر اسمه، ثم تخمين من هو. لاحظت أن طالباً خجولاً بدأ يشارك بثقة، وطالبة كانت تكتب كلمات بسيطة أصبحت تستخدم صفات متنوعة. ما المعيار الذي يتم تقييمه هنا؟", options: [ "التحصيل الدراسي", "التقدم الدراسي", "مهارات التعلم", "القيم والسلوك" ], correct: 1, explanation: "التحسن الواضح في أداء الطلبة من بداية النشاط (الخجل، الكتابة البسيطة) إلى نهايته (المشاركة بثقة، استخدام صفات متنوعة) يقيم في معيار التقدم الدراسي." },
-            { question: "معلم علوم في درس 'الجهاز التنفسي' استخدم تطبيق الواقع المعزز لإظهار الرئتين ثلاثياً، وطلب من الطلبة تسجيل أنفاسهم بتطبيق على الهاتف، ثم ربط ذلك بأهمية الرياضة. الطلبة تفاعلوا بحماس وطرحوا أسئلة عميقة. للحصول على تقدير متميز، ما الذي يجب ملاحظته؟", options: [ "استخدام التقنية فقط", "تفاعل الطلبة وطرح أسئلة عميقة مع الاستخدام الإبداعي للتقنية", "ربط الدرس بالحياة العملية فقط", "استخدام الهاتف في التعلم" ], correct: 1, explanation: "للحصول على تقدير متميز في 'تفعيل المصادر والموارد التعليمية'، يجب أن يكون الاستخدام إبداعياً ومؤثراً، مع تفاعل عميق من الطلبة وطرح أسئلة تدل على فهم متقدم." },
-            { question: "في حصة تاريخ، بدأ طالبان بالحديث أثناء الشرح. المعلم توقف، نظر إليهما بهدوء، وقال: 'أحمد وسارة، أرى أن لديكما شيء مهم تودان مشاركته مع الصف؟' ابتسم الطالبان واعتذرا وانتبها. ما تقييم هذا الأسلوب؟", options: [ "متميز - تعامل إيجابي وذكي مع السلوك", "جيد - حل المشكلة لكن بطريقة تقليدية", "ملائم - توقف الإزعاج فقط", "غير ملائم - لم يعالج السلوك بحزم" ], correct: 0, explanation: "هذا أسلوب متميز في إدارة الصف لأنه: 1) لم يحرج الطلبة 2) استخدم الفكاهة الإيجابية 3) حول الانتباه للدرس 4) حافظ على العلاقة الإيجابية مع الطلبة." },
-            { question: "في حصة التربية الإسلامية عن 'التسامح'، طلب المعلم من الطلبة مشاركة قصص من التراث العماني. طالب هندي شارك قصة عن جده الذي وجد الترحيب في عمان، وطالبة عمانية ربطت ذلك بقيم الإسلام. جميع الطلبة استمعوا باحترام وطرحوا أسئلة إيجابية. ما المعيار المتميز هنا؟", options: [ "التحصيل الدراسي فقط", "القيم والسلوك - تطبيق عملي للتسامح والهوية العمانية", "فاعلية التدريس فقط", "مهارات التعلم فقط" ], correct: 1, explanation: "هذا مثال متميز على معيار 'القيم والسلوك' حيث طبق الطلبة قيم التسامح عملياً، وأظهروا اعتزازاً بالهوية العمانية، واحتراماً للتنوع الثقافي." },
-            { question: "معلمة رياضيات في درس 'المعادلات'، بدأت بتقييم سريع (3 أسئلة شفهية)، ثم قسمت الطلبة حسب النتائج: مجموعة للتعزيز، مجموعة للتطبيق العادي، مجموعة للإثراء. أثناء العمل، تنقلت بينهم وقدمت تغذية راجعة فورية. في النهاية، طلبت من كل مجموعة تقييم تعلمها. ما المعيار المتميز؟", options: [ "إدارة الصف فقط", "التقويم ومساندة التقدم - تقويم متنوع وتغذية راجعة فورية", "فاعلية التدريس فقط", "تخطيط المنهاج فقط" ], correct: 1, explanation: "هذا مثال متميز على 'التقويم ومساندة التقدم' لأنه شمل: التقويم التشخيصي، التقويم التكويني، التغذية الراجعة الفورية، التقويم الذاتي، والتمايز في التعلم." },
-            { question: "معلم لاحظ أن طلبته يواجهون صعوبة في الكتابة الإبداعية. بحث في الإنترنت، حضر ورشة تدريبية، جرب استراتيجية 'خرائط القصة'، وثق النتائج، وشاركها مع زملائه في اجتماع القسم. تحسن أداء طلبته بوضوح. ما المعيار المتميز؟", options: [ "فاعلية التدريس فقط", "قيادة التغيير - تطوير ذاتي وتطبيق ومشاركة الخبرات", "التقويم ومساندة التقدم فقط", "تنفيذ مبادرات تربوية فقط" ], correct: 1, explanation: "هذا مثال متميز على 'قيادة التغيير' لأنه شمل: التقويم الذاتي، التطوير المهني، تطبيق ما تعلم، توثيق النتائج، ومشاركة الخبرات مع الزملاء." },
-            { question: "معلمة علوم خططت وحدة 'الماء' بحيث ربطتها بالرياضيات (حساب كمية الاستهلاك)، واللغة العربية (كتابة تقرير عن ترشيد المياه)، والجغرافيا (مصادر المياه في عمان). وضعت أهدافاً واضحة لكل درس، ونوعت الاستراتيجيات، وحددت أدوات التقويم مسبقاً. ما التقدير المناسب؟", options: [ "جيد - تخطيط عادي", "متميز - تخطيط شامل ومتكامل", "ملائم - تخطيط أساسي", "غير ملائم - تخطيط معقد" ], correct: 1, explanation: "هذا تخطيط متميز لأنه حقق: التكامل بين المواد، الربط بالواقع المحلي، أهداف واضحة، تنوع في الاستراتيجيات، وتخطيط مسبق للتقويم." },
-            { question: "إذا كان 'يكتسب عدد نادر من الطلبة المهارات الأساسية بصورة محدودة جداً/نادرة'، فما هو تقدير الأداء المناسب؟", options: [ "متميز (1)", "جيد (2)", "ملائم (3)", "يحتاج إلى تدخل (5)" ], correct: 3, explanation: "عندما يكتسب عدد نادر من الطلبة المهارات بصورة محدودة جداً، فهذا يعني أن الوضع يحتاج إلى تدخل عاجل (تقدير 5)." },
-            { question: "أي مجال يهتم بتقييم مستوى تحصيل الطلبة وتقدمهم في المواد الدراسية؟", options: [ "الإنجاز الدراسي", "النمو الشخصي", "التدريس والتقويم", "القيادة والإدارة والحوكمة" ], correct: 0, explanation: "مجال الإنجاز الدراسي يركز على تقييم مستوى تحصيل الطلبة وتقدمهم الأكاديمي في المواد الدراسية المختلفة." },
-            { question: "إذا كان 'يحقق جميع الطلبة نواتج التعلم المتوقعة ويتجاوزونها'، فما التقدير المناسب؟", options: [ "متميز (1)", "جيد (2)", "ملائم (3)", "غير ملائم (4)" ], correct: 0, explanation: "عندما يحقق جميع الطلبة نواتج التعلم المتوقعة ويتجاوزونها، فهذا أداء متميز يستحق التقدير الأعلى (1)." },
-            { question: "البند الخاص بـ 'القيم والسلوك' ينتمي إلى أي مجال؟", options: [ "الإنجاز الدراسي", "النمو الشخصي", "مناخ المدرسة وبيئة التعلم", "التدريس والتقويم" ], correct: 1, explanation: "بند القيم والسلوك ينتمي إلى مجال النمو الشخصي الذي يركز على تطوير شخصية الطلبة وقيمهم وسلوكياتهم." },
-            { question: "معلم تربية رياضية أطلق مبادرة 'مدرستي صحية' شملت: تدريب الطلبة على الإسعافات الأولية، تنظيم يوم رياضي للأسر، إنشاء حديقة مدرسية، والتعاون مع المركز الصحي لفحوصات دورية. شارك 90% من الطلبة والأسر، وتبنت مدارس أخرى المبادرة. ما التقييم؟", options: [ "جيد - مبادرة محلية فقط", "متميز - مبادرة شاملة ومؤثرة في المجتمع", "ملائم - نشاط عادي", "غير ملائم - خارج نطاق التخصص" ], correct: 1, explanation: "هذا مثال متميز على 'تنفيذ مبادرات وأنشطة تربوية' لأنه: شامل، مؤثر في المجتمع، حقق مشاركة واسعة، وانتشر لمدارس أخرى." },
-            { question: "في حصة جغرافيا عن 'التصحر'، طلبت المعلمة من الطلبة البحث في مصادر متعددة، تحليل البيانات، اقتراح حلول، وتقييم فعالية كل حل. طالب استخدم جوجل إيرث لمقارنة صور الأقمار الصناعية، وآخر أجرى مقابلة مع مزارع، وثالث صمم تطبيقاً بسيطاً لحساب استهلاك المياه. ما المعيار المتميز؟", options: [ "التحصيل الدراسي فقط", "مهارات التعلم - تطبيق متقدم للتفكير النقدي والرقمي والبحثي", "فاعلية التدريس فقط", "تفعيل المصادر فقط" ], correct: 1, explanation: "هذا مثال متميز على 'مهارات التعلم' لأن الطلبة طبقوا: مهارات البحث، التفكير النقدي، التعلم الرقمي، الإبداع، وربط التعلم بالواقع." },
-            { question: "في مختبر الكيمياء، لاحظ المشرف أن المعلم: وضع تعليمات السلامة بوضوح، تأكد من ارتداء الطلبة للنظارات الواقية، نظم المواد بطريقة آمنة، وفر إضاءة مناسبة، ونظف المختبر مع الطلبة بعد التجربة. كما علق لوحات تحفيزية عن العلماء المسلمين. ما التقييم؟", options: [ "جيد - اهتمام بالسلامة فقط", "متميز - بيئة تعلم آمنة ومحفزة وشاملة", "ملائم - تطبيق أساسي للسلامة", "غير ملائم - إجراءات معقدة" ], correct: 1, explanation: "هذا مثال متميز على 'جودة بيئة التعلم' لأنه شمل: السلامة، النظافة، التنظيم، الإضاءة المناسبة، والتحفيز التربوي." },
-            { question: "معلم يلتزم بمواعيد الحضور، يطبق سياسة التقويم بدقة، يحافظ على سرية درجات الطلبة، يشارك في التطوير المهني المطلوب، ويوثق أعماله وفق النماذج المعتمدة. كما يتعامل مع الطلبة بأخلاقيات المهنة العالية. ما المعيار المقيم؟", options: [ "قيادة التغيير", "الحوكمة - تطبيق شامل للسياسات والأخلاقيات المهنية", "تنفيذ مبادرات تربوية", "إدارة الصف" ], correct: 1, explanation: "هذا مثال شامل على معيار 'الحوكمة' لأنه يشمل: الالتزام بالأنظمة، تطبيق السياسات، الأخلاقيات المهنية، والشفافية في العمل." },
-            { question: "إذا كان 'يحقق حوالي نصف الطلبة نواتج التعلم المتوقعة'، فما التقدير المناسب؟", options: [ "جيد (2)", "ملائم (3)", "غير ملائم (4)", "يحتاج إلى تدخل (5)" ], correct: 1, explanation: "عندما يحقق حوالي نصف الطلبة نواتج التعلم المتوقعة، فهذا أداء ملائم يستحق التقدير (3)." },
-            { question: "أي مجال يتضمن 'قيادة التغيير' و'الحوكمة'؟", options: [ "التدريس والتقويم", "مناخ المدرسة وبيئة التعلم", "القيادة والإدارة والحوكمة", "النمو الشخصي" ], correct: 2, explanation: "مجال القيادة والإدارة والحوكمة يتضمن قيادة التغيير والحوكمة وتنفيذ المبادرات التربوية." },
-            { question: "البند الخاص بـ 'مهارات التعلم' ينتمي إلى أي مجال؟", options: [ "الإنجاز الدراسي", "النمو الشخصي", "التدريس والتقويم", "مناخ المدرسة وبيئة التعلم" ], correct: 0, explanation: "بند مهارات التعلم ينتمي إلى مجال الإنجاز الدراسي الذي يقيم قدرة الطلبة على التعلم والتحصيل." },
-            { question: "أي مجال يركز على 'جودة بيئة التعلم'؟", options: [ "الإنجاز الدراسي", "النمو الشخصي", "مناخ المدرسة وبيئة التعلم", "التدريس والتقويم" ], correct: 2, explanation: "مجال مناخ المدرسة وبيئة التعلم يركز على جودة البيئة التعليمية وتوفير مناخ مناسب للتعلم." },
-            { question: "البند الخاص بـ 'التقويم ومساندة التقدم' ينتمي إلى أي مجال؟", options: [ "الإنجاز الدراسي", "التدريس والتقويم", "مناخ المدرسة وبيئة التعلم", "القيادة والإدارة والحوكمة" ], correct: 1, explanation: "بند التقويم ومساندة التقدم ينتمي إلى مجال التدريس والتقويم الذي يركز على أساليب التقييم ودعم تقدم الطلبة." },
-            { question: "أي مجال يتضمن 'تنفيذ مبادرات وأنشطة تربوية'؟", options: [ "النمو الشخصي", "مناخ المدرسة وبيئة التعلم", "التدريس والتقويم", "القيادة والإدارة والحوكمة" ], correct: 3, explanation: "مجال القيادة والإدارة والحوكمة يتضمن تنفيذ المبادرات والأنشطة التربوية كجزء من القيادة التعليمية." },
-            { question: "معلم يستخدم التقنيات الرقمية والمختبرات بطريقة إبداعية لتعزيز التعلم. هذا يندرج تحت أي معيار؟", options: [ "فاعلية التدريس", "تفعيل المصادر والموارد التعليمية", "إدارة الصف", "التقويم ومساندة التقدم" ], correct: 1, explanation: "استخدام التقنيات الرقمية والمختبرات بطريقة إبداعية يندرج تحت معيار 'تفعيل المصادر والموارد التعليمية'." },
-            { question: "طلبة يظهرون احتراماً متبادلاً ويتمسكون بالهوية العمانية والقيم الإنسانية. هذا يقيم في أي مجال؟", options: [ "الإنجاز الدراسي", "النمو الشخصي", "التدريس والتقويم", "القيادة والإدارة والحوكمة" ], correct: 1, explanation: "إظهار الاحترام المتبادل والتمسك بالهوية العمانية والقيم الإنسانية يقيم في مجال النمو الشخصي." },
-            { question: "معلم يجري تقويماً ذاتياً لأدائه ويشارك في التطوير المهني. هذا يندرج تحت أي معيار؟", options: [ "قيادة التغيير", "الحوكمة", "تنفيذ مبادرات وأنشطة تربوية", "فاعلية التدريس" ], correct: 0, explanation: "إجراء التقويم الذاتي والمشاركة في التطوير المهني يندرج تحت معيار 'قيادة التغيير'." },
-            { question: "في حصة رياضيات، لاحظ المشرف أن جميع الطلبة يشاركون بفعالية ويحلون المسائل بطرق إبداعية متنوعة. ما التقدير المناسب لمعيار 'مهارات التعلم'؟", options: [ "متميز (1)", "جيد (2)", "ملائم (3)", "غير ملائم (4)" ], correct: 0, explanation: "مشاركة جميع الطلبة بفعالية وحل المسائل بطرق إبداعية متنوعة يدل على تطبيق متميز لمهارات التعلم." },
-            { question: "معلم يطبق السياسات والأنظمة بدقة ويلتزم بالمعايير المهنية في جميع ممارساته. هذا يقيم تحت أي معيار؟", options: [ "قيادة التغيير", "الحوكمة", "تنفيذ مبادرات وأنشطة تربوية", "إدارة الصف" ], correct: 1, explanation: "تطبيق السياسات والأنظمة والالتزام بالمعايير المهنية يقيم تحت معيار 'الحوكمة'." },
-            { question: "معلم يستخدم استراتيجيات التعلم النشط والتفاعلي ويطبق التعلم القائم على حل المشكلات. أي معيار يتم تقييمه؟", options: [ "إدارة الصف", "فاعلية التدريس", "تفعيل المصادر والموارد التعليمية", "التقويم ومساندة التقدم" ], correct: 1, explanation: "استخدام استراتيجيات التعلم النشط والتعلم القائم على حل المشكلات يقيم في معيار 'فاعلية التدريس'." },
-            { question: "إذا كان 'يوظف المعلم أساليب تقويم متنوعة تراعي التمايز بين الطلبة بصورة فعالة'، فما التقدير المناسب؟", options: [ "متميز (1)", "جيد (2)", "ملائم (3)", "غير ملائم (4)" ], correct: 0, explanation: "توظيف أساليب التقويم المتنوعة التي تراعي التمايز بصورة فعالة يستحق التقدير المتميز (1)." },
-            { question: "في حصة رياضيات، يقوم المعلم بتوزيع الأدوار بعدالة ويطبق قواعد صفية واضحة. أي معيار يتم تقييمه؟", options: [ "إدارة الصف", "فاعلية التدريس", "جودة بيئة التعلم", "التقويم ومساندة التقدم" ], correct: 0, explanation: "توزيع الأدوار بعدالة وتطبيق القواعد الصفية الواضحة يقيم في معيار 'إدارة الصف'." },
-            { question: "معلم يقود مجتمعات التعلم المهنية ويجري بحوثاً إجرائية لحل المشكلات التعليمية. هذا يندرج تحت أي معيار؟", options: [ "قيادة التغيير", "الحوكمة", "تنفيذ مبادرات وأنشطة تربوية", "فاعلية التدريس" ], correct: 0, explanation: "قيادة مجتمعات التعلم المهنية وإجراء البحوث الإجرائية يندرج تحت معيار 'قيادة التغيير'." },
-            { question: "إذا كان 'يدير المعلم الصف بفاعلية متوسطة مع بعض التحديات في إدارة السلوك'، فما التقدير المناسب؟", options: [ "جيد (2)", "ملائم (3)", "غير ملائم (4)", "يحتاج إلى تدخل (5)" ], correct: 1, explanation: "الإدارة الصفية بفاعلية متوسطة مع بعض التحديات تستحق التقدير الملائم (3)." },
-            { question: "معلم ينظم فعاليات تعليمية متنوعة ويقود مشاريع تطويرية تخدم المجتمع المدرسي. أي معيار يتم تقييمه؟", options: [ "قيادة التغيير", "الحوكمة", "تنفيذ مبادرات وأنشطة تربوية", "فاعلية التدريس" ], correct: 2, explanation: "تنظيم الفعاليات وقيادة المشاريع التطويرية يقيم في معيار 'تنفيذ مبادرات وأنشطة تربوية'." },
-            { question: "طلبة يطبقون مهارات التفكير النقدي ويستخدمون التقنيات الرقمية بمهارة عالية. هذا يقيم في أي معيار؟", options: [ "التحصيل الدراسي", "التقدم الدراسي", "مهارات التعلم", "القيم والسلوك" ], correct: 2, explanation: "تطبيق مهارات التفكير النقدي واستخدام التقنيات الرقمية يقيم في معيار 'مهارات التعلم'." },
-            { question: "إذا كان 'يفعل المعلم التقنيات الرقمية والمختبرات بصورة محدودة'، فما التقدير المناسب؟", options: [ "ملائم (3)", "غير ملائم (4)", "يحتاج إلى تدخل (5)", "جيد (2)" ], correct: 1, explanation: "التفعيل المحدود للتقنيات والمختبرات يستحق التقدير غير الملائم (4)." },
-            { question: "في حصة لغة عربية، يربط المعلم النصوص بالحياة العملية ويستخدم القصص الواقعية. أي معيار يتم تقييمه؟", options: [ "إدارة الصف", "فاعلية التدريس", "تفعيل المصادر والموارد التعليمية", "التقويم ومساندة التقدم" ], correct: 1, explanation: "ربط المحتوى بالحياة العملية واستخدام القصص الواقعية يقيم في معيار 'فاعلية التدريس'." },
-            { question: "معلم يقدم تغذية راجعة فورية وبناءة ويستخدم نتائج التقويم لتطوير التعلم. أي معيار يتم تقييمه؟", options: [ "فاعلية التدريس", "إدارة الصف", "التقويم ومساندة التقدم", "تفعيل المصادر والموارد التعليمية" ], correct: 2, explanation: "تقديم التغذية الراجعة واستخدام نتائج التقويم للتطوير يقيم في معيار 'التقويم ومساندة التقدم'." }
-        ];
+    <!-- تفاصيل مجال -->
+    <div class="screen" id="domainDetailsScreen">
+      <div id="domainDetailsContent"></div>
+    </div>
 
-        // //////////////////////////////////////////////////////
-        // متغيرات اللعبة
-        // //////////////////////////////////////////////////////
-        let currentUser = '';
-        let currentQuizQuestion = 0;
-        let quizScore = 0;
-        let selectedQuestions = [];
-        let totalQuizQuestions = 20;
-        let quizStartTime = 0;
-        let quizTimer = null;
-        let viewedDomains = new Set();
-        let currentLeaderboardTab = 'accuracy';
-        let quizTimeLimit = 180; // 3 دقائق بالثواني
-        let remainingTime = 180;
+    <!-- شاشة الاختبار -->
+    <div class="screen" id="quizScreen">
+      <div class="quiz-header">
+        <h3>🎯 اختبار بوصلة التميز الإشرافي</h3>
+        <div class="quiz-stats">
+          <div><div id="currentQuestionNum" style="font-weight:800;font-size:1.4rem">1</div><div>السؤال الحالي</div></div>
+          <div><div id="totalQuestions" style="font-weight:800;font-size:1.4rem">20</div><div>إجمالي الأسئلة</div></div>
+          <div><div id="currentScore" style="font-weight:800;font-size:1.4rem">0</div><div>النقاط</div></div>
+          <div><div id="timeRemaining" style="font-weight:800;font-size:1.4rem">03:00</div><div>الوقت المتبقي</div></div>
+        </div>
+        <div style="background:rgba(255,255,255,.25);height:10px;border-radius:10px;overflow:hidden;margin-top:10px">
+          <div id="quizProgressBar" style="height:100%;width:0;background:linear-gradient(90deg,#00cec9,#55efc4)"></div>
+        </div>
+      </div>
+      <div id="quizContent"></div>
+    </div>
 
-        // //////////////////////////////////////////////////////
-        // ⚠️ رابط Apps Script الجديد المدمج
-        // //////////////////////////////////////////////////////
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyyJT7X0M7YOck1nKiaZv54CFAuK44cr85Mcv5Besvv1xlJ9OoWT0BJHpHnDOLw2rM7/exec'; 
+    <!-- شاشة النتائج -->
+    <div class="screen" id="resultsScreen">
+      <div class="results-container" id="resultsContent" style="text-align:center"></div>
+    </div>
 
-        // //////////////////////////////////////////////////////
-        // وظائف مساعدة
-        // //////////////////////////////////////////////////////
-        function formatSeconds(sec) {
-            const m = Math.floor(sec / 60).toString().padStart(2, '0');
-            const s = (sec % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
+    <!-- لوحة الصدارة -->
+    <div class="screen" id="leaderboardScreen">
+      <h2>🏆 لوحة الصدارة</h2>
+      <p class="subtitle">أفضل الإنجازات في بوصلة التميز الإشرافي</p>
+      <div class="leaderboard-tabs" style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">
+        <button class="btn" onclick="showLeaderboardFromSheets('bestScore')">🎯 الدقة</button>
+        <button class="btn secondary" onclick="showLeaderboardFromSheets('bestTime')">⚡ السرعة</button>
+      </div>
+      <div class="leaderboard-content" id="leaderboardContent">
+        <table>
+          <thead>
+            <tr>
+              <th>الترتيب</th><th>الاسم</th><th>الدقة (%)</th><th>الوقت</th><th>المحاولات</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardBody"><tr><td colspan="5">جاري التحميل...</td></tr></tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn secondary" onclick="showWelcomeScreen()">الصفحة الرئيسية</button>
+        <button class="btn" onclick="startQuiz()">اختبار جديد</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ============ إعداد رابط Apps Script (تعريف واحد فقط) ============ */
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyyJT7X0M7YOck1nKiaZv54CFAuK44cr85Mcv5Besvv1xlJ9OoWT0BJHpHnDOLw2rM7/exec';
+
+    /* ============ بيانات المجالات والأسئلة (من نسختك) ============ */
+    const domains = {
+      1:{title:"الإنجاز الدراسي",icon:"📊",description:"الأساليب المنفذة ...",criteria:[
+        {id:1,title:"التحصيل الدراسي",explanation:"مستوى تحصيل الطلبة ...",examples:[
+          "في درس الكسور: جميع الطلبة نجحوا ...","في درس التمثيل الضوئي ...","في اختبار اللغة العربية ...","مشروع 'تراثنا العماني' ...",
+          "في درس الأنظمة البيئية ...","تفوق الطلبة في الاختبارات ...","إتقان الطلبة للمهارات ...","تطبيق الطلبة للمفاهيم ...",
+          "قدرة الطلبة على تلخيص ...","استخدام الطلبة للمصطلحات ...","إظهار الطلبة لمستوى عالٍ ...","تميز الطلبة في حل المسائل ...",
+          "قدرة الطلبة على تفسير النتائج ...","إظهار الطلبة لمهارات التفكير ...","تطبيق الطلبة للمعرفة ...","قدرة الطلبة على إنتاج أعمال ...",
+          "استخدام الطلبة لاستراتيجيات ...","إظهار الطلبة لقدرة على التعلم الذاتي ...","تطبيق الطلبة لمهارات البحث ...","قدرة الطلبة على تقييم مصادر ..."
+        ]}
+      ]},
+      2:{title:"النمو الشخصي",icon:"🌱",description:"تعزيز العلاقات ...",criteria:[
+        {id:4,title:"القيم والسلوك",explanation:"تمسك الطلبة بالهوية ...",examples:[
+          "في اليوم الوطني: ...","طالب هندي ساعد زميله ...","عند سماع النشيد الوطني ...","طالبة من جنسية أخرى ...","في الاختبار: طالب وجد ...",
+          "إظهار روح المسؤولية ...","التعبير عن الآراء بأدب ...","المشاركة الإيجابية ...","إظهار قيم التسامح ...","الاعتزاز الواضح بالتراث ...",
+          "تطبيق قيم العمل الجماعي ...","إظهار الاحترام العميق ...","التمسك الثابت بالقيم ...","إظهار قيم الإيثار ...","تطبيق مبادئ الحوار ...",
+          "إظهار قيم الصبر ...","تطبيق قيم النزاهة ...","إظهار روح القيادة ...","تطبيق قيم احترام البيئة ...","إظهار قيم التواضع ..."
+        ]}
+      ]},
+      3:{title:"مناخ المدرسة وبيئة التعلم",icon:"🏫",description:"الإطار الشامل ...",criteria:[
+        {id:5,title:"جودة بيئة التعلم",explanation:"متابعة جوانب الأمن ...",examples:[
+          "يتابع المعلم جوانب الأمن ...","توفير بيئة تعليمية آمنة ...","تنظيم الصف والمواد ...","ضمان توفر الإضاءة ...","تطبيق إجراءات السلامة ...",
+          "المحافظة على نظافة ...","توفير مساحات مناسبة ...","استخدام الألوان والديكورات ...","توفير بيئة هادئة ...","ضمان سهولة الوصول ...",
+          "تطبيق معايير الصحة ...","توفير بيئة تعليمية شاملة ...","تهيئة مناخ صفي إيجابي ...","توفير أثاث مدرسي مناسب ...","ضمان توفر التقنيات ...",
+          "تطبيق معايير النظافة ...","توفير مساحات للعرض ...","ضمان توفر مصادر التعلم ...","تطبيق إجراءات الطوارئ ...","توفير بيئة تحترم الخصوصية ..."
+        ]},
+        {id:6,title:"تخطيط المنهاج الدراسي",explanation:"تخطيط المنهاج ...",examples:[
+          "يخطط المعلم المنهاج ...","التوافق التام بين التخطيط ...","ربط واضح ومحكم ...","تحديد أهداف تعليمية ...","تنويع الاستراتيجيات ...",
+          "تخطيط الأنشطة التعليمية ...","مراعاة التسلسل المنطقي ...","تخطيط أساليب التقويم ...","تحديد المصادر والوسائل ...","مراعاة الفروق الفردية ...",
+          "ربط المحتوى التعليمي ...","تخطيط الأنشطة الإثرائية ..."
+        ]}
+      ]},
+      4:{title:"التدريس والتقويم",icon:"🎓",description:"الإجراءات التدريسية ...",criteria:[
+        {id:7,title:"إدارة الصف",explanation:"فاعلية الإدارة الصفية ...",examples:[
+          "يدير المعلم الصف بفاعلية ...","استغلال أمثل لوقت التعلم ...","تطبيق استراتيجيات متنوعة ...","إنشاء بيئة صفية منظمة ...",
+          "استخدام تقنيات فعالة ...","تطبيق قواعد صفية واضحة ...","التعامل مع السلوكيات ...","توزيع الأدوار ...","استخدام أساليب التعزيز ...",
+          "إدارة الانتقالات ...","تنظيم المجموعات ..."
+        ]},
+        {id:8,title:"فاعلية التدريس",explanation:"توظيف استراتيجيات التدريس ...",examples:[
+          "يوظف المعلم استراتيجيات ...","تنويع الاستراتيجيات ...","ربط فعال بالمحتوى ...","استخدام التعلم النشط ...","التعلم القائم على حل المشكلات ...",
+          "استخدام القصص ...","التعلم التعاوني ...","العصف الذهني ...","التفكير الناقد ...","المحاكاة والألعاب ...","التعلم المتمايز ...","التقويم التكويني ..."
+        ]},
+        {id:9,title:"تفعيل المصادر والموارد التعليمية",explanation:"تفعيل التقنيات الرقمية ...",examples:[
+          "يفعل المعلم التقنيات ...","الاستخدام الإبداعي للتقنيات ...","توظيف الذكاء الاصطناعي ...","السبورات التفاعلية ...","المختبرات ...",
+          "الفيديوهات التعليمية ...","المكتبة الرقمية ...","تطبيقات الهواتف ...","الواقع المعزز ...","منصات التعلم الإلكتروني ...","أدوات التقييم الرقمي ...","المصادر المجتمعية ..."
+        ]},
+        {id:10,title:"التقويم ومساندة التقدم",explanation:"توظيف أساليب تقويم ...",examples:[
+          "يوظف المعلم أساليب تقويم ...","تغذية راجعة فورية ...","استخدام نتائج التقويم ...","التقويم التشخيصي ...","التقويم التكويني ...","التقويم الختامي ...",
+          "ملفات الإنجاز ...","التقويم الذاتي والأقران ...","التقويم الأدائي ...","التقويم القائم على المشاريع ...","أدوات التقويم الرقمية ...","خطط علاجية وإثرائية ..."
+        ]}
+      ]},
+      5:{title:"القيادة والإدارة والحوكمة",icon:"👑",description:"المشاركات والأنشطة المهنية ...",criteria:[
+        {id:11,title:"قيادة التغيير",explanation:"توظيف التقويم الذاتي ...",examples:[
+          "المعلم يجري تقويماً ...","المشاركة الفاعلة في ورش ...","تطبيق ما تم تعلمه ...","بحوث إجرائية ...","تبادل الخبرات ...","قيادة مجتمعات التعلم ...","تطوير أدوات تعليمية ...",
+          "تطبيق اتجاهات حديثة ...","استشارة المعلمين الجدد ...","لجان التطوير ...","مهارات القيادة ...","التعلم مدى الحياة ..."
+        ]},
+        {id:12,title:"الحوكمة",explanation:"تطبيق السياسات والأنظمة ...",examples:[
+          "المعلم يطبق السياسات ...","الالتزام بالمعايير ...","إجراءات التقويم والتوثيق ...","الالتزام بالمواعيد ...","سياسات الأمن والسلامة ...",
+          "أخلاقيات المهنة ...","حماية الطلبة ...","سرية المعلومات ...","سياسات التقويم والامتحانات ...","التطوير المهني المطلوب ...","معايير الجودة ...","الشفافية والمساءلة ..."
+        ]},
+        {id:13,title:"تنفيذ مبادرات وأنشطة تربوية",explanation:"تنفيذ مبادرات وأنشطة ...",examples:[
+          "تقديم مبادرات فعالة ...","التفاعل الإيجابي ...","قيادة مشاريع تطويرية ...","تنظيم فعاليات تعليمية ...","الأنشطة اللاصفية ...",
+          "برامج إرشادية ...","خدمة المجتمع ...","رحلات تعليمية ...","معارض ومسابقات ...","شراكات مجتمعية ...","برامج توعوية ...","الاستدامة والبيئة ..."
+        ]}
+      ]}
+    };
+
+    const quizQuestions = [
+      {question:"في حصة رياضيات عن الكسور ...",options:["التحصيل الدراسي","فاعلية التدريس","تفعيل المصادر والموارد التعليمية","إدارة الصف"],correct:0,explanation:"نجاح جميع الطلبة ..."},
+      {question:"معلمة لغة عربية في درس 'الوصف' ...",options:["التحصيل الدراسي","التقدم الدراسي","مهارات التعلم","القيم والسلوك"],correct:1,explanation:"التحسن الواضح ..."},
+      {question:"معلم علوم استخدم الواقع المعزز ...",options:["استخدام التقنية فقط","تفاعل الطلبة ...","ربط الدرس بالحياة","استخدام الهاتف"],correct:1,explanation:"للحصول على تقدير متميز ..."},
+      {question:"في حصة تاريخ ...",options:["متميز","جيد","ملائم","غير ملائم"],correct:0,explanation:"أسلوب متميز في إدارة الصف ..."},
+      {question:"التسامح والهوية ...",options:["التحصيل فقط","القيم والسلوك","فاعلية التدريس","مهارات التعلم"],correct:1,explanation:"مثال متميز على القيم والسلوك ..."},
+      {question:"تقويم متنوع وتغذية راجعة ...",options:["إدارة الصف","التقويم ومساندة التقدم","فاعلية التدريس","تخطيط المنهاج"],correct:1,explanation:"يشمل تشخيصي وتكويني ..."},
+      {question:"قيادة التغيير ...",options:["فاعلية التدريس","قيادة التغيير","التقويم","مبادرات"],correct:1,explanation:"تقويم ذاتي وتطبيق ومشاركة ..."},
+      {question:"تخطيط وحدة الماء ...",options:["جيد","متميز","ملائم","غير ملائم"],correct:1,explanation:"تكامل وأهداف واضحة ..."},
+      {question:"عدد نادر يكتسب المهارات ...",options:["متميز (1)","جيد (2)","ملائم (3)","يحتاج تدخل (5)"],correct:3,explanation:"يحتاج تدخل عاجل ..."},
+      {question:"أي مجال لتحصيل الطلبة؟",options:["الإنجاز الدراسي","النمو الشخصي","التدريس والتقويم","القيادة"],correct:0,explanation:"يركز على التحصيل والتقدم ..."},
+      {question:"جميع الطلبة يتجاوزون النواتج ...",options:["متميز (1)","جيد (2)","ملائم (3)","غير ملائم (4)"],correct:0,explanation:"أداء متميز ..."},
+      {question:"القيم والسلوك يتبع ...",options:["الإنجاز","النمو الشخصي","مناخ المدرسة","التدريس"],correct:1,explanation:"يتبع النمو الشخصي ..."},
+      {question:"مبادرة 'مدرستي صحية' ...",options:["جيد","متميز","ملائم","غير ملائم"],correct:1,explanation:"شامل ومؤثر ومشاركة واسعة ..."},
+      {question:"التصحر ومهارات بحث ...",options:["التحصيل","مهارات التعلم","فاعلية التدريس","تفعيل المصادر"],correct:1,explanation:"تفكير نقدي ورقمي ..."},
+      {question:"مختبر كيمياء وسلامة ...",options:["جيد","متميز","ملائم","غير ملائم"],correct:1,explanation:"بيئة تعلم آمنة ومحفزة ..."},
+      {question:"حوكمة وأخلاقيات ...",options:["قيادة التغيير","الحوكمة","مبادرات","إدارة الصف"],correct:1,explanation:"تطبيق السياسات والأنظمة ..."},
+      {question:"حوالي نصف الطلبة يحققون النواتج ...",options:["جيد (2)","ملائم (3)","غير ملائم (4)","يحتاج تدخل (5)"],correct:1,explanation:"أداء ملائم ..."},
+      {question:"أي مجال يضم قيادة التغيير؟",options:["التدريس","مناخ المدرسة","القيادة والإدارة والحوكمة","النمو الشخصي"],correct:2,explanation:"يضم القيادة والحوكمة والمبادرات ..."},
+      {question:"مهارات التعلم تتبع ...",options:["الإنجاز الدراسي","النمو الشخصي","التدريس","مناخ المدرسة"],correct:0,explanation:"ضمن الإنجاز الدراسي ..."},
+      {question:"جودة بيئة التعلم تتبع ...",options:["الإنجاز","النمو","مناخ المدرسة","التدريس"],correct:2,explanation:"ضمن مناخ المدرسة ..."},
+      {question:"التقويم ومساندة التقدم تتبع ...",options:["الإنجاز","التدريس والتقويم","مناخ","القيادة"],correct:1,explanation:"ضمن التدريس والتقويم ..."},
+      {question:"المبادرات التربوية تتبع ...",options:["النمو","المناخ","التدريس","القيادة"],correct:3,explanation:"ضمن القيادة والإدارة ..."},
+      {question:"تفعيل التقنيات والمختبرات ...",options:["فاعلية التدريس","تفعيل المصادر والموارد التعليمية","إدارة الصف","التقويم"],correct:1,explanation:"هذا هو المعيار ..."},
+      {question:"احترام متبادل وهوية ...",options:["الإنجاز","النمو الشخصي","التدريس","القيادة"],correct:1,explanation:"النمو الشخصي ..."},
+      {question:"تقويم ذاتي وتطوير مهني ...",options:["قيادة التغيير","الحوكمة","مبادرات","فاعلية التدريس"],correct:0,explanation:"قيادة التغيير ..."},
+      {question:"مشاركة فعالة وحلول إبداعية ...",options:["متميز (1)","جيد (2)","ملائم (3)","غير ملائم (4)"],correct:0,explanation:"متميز ..."},
+      {question:"تطبيق السياسات والأنظمة ...",options:["قيادة التغيير","الحوكمة","مبادرات","إدارة الصف"],correct:1,explanation:"حوكمة ..."},
+      {question:"تعلم نشط ومشكلات ...",options:["إدارة الصف","فاعلية التدريس","تفعيل المصادر","التقويم"],correct:1,explanation:"فاعلية التدريس ..."},
+      {question:"تقويم متنوع يراعي التمايز ...",options:["متميز (1)","جيد (2)","ملائم (3)","غير ملائم (4)"],correct:0,explanation:"متميز ..."},
+      {question:"قواعد صفية وتوزيع أدوار ...",options:["إدارة الصف","فاعلية التدريس","جودة البيئة","التقويم"],correct:0,explanation:"إدارة الصف ..."},
+      {question:"قيادة مجتمعات التعلم وبحوث ...",options:["قيادة التغيير","الحوكمة","مبادرات","فاعلية"],correct:0,explanation:"قيادة التغيير ..."},
+      {question:"إدارة صف متوسطة ...",options:["جيد (2)","ملائم (3)","غير ملائم (4)","يحتاج تدخل (5)"],correct:1,explanation:"ملائم ..."},
+      {question:"تنظيم فعاليات ومشاريع مجتمعية ...",options:["قيادة","حوكمة","مبادرات","فاعلية"],correct:2,explanation:"مبادرات ..."},
+      {question:"تفكير نقدي وتقنيات رقمية ...",options:["التحصيل","التقدم","مهارات التعلم","القيم"],correct:2,explanation:"مهارات التعلم ..."},
+      {question:"تفعيل التقنيات محدود ...",options:["ملائم (3)","غير ملائم (4)","يحتاج تدخل (5)","جيد (2)"],correct:1,explanation:"غير ملائم ..."},
+      {question:"قصص واقعية وربط بالحياة ...",options:["إدارة الصف","فاعلية التدريس","تفعيل المصادر","التقويم"],correct:1,explanation:"فاعلية التدريس ..."},
+      {question:"تغذية راجعة واستخدام نتائج ...",options:["فاعلية التدريس","إدارة الصف","التقويم ومساندة التقدم","تفعيل المصادر"],correct:2,explanation:"التقويم ومساندة التقدم ..."
+      }
+    ];
+
+    /* ============ متغيرات الحالة ============ */
+    let currentUser = localStorage.getItem('currentUser') || '';
+    let currentQuizQuestion = 0;
+    let quizScore = 0;
+    let selectedQuestions = [];
+    let totalQuizQuestions = 20;
+    let quizStartTime = 0;
+    let quizTimer = null;
+    let viewedDomains = new Set();
+    let quizTimeLimit = 180; // 3 دقائق
+    let remainingTime = 180;
+
+    /* ============ أدوات مساعدة ============ */
+    function formatSeconds(sec){ const m=String(Math.floor(sec/60)).padStart(2,'0'); const s=String(sec%60).padStart(2,'0'); return `${m}:${s}`; }
+    function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id)?.classList.add('active'); }
+
+    /* ============ إدارة الشاشات ============ */
+    function showWelcomeScreen(){ stopQuizTimer(); showScreen('welcomeScreen'); }
+    function startLearningJourney(){ showScreen('nameScreen'); }
+    function showDomainsScreen(){ updateDomainProgress(); showScreen('domainsScreen'); }
+    function showLeaderboard(){ showLeaderboardFromSheets('bestScore'); }
+
+    /* ============ اختيار/تأكيد الاسم ============ */
+    function handleUserSelection(){
+      const select=document.getElementById('userSelect');
+      const group=document.getElementById('customNameGroup');
+      group.style.display = (select.value==='custom')?'block':'none';
+      if(select.value==='custom') document.getElementById('customNameInput').focus();
+    }
+    function confirmName(){
+      const select=document.getElementById('userSelect');
+      const custom=document.getElementById('customNameInput');
+      if(select.value==='custom'){
+        currentUser = (custom.value||'').trim();
+        if(!currentUser){ alert('يرجى إدخال اسمك أولاً'); return; }
+      } else if(select.value){
+        currentUser = select.value;
+      } else { alert('يرجى اختيار اسم أو إدخال اسم جديد'); return; }
+      localStorage.setItem('currentUser', currentUser);
+      showDomainsScreen();
+    }
+
+    /* ============ تقدم المجالات وزر الاختبار ============ */
+    function updateDomainProgress(){
+      for(let i=1;i<=5;i++){
+        const pb=document.getElementById(`progress-${i}`);
+        const card=document.getElementById(`domain-${i}`);
+        if(pb&&card){
+          const done=viewedDomains.has(i);
+          pb.style.width = done ? '100%' : '0%';
+          if(done && !card.querySelector('.completion-badge')){
+            const b=document.createElement('div'); b.className='completion-badge'; b.textContent='✓ مكتمل';
+            b.style.cssText='position:absolute;top:10px;left:10px;background:#00b894;color:#fff;padding:4px 10px;border-radius:12px;font-weight:700';
+            card.style.position='relative'; card.appendChild(b);
+          }
         }
+      }
+      const btn=document.getElementById('startQuizBtn');
+      const note=document.getElementById('requirementNotice');
+      const allViewed = viewedDomains.size===5;
+      btn.disabled=!allViewed; note.style.display = allViewed ? 'none' : 'block';
+    }
 
-        // //////////////////////////////////////////////////////
-        // وظائف Google Sheets (تستخدم Apps Script كوسيط)
-        // //////////////////////////////////////////////////////
-        function saveUserScoreToSheets(userName, scorePercentage, totalQuestions, totalTime) {
-            
-            // تهيئة معلمات URL لطلب الإرسال
-            const params = new URLSearchParams({
-                action: 'saveScore', // يجب أن يكون Apps Script لديك دالة doPost() لمعالجة هذا الإجراء
-                name: userName,
-                bestScore: scorePercentage,
-                bestTime: totalTime,
-                totalQuestions: totalQuestions
-            });
-            
-            const url = `${APPS_SCRIPT_URL}?${params.toString()}`;
+    /* ============ تفاصيل المجال ============ */
+    function showDomainDetails(domainId){
+      const d=domains[domainId]; if(!d) return;
+      viewedDomains.add(domainId); updateDomainProgress();
 
-            if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_APPS_SCRIPT_URL')) {
-                console.error("APPS_SCRIPT_URL is not configured.");
-                return Promise.resolve({ isNewRecord: false, isNewSpeedRecord: false });
-            }
+      const totalCriteria=d.criteria.length;
+      const totalExamples=d.criteria.reduce((s,c)=>s+c.examples.length,0);
 
-            // إرسال طلب GET (أسهل طريقة لنقل البيانات إلى Apps Script)
-            return fetch(url, {
-                method: 'GET', 
-                mode: 'cors',
-                cache: 'no-cache',
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'error') {
-                    console.error('Error saving to Sheets:', data.message);
-                    return { isNewRecord: data.isNewRecord || false, isNewSpeedRecord: data.isNewSpeedRecord || false };
-                }
-                // يجب أن يعيد Apps Script قيم isNewRecord/isNewSpeedRecord
-                return { 
-                    isNewRecord: data.isNewRecord || false, 
-                    isNewSpeedRecord: data.isNewSpeedRecord || false
-                };
-            })
-            .catch(error => {
-                console.error('Network or POST error:', error);
-                return { isNewRecord: false, isNewSpeedRecord: false };
-            });
-        }
-        
-        function showLeaderboardFromSheets(orderBy = 'bestScore') {
-            currentLeaderboardTab = orderBy;
-            const leaderboardBody = document.getElementById('leaderboardBody');
-            leaderboardBody.innerHTML = '<tr><td colspan="5">جاري تحميل لوحة الصدارة... 🚀</td></tr>';
-            
-            // إزالة وتفعيل أزرار التبويب
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[onclick="showLeaderboardFromSheets('${orderBy}')"]`)?.classList.add('active');
+      const criteriaIcons={1:'📊',2:'📈',3:'🎯',4:'🌱',5:'🏫',6:'📋',7:'👨‍🏫',8:'🎓',9:'💻',10:'📝',11:'👑',12:'⚖️',13:'🚀'};
+      let criteriaHTML='';
+      d.criteria.forEach(cr=>{
+        const third=Math.ceil(cr.examples.length/3);
+        const practical=cr.examples.slice(0,third);
+        const excellent=cr.examples.slice(third,third*2);
+        const innovative=cr.examples.slice(third*2);
 
-            if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_APPS_SCRIPT_URL')) {
-                leaderboardBody.innerHTML = '<tr><td colspan="5" style="color: #e74c3c;">⚠️ خطأ: رابط Apps Script غير متاح.</td></tr>';
-                showScreen('leaderboardScreen');
-                return;
-            }
-            
-            // جلب البيانات (يجب أن يكون Apps Script لديه دالة doGet() ترجع البيانات)
-            fetch(APPS_SCRIPT_URL, {
-                method: 'GET',
-                mode: 'cors'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        console.error('Apps Script Response:', text);
-                        throw new Error(`Apps Script did not return JSON. Check deployment permissions.`);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                // تحويل البيانات من النصوص إلى أرقام للترتيب
-                const users = data.map(user => ({
-                    name: user.Name,
-                    bestScore: parseInt(user.BestScore) || 0,
-                    bestTime: parseInt(user.BestTime) || 0,
-                    gamesPlayed: parseInt(user.GamesPlayed) || 0,
-                    // LastPlayed: user.LastPlayed // لا نحتاجها في العرض الحالي
-                }));
-                
-                // ترتيب البيانات محلياً
-                users.sort((a, b) => {
-                    if (orderBy === 'bestScore') {
-                        if (b.bestScore !== a.bestScore) return b.bestScore - a.bestScore; // أعلى نتيجة أولاً
-                        return a.bestTime - b.bestTime; // ثم أسرع وقت (للكسر التعادل)
-                    } else { // orderBy === 'bestTime'
-                        const timeA = a.bestTime === 0 ? Infinity : a.bestTime;
-                        const timeB = b.bestTime === 0 ? Infinity : b.bestTime;
-                        
-                        if (timeA !== timeB) return timeA - timeB; // أسرع وقت أولاً
-                        return b.bestScore - a.bestScore; // ثم أعلى نتيجة
-                    }
-                });
+        const exHTML=(arr,label,color,icon)=>arr.map(e=>`
+          <div class="example-item" style="background:#f8fff9;border:2px solid ${color};border-radius:12px;padding:12px">
+            <div class="example-category" style="display:inline-block;background:${color};color:#fff;padding:2px 10px;border-radius:16px;margin-bottom:6px">${label}</div>
+            <span style="margin:0 6px">${icon}</span>${e}
+          </div>`).join('');
 
-                leaderboardBody.innerHTML = '';
-                
-                if (users.length === 0) {
-                    leaderboardBody.innerHTML = '<tr><td colspan="5">لا توجد نتائج مسجلة حتى الآن.</td></tr>';
-                    showScreen('leaderboardScreen');
-                    return;
-                }
+        criteriaHTML+=`
+          <div class="criterion-card" style="background:#fff;border:2px solid #e9ecef;border-radius:16px;padding:18px;margin-bottom:14px">
+            <div class="criterion-header" style="display:flex;align-items:center;gap:10px;border-bottom:2px solid #f5f7ff;padding-bottom:10px;margin-bottom:10px">
+              <div class="criterion-icon" style="font-size:1.4rem">${criteriaIcons[cr.id]||'⭐'}</div>
+              <div class="criterion-title" style="font-weight:800">${cr.title}</div>
+              <div class="criterion-number" style="margin-inline-start:auto;background:#eef2ff;color:#667eea;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800">${cr.id}</div>
+            </div>
+            <div class="criterion-explanation" style="background:#f8f9ff;border-right:5px solid #667eea;border-radius:12px;padding:12px;margin-bottom:10px">${cr.explanation}</div>
 
-                users.slice(0, 10).forEach((user, index) => {
-                    const row = document.createElement("tr");
-                    const rankClass = index < 3 ? `rank-${index + 1}` : '';
-                    
-                    // استخدام تنسيق CSS المدمج لتطبيق الألوان
-                    const scoreStyle = "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; font-weight: 600; padding: 4px 8px; display: inline-block; min-width: 50px;";
-                    const timeValue = user.bestTime > 0 ? formatSeconds(user.bestTime) : '---';
-
-                    row.className = rankClass;
-                    row.innerHTML = `
-                        <td style="font-weight: bold;">${index + 1}</td>
-                        <td style="text-align: right;">${user.name}</td>
-                        <td><span style="${scoreStyle}">${user.bestScore}%</span></td>
-                        <td>${timeValue}</td>
-                        <td>${user.gamesPlayed}</td>
-                    `;
-                    leaderboardBody.appendChild(row);
-                });
-                showScreen('leaderboardScreen');
-
-            }).catch(error => {
-                console.error('Error loading leaderboard from Sheets:', error);
-                leaderboardBody.innerHTML = '<tr><td colspan="5" style="color: #e74c3c;">حدث خطأ في الاتصال أو معالجة البيانات.</td></tr>';
-                showScreen('leaderboardScreen');
-            });
-        }
-
-        // //////////////////////////////////////////////////////
-        // وظائف إدارة المستخدم
-        // //////////////////////////////////////////////////////
-        function handleUserSelection() {
-            const select = document.getElementById('userSelect');
-            const customGroup = document.getElementById('customNameGroup');
-            
-            if (select.value === 'custom') {
-                customGroup.style.display = 'block';
-                document.getElementById('customNameInput').focus();
-            } else {
-                customGroup.style.display = 'none';
-            }
-        }
-
-        function confirmName() {
-            const select = document.getElementById('userSelect');
-            const customInput = document.getElementById('customNameInput');
-            
-            if (select.value === 'custom') {
-                currentUser = customInput.value.trim();
-                if (!currentUser) {
-                    alert('يرجى إدخال اسمك أولاً');
-                    return;
-                }
-            } else if (select.value) {
-                currentUser = select.value;
-            } else {
-                alert('يرجى اختيار اسم أو إدخال اسم جديد');
-                return;
-            }
-            
-            // حفظ الاسم الأخير في localStorage
-            localStorage.setItem('currentUser', currentUser);
-            showDomainsScreen();
-        }
-
-        // //////////////////////////////////////////////////////
-        // وظائف عرض الشاشات والبيانات
-        // //////////////////////////////////////////////////////
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function showWelcomeScreen() {
-            stopQuizTimer();
-            showScreen('welcomeScreen'); 
-        }
-
-        function startLearningJourney() {
-            showScreen('nameScreen');
-        }
-
-        function showDomainsScreen() {
-            updateDomainProgress();
-            showScreen('domainsScreen');
-        }
-
-        function showLeaderboard() {
-            // البدء بالترتيب الافتراضي (الدقة)
-            showLeaderboardFromSheets('bestScore');
-        }
-
-
-        function updateDomainProgress() {
-            for (let i = 1; i <= 5; i++) {
-                const progressBar = document.getElementById(`progress-${i}`);
-                const domainCard = document.getElementById(`domain-${i}`);
-                if (progressBar && domainCard) {
-                    const progress = viewedDomains.has(i) ? 100 : 0;
-                    progressBar.style.width = progress + '%';
-                    
-                    if (viewedDomains.has(i)) {
-                        domainCard.classList.add('viewed');
-                        if (!domainCard.querySelector('.completion-badge')) {
-                            const badge = document.createElement('div');
-                            badge.className = 'completion-badge';
-                            badge.textContent = '✓ مكتمل';
-                            domainCard.appendChild(badge);
-                        }
-                    }
-                }
-            }
-            
-            const startQuizBtn = document.getElementById('startQuizBtn');
-            const requirementNotice = document.getElementById('requirementNotice');
-            
-            if (viewedDomains.size === 5) {
-                startQuizBtn.disabled = false;
-                startQuizBtn.style.opacity = '1';
-                requirementNotice.style.display = 'none';
-            } else {
-                startQuizBtn.disabled = true;
-                startQuizBtn.style.opacity = '0.5';
-                requirementNotice.style.display = 'block';
-            }
-        }
-
-        function showDomainDetails(domainId) {
-            const domain = domains[domainId];
-            if (!domain) return;
-
-            viewedDomains.add(domainId);
-
-            // إحصائيات المجال
-            const totalCriteria = domain.criteria.length;
-            const totalExamples = domain.criteria.reduce((sum, criterion) => sum + criterion.examples.length, 0);
-            
-            // أيقونات المعايير
-            const criteriaIcons = {
-                1: '📊', 2: '📈', 3: '🎯', // الإنجاز الدراسي
-                4: '🌱', // النمو الشخصي
-                5: '🏫', 6: '📋', // مناخ المدرسة
-                7: '👨‍🏫', 8: '🎓', 9: '💻', 10: '📝', // التدريس والتقويم
-                11: '👑', 12: '⚖️', 13: '🚀' // القيادة والإدارة
-            };
-
-            let criteriaHTML = '';
-            domain.criteria.forEach((criterion, index) => {
-                // تصنيف الأمثلة
-                const practicalExamples = criterion.examples.filter((_, i) => i < Math.ceil(criterion.examples.length / 3));
-                const excellentExamples = criterion.examples.filter((_, i) => i >= Math.ceil(criterion.examples.length / 3) && i < Math.ceil(criterion.examples.length * 2 / 3));
-                const innovativeExamples = criterion.examples.filter((_, i) => i >= Math.ceil(criterion.examples.length * 2 / 3));
-
-                const createExampleHTML = (examples, category, icon, color) => {
-                    return examples.map(example => `
-                        <div class="example-item">
-                            <div class="example-category" style="background: ${color};">${category}</div>
-                            <span class="example-icon">${icon}</span>
-                            ${example}
-                        </div>
-                    `).join('');
-                };
-
-                criteriaHTML += `
-                    <div class="criterion-card">
-                        <div class="criterion-header">
-                            <div class="criterion-icon">${criteriaIcons[criterion.id] || '⭐'}</div>
-                            <div class="criterion-title">${criterion.title}</div>
-                            <div class="criterion-number">${criterion.id}</div>
-                        </div>
-                        
-                        <div class="criterion-explanation">
-                            ${criterion.explanation}
-                        </div>
-                        
-                        <div class="examples-section">
-                            <div class="interactive-tabs">
-                                <button class="tab-button active" onclick="switchTab(${criterion.id}, 'practical', event)">
-                                    🎯 أمثلة عملية
-                                    <span class="visual-indicator indicator-good"></span>
-                                </button>
-                                <button class="tab-button" onclick="switchTab(${criterion.id}, 'excellent', event)">
-                                    ⭐ أمثلة متميزة
-                                    <span class="visual-indicator indicator-excellent"></span>
-                                </button>
-                                <button class="tab-button" onclick="switchTab(${criterion.id}, 'innovative', event)">
-                                    🚀 أمثلة إبداعية
-                                    <span class="visual-indicator indicator-needs-improvement"></span>
-                                </button>
-                            </div>
-                            
-                            <div id="tab-${criterion.id}-practical" class="tab-content active">
-                                <div class="examples-header" style="background: linear-gradient(135deg, #2196F3 0%, #74b9ff 100%);">
-                                    <span style="font-size: 1.5rem;">🎯</span>
-                                    <h4>أمثلة عملية وتطبيقية (جيد فما فوق)</h4>
-                                </div>
-                                <div class="examples-grid">
-                                    ${createExampleHTML(practicalExamples, 'عملي', '✅', '#2196F3')}
-                                </div>
-                            </div>
-                            
-                            <div id="tab-${criterion.id}-excellent" class="tab-content">
-                                <div class="examples-header" style="background: linear-gradient(135deg, #4CAF50 0%, #00cec9 100%);">
-                                    <span style="font-size: 1.5rem;">⭐</span>
-                                    <h4>أمثلة متميزة ومتقدمة (متميز)</h4>
-                                </div>
-                                <div class="examples-grid">
-                                    ${createExampleHTML(excellentExamples, 'متميز', '🌟', '#4CAF50')}
-                                </div>
-                            </div>
-                            
-                            <div id="tab-${criterion.id}-innovative" class="tab-content">
-                                <div class="examples-header" style="background: linear-gradient(135deg, #FF9800 0%, #fdcb6e 100%);">
-                                    <span style="font-size: 1.5rem;">🚀</span>
-                                    <h4>أمثلة إبداعية ومبتكرة (متميز/رائد)</h4>
-                                </div>
-                                <div class="examples-grid">
-                                    ${createExampleHTML(innovativeExamples, 'إبداعي', '💡', '#FF9800')}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            document.getElementById('domainDetailsContent').innerHTML = `
-                <div class="domain-detail-header">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-                        <div>
-                            <div style="font-size: 4rem; margin-bottom: 10px;">${domain.icon}</div>
-                            <h2 style="margin: 0; font-size: 2.2rem;">${domain.title}</h2>
-                        </div>
-                        <div class="domain-stats">
-                            <div class="stat-box">
-                                <span class="stat-icon">📊</span>
-                                <div class="stat-number">${totalCriteria}</div>
-                                <div class="stat-label">معايير</div>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-icon">💡</span>
-                                <div class="stat-number">${totalExamples}</div>
-                                <div class="stat-label">مثال</div>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-icon">⏱️</span>
-                                <div class="stat-number">${Math.ceil(totalExamples / 10)}</div>
-                                <div class="stat-label">دقائق</div>
-                            </div>
-                        </div>
-                    </div>
-                    <p style="font-size: 1.15rem; line-height: 1.7; opacity: 0.95; margin: 0;">${domain.description}</p>
+            <div class="examples-section">
+              <div class="interactive-tabs" style="display:flex;gap:6px;background:#f8f9fa;border-radius:12px;padding:6px;margin-bottom:8px">
+                <button class="btn" style="padding:8px 12px" onclick="switchTab(${cr.id},'practical',event)">🎯 أمثلة عملية</button>
+                <button class="btn success" style="padding:8px 12px" onclick="switchTab(${cr.id},'excellent',event)">⭐ أمثلة متميزة</button>
+                <button class="btn secondary" style="padding:8px 12px" onclick="switchTab(${cr.id},'innovative',event)">🚀 أمثلة إبداعية</button>
+              </div>
+              <div id="tab-${cr.id}-practical" class="tab-content active">
+                <div class="examples-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
+                  ${exHTML(practical,'عملي','#2196F3','✅')}
                 </div>
-                
-                <div style="margin-bottom: 40px;">
-                    <div style="text-align: center; margin-bottom: 40px;">
-                        <h3 style="color: #2c3e50; font-size: 2rem; margin-bottom: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                            🎯 المعايير التفصيلية مع الأمثلة التطبيقية
-                        </h3>
-                        <p style="color: #7f8c8d; font-size: 1.1rem;">استكشف كل معيار بأمثلة متدرجة من العملي إلى الإبداعي</p>
-                    </div>
-                    ${criteriaHTML}
+              </div>
+              <div id="tab-${cr.id}-excellent" class="tab-content" style="display:none">
+                <div class="examples-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
+                  ${exHTML(excellent,'متميز','#00b894','🌟')}
                 </div>
-                
-                <div style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 20px;">
-                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🎓</div>
-                    <h3 style="color: #2c3e50; margin-bottom: 20px;">هل أنت مستعد للاختبار؟</h3>
-                    <p style="color: #7f8c8d; margin-bottom: 25px;">اختبر فهمك لهذا المجال والمجالات الأخرى</p>
-                    <button class="btn secondary" onclick="showDomainsScreen()">
-                        <span style="margin-left: 8px;">🔙</span>
-                        العودة للمجالات
-                    </button>
-                    <button class="btn success" onclick="checkAndStartQuiz()">
-                        <span style="margin-left: 8px;">🚀</span>
-                        ابدا الاختبار الآن
-                    </button>
+              </div>
+              <div id="tab-${cr.id}-innovative" class="tab-content" style="display:none">
+                <div class="examples-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
+                  ${exHTML(innovative,'إبداعي','#FF9800','💡')}
                 </div>
-            `;
+              </div>
+            </div>
+          </div>
+        `;
+      });
 
-            showScreen('domainDetailsScreen');
-        }
+      document.getElementById('domainDetailsContent').innerHTML=`
+        <div class="domain-detail-header" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:18px;padding:18px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <div>
+              <div style="font-size:3rem">${d.icon}</div>
+              <h3 style="margin:6px 0">${d.title}</h3>
+            </div>
+            <div class="domain-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+              <div style="text-align:center"><div style="font-weight:800;font-size:1.2rem">${totalCriteria}</div><div>معايير</div></div>
+              <div style="text-align:center"><div style="font-weight:800;font-size:1.2rem">${totalExamples}</div><div>أمثلة</div></div>
+              <div style="text-align:center"><div style="font-weight:800;font-size:1.2rem">${Math.ceil(totalExamples/10)}</div><div>دقائق</div></div>
+            </div>
+          </div>
+          <p style="margin:8px 0 0">${d.description}</p>
+        </div>
+        <div>${criteriaHTML}</div>
+        <div style="text-align:center;margin-top:16px">
+          <button class="btn secondary" onclick="showDomainsScreen()">🔙 العودة للمجالات</button>
+          <button class="btn success" onclick="checkAndStartQuiz()">🚀 ابدأ الاختبار الآن</button>
+        </div>
+      `;
+      showScreen('domainDetailsScreen');
+    }
 
-        function switchTab(criterionId, tabType, event) {
-            // (بقية منطق تبديل التبويبات)
-            document.querySelectorAll(`[id^="tab-${criterionId}-"]`).forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            const parent = event.target.closest('.examples-section');
-            if(parent) {
-                parent.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            }
-            
-            document.getElementById(`tab-${criterionId}-${tabType}`).classList.add('active');
-            event.target.classList.add('active');
-        }
-        
-        // //////////////////////////////////////////////////////
-        // وظائف إدارة المستخدم
-        // //////////////////////////////////////////////////////
-        function handleUserSelection() {
-            const select = document.getElementById('userSelect');
-            const customGroup = document.getElementById('customNameGroup');
-            
-            if (select.value === 'custom') {
-                customGroup.style.display = 'block';
-                document.getElementById('customNameInput').focus();
-            } else {
-                customGroup.style.display = 'none';
-            }
-        }
+    function switchTab(criterionId, tabType, event){
+      ['practical','excellent','innovative'].forEach(t=>{
+        const el=document.getElementById(`tab-${criterionId}-${t}`);
+        if(el) el.style.display = (t===tabType)?'block':'none';
+      });
+    }
 
-        function confirmName() {
-            const select = document.getElementById('userSelect');
-            const customInput = document.getElementById('customNameInput');
-            
-            if (select.value === 'custom') {
-                currentUser = customInput.value.trim();
-                if (!currentUser) {
-                    alert('يرجى إدخال اسمك أولاً');
-                    return;
-                }
-            } else if (select.value) {
-                currentUser = select.value;
-            } else {
-                alert('يرجى اختيار اسم أو إدخال اسم جديد');
-                return;
-            }
-            
-            localStorage.setItem('currentUser', currentUser);
-            showDomainsScreen();
-        }
+    /* ============ بدء الاختبار ============ */
+    function checkAndStartQuiz(){
+      if(viewedDomains.size<5){ alert('يجب الاطلاع على جميع المجالات الخمسة أولاً'); return; }
+      startQuiz();
+    }
 
-        // //////////////////////////////////////////////////////
-        // وظائف بدء الاختبار والزمن
-        // //////////////////////////////////////////////////////
-        function checkAndStartQuiz() {
-            if (!currentUser) {
-                showScreen('nameScreen');
-                return;
-            }
-            if (viewedDomains.size < 5) {
-                alert('يجب الاطلاع على جميع المجالات الخمسة قبل البدء في الاختبار');
-                showDomainsScreen();
-                return;
-            }
-            startQuiz();
-        }
+    function startQuiz(){
+      if(viewedDomains.size<5){ alert('يجب الاطلاع على جميع المجالات الخمسة أولاً'); return; }
+      // اختيار عشوائي 20 سؤال
+      const shuffled=[...quizQuestions].sort(()=>Math.random()-0.5);
+      selectedQuestions=shuffled.slice(0,totalQuizQuestions);
+      currentQuizQuestion=0;
+      quizScore=0;
+      remainingTime=quizTimeLimit;
+      document.getElementById('totalQuestions').textContent = selectedQuestions.length;
+      document.getElementById('currentScore').textContent = quizScore;
+      document.getElementById('quizProgressBar').style.width='0%';
+      renderQuestion();
+      startQuizTimer();
+      showScreen('quizScreen');
+    }
 
-        function startQuiz() {
-            if (!currentUser) { showScreen('nameScreen'); return; }
-            if (viewedDomains.size < 5) { alert('يجب الاطلاع على جميع المجالات الخمسة قبل البدء في الاختبار'); showDomainsScreen(); return; }
-            
-            currentQuizQuestion = 0;
-            quizScore = 0;
-            quizStartTime = Date.now();
-            remainingTime = quizTimeLimit;
-            selectedQuestions = quizQuestions.sort(() => Math.random() - 0.5).slice(0, totalQuizQuestions);
-            startQuizTimer();
-            
-            document.getElementById('timeRemaining').textContent = formatSeconds(quizTimeLimit);
-            document.getElementById('timeRemaining').style.color = 'white';
-            document.getElementById('timeRemaining').style.fontWeight = 'normal';
+    function renderQuestion(){
+      const q=selectedQuestions[currentQuizQuestion];
+      if(!q){ showQuizResults(); return; }
+      document.getElementById('currentQuestionNum').textContent = currentQuizQuestion+1;
+      const html=`
+        <div class="quiz-question">${q.question}</div>
+        <div class="quiz-options">
+          ${q.options.map((opt,i)=>`<div class="quiz-option" data-idx="${i}" onclick="selectOption(${i})">${opt}</div>`).join('')}
+        </div>
+        <div id="explainBox" style="display:none" class="explanation-box"></div>
+        <div style="text-align:center;margin-top:8px">
+          <button id="nextBtn" class="btn" onclick="nextQuestion()" disabled>التالي</button>
+        </div>
+      `;
+      document.getElementById('quizContent').innerHTML=html;
+      const prog=((currentQuizQuestion)/selectedQuestions.length)*100;
+      document.getElementById('quizProgressBar').style.width=`${prog}%`;
+    }
 
-            showScreen('quizScreen');
-            showQuizQuestion();
-        }
+    function selectOption(index){
+      const q=selectedQuestions[currentQuizQuestion];
+      const options=[...document.querySelectorAll('.quiz-option')];
+      options.forEach(o=>o.classList.remove('selected','correct','incorrect'));
+      options[index].classList.add('selected');
+      const correctIndex=q.correct;
+      if(index===correctIndex){ options[index].classList.add('correct'); quizScore++; }
+      else { options[index].classList.add('incorrect'); options[correctIndex]?.classList.add('correct'); }
+      document.getElementById('currentScore').textContent = quizScore;
+      const ex=document.getElementById('explainBox');
+      ex.style.display='block';
+      ex.className='explanation-box'+(index===correctIndex?'':' incorrect');
+      ex.textContent=q.explanation || '';
+      document.getElementById('nextBtn').disabled=false;
+      // منع تغيير الاختيار بعد الإجابة
+      options.forEach(o=>o.onclick=null);
+    }
 
-        function startQuizTimer() {
-            stopQuizTimer(); 
+    function nextQuestion(){
+      currentQuizQuestion++;
+      if(currentQuizQuestion>=selectedQuestions.length){ showQuizResults(); }
+      else { renderQuestion(); }
+    }
 
-            quizTimer = setInterval(() => {
-                remainingTime--;
-                
-                if (remainingTime <= 0) {
-                    stopQuizTimer();
-                    alert('⏰ انتهى الوقت المحدد للاختبار! سيتم عرض نتيجتك.');
-                    showQuizResults();
-                    return;
-                }
-                
-                const minutes = Math.floor(remainingTime / 60);
-                const seconds = remainingTime % 60;
-                const timeElement = document.getElementById('timeRemaining');
-                
-                if (timeElement) {
-                    timeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                    
-                    if (remainingTime <= 30) {
-                        timeElement.style.color = '#ff6b6b'; 
-                        timeElement.style.fontWeight = 'bold';
-                    } else if (remainingTime <= 60) {
-                        timeElement.style.color = '#feca57'; 
-                        timeElement.style.fontWeight = 'bold';
-                    }
-                }
-            }, 1000);
-        }
+    function startQuizTimer(){
+      stopQuizTimer();
+      quizStartTime=Date.now();
+      quizTimer=setInterval(()=>{
+        remainingTime--;
+        document.getElementById('timeRemaining').textContent = formatSeconds(Math.max(0,remainingTime));
+        if(remainingTime<=0){ stopQuizTimer(); showQuizResults(); }
+      },1000);
+    }
+    function stopQuizTimer(){ if(quizTimer){ clearInterval(quizTimer); quizTimer=null; } }
 
-        function stopQuizTimer() {
-            if (quizTimer) {
-                clearInterval(quizTimer);
-                quizTimer = null;
-            }
-        }
-
-        function showQuizQuestion() {
-            // (بقية منطق عرض السؤال)
-            if (currentQuizQuestion >= selectedQuestions.length) {
-                stopQuizTimer();
-                showQuizResults();
-                return;
-            }
-
-            const question = selectedQuestions[currentQuizQuestion];
-            const progress = ((currentQuizQuestion + 1) / selectedQuestions.length) * 100;
-            document.getElementById('quizProgressBar').style.width = progress + '%';
-            document.getElementById('currentQuestionNum').textContent = currentQuizQuestion + 1;
-            document.getElementById('totalQuestions').textContent = selectedQuestions.length;
-            document.getElementById('currentScore').textContent = quizScore;
-            
-            let optionsHTML = '';
-            const letters = ['أ', 'ب', 'ج', 'د'];
-            question.options.forEach((option, index) => {
-                optionsHTML += `
-                    <div class="quiz-option" data-letter="${letters[index]}" onclick="selectQuizOption(this, ${index})">
-                        ${option}
-                    </div>
-                `;
-            });
-
-            document.getElementById('quizContent').innerHTML = `
-                <div class="quiz-question">
-                    ${question.question}
-                </div>
-                <div class="quiz-options" id="quizOptions">
-                    ${optionsHTML}
-                </div>
-                <button class="btn" id="nextQuizBtn" onclick="nextQuizQuestion()" style="display: none;">السؤال التالي</button>
-            `;
-        }
-
-        function selectQuizOption(element, selectedIndex) {
-            // (بقية منطق اختيار الإجابة)
-            const question = selectedQuestions[currentQuizQuestion];
-            const options = document.querySelectorAll('.quiz-option');
-            
-            options.forEach((option, index) => {
-                option.style.pointerEvents = 'none';
-                if (index === question.correct) {
-                    option.classList.add('correct');
-                } else if (index === selectedIndex && selectedIndex !== question.correct) {
-                    option.classList.add('incorrect');
-                } else if (index === selectedIndex) {
-                    option.classList.add('selected');
-                }
-            });
-
-            if (selectedIndex === question.correct) {
-                quizScore++;
-                document.getElementById('currentScore').textContent = quizScore;
-            }
-
-            const isCorrect = selectedIndex === question.correct;
-            const explanationHTML = `
-                <div class="explanation-box ${isCorrect ? '' : 'incorrect'}">
-                    <div style="font-weight: 700; margin-bottom: 10px; color: ${isCorrect ? '#27ae60' : '#c0392b'}; font-size: 1.1rem;">
-                        ${isCorrect ? '✅ إجابة صحيحة!' : '❌ إجابة خاطئة'}
-                    </div>
-                    ${question.explanation}
-                </div>
-            `;
-
-            document.getElementById('quizOptions').insertAdjacentHTML('afterend', explanationHTML);
-            document.getElementById('nextQuizBtn').style.display = 'block';
-        }
-
-        function nextQuizQuestion() {
-            currentQuizQuestion++;
-            showQuizQuestion();
-        }
-
-        // //////////////////////////////////////////////////////
-        // وظائف تحميل الصفحة
-        // //////////////////////////////////////////////////////
-        window.onload = function() {
-            const savedUser = localStorage.getItem('currentUser');
-            if (savedUser) {
-                currentUser = savedUser;
-            }
-            showScreen('welcomeScreen'); 
-        };
-
-        // تحسين تجربة المستخدم (إدخال بزر Enter)
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                const nextBtn = document.getElementById('nextQuizBtn');
-                if (nextBtn && nextBtn.style.display !== 'none') {
-                    nextQuizQuestion();
-                }
-            }
+    /* ============ حفظ النتيجة إلى Google Sheets ============ */
+    async function saveUserScoreToSheets(userName, scorePercentage, totalQuestionsCount, totalTime){
+      try{
+        if(!APPS_SCRIPT_URL) throw new Error('APPS_SCRIPT_URL غير مهيأ.');
+        const params=new URLSearchParams({
+          action:'saveScore',
+          name:userName||'مشارك',
+          bestScore:String(scorePercentage??0),
+          bestTime:String(totalTime??0),
+          gamesPlayed:'1'
         });
-    </script>
+        const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`,{method:'GET',mode:'cors',cache:'no-cache'});
+        const text=await res.text();
+        let data; try{ data=JSON.parse(text);}catch{ data={}; }
+        return { isNewRecord:!!data.isNewRecord, isNewSpeedRecord:!!data.isNewSpeedRecord };
+      }catch(e){
+        console.error('Failed to save score:',e);
+        return { isNewRecord:false, isNewSpeedRecord:false };
+      }
+    }
+
+    /* ============ عرض النتائج ============ */
+    function renderQuizResultsScreen(percentage,totalTime,records){
+      const total=selectedQuestions.length;
+      let icon='📚',msg='يُنصح بمراجعة المجالات والمعايير مرة أخرى';
+      if(percentage>=90){icon='🏆';msg='أداء متميز! لديك فهم عميق';}
+      else if(percentage>=80){icon='🥇';msg='أداء ممتاز! فهم جيد جداً';}
+      else if(percentage>=70){icon='🥈';msg='أداء جيد! توجد نقاط للتحسين';}
+      else if(percentage>=60){icon='🥉';msg='أداء مقبول! راجع بعض المجالات';}
+      const recordMsgs=[
+        records?.isNewRecord?'<div style="color:#e74c3c;font-weight:800">🎉 رقم قياسي جديد في الدقة!</div>':'',
+        records?.isNewSpeedRecord?'<div style="color:#00b894;font-weight:800">⚡ رقم قياسي جديد في السرعة!</div>':''
+      ].join('');
+      document.getElementById('resultsContent').innerHTML=`
+        <div style="font-size:4rem">${icon}</div>
+        <h2>انتهى الاختبار!</h2>
+        ${recordMsgs}
+        <div style="margin:6px 0">${msg}</div>
+        <div class="results-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px">
+          <div class="result-stat" style="background:#fff;border-radius:12px;padding:14px;box-shadow:0 4px 10px rgba(0,0,0,.05)">
+            <div class="result-stat-value" style="font-size:2rem;color:#667eea;font-weight:800">${quizScore}/${total}</div>
+            <div class="result-stat-label">الإجابات الصحيحة</div>
+          </div>
+          <div class="result-stat" style="background:#fff;border-radius:12px;padding:14px;box-shadow:0 4px 10px rgba(0,0,0,.05)">
+            <div class="result-stat-value" style="font-size:2rem;color:#667eea;font-weight:800">${percentage}%</div>
+            <div class="result-stat-label">نسبة النجاح</div>
+          </div>
+          <div class="result-stat" style="background:#fff;border-radius:12px;padding:14px;box-shadow:0 4px 10px rgba(0,0,0,.05)">
+            <div class="result-stat-value" style="font-size:2rem;color:#667eea;font-weight:800">${formatSeconds(totalTime)}</div>
+            <div class="result-stat-label">الوقت المستغرق</div>
+          </div>
+          <div class="result-stat" style="background:#fff;border-radius:12px;padding:14px;box-shadow:0 4px 10px rgba(0,0,0,.05)">
+            <div class="result-stat-value" style="font-size:2rem;color:#667eea;font-weight:800">${Math.max(1,Math.round(totalTime/Math.max(1,selectedQuestions.length)))}ث</div>
+            <div class="result-stat-label">متوسط الوقت/سؤال</div>
+          </div>
+        </div>
+        <div style="margin-top:16px">
+          <button class="btn" onclick="startQuiz()">اختبار جديد</button>
+          <button class="btn success" onclick="showLeaderboardFromSheets('bestScore')">لوحة الصدارة</button>
+          <button class="btn secondary" onclick="showWelcomeScreen()">الصفحة الرئيسية</button>
+        </div>
+      `;
+      showScreen('resultsScreen');
+    }
+
+    async function showQuizResults(){
+      stopQuizTimer();
+      const totalTime = quizTimeLimit - Math.max(0,remainingTime);
+      const percentage = selectedQuestions.length ? Math.round((quizScore/selectedQuestions.length)*100) : 0;
+      const records = await saveUserScoreToSheets(currentUser, percentage, selectedQuestions.length, totalTime);
+      renderQuizResultsScreen(percentage,totalTime,records);
+    }
+
+    /* ============ لوحة الصدارة من Google Sheets ============ */
+    async function showLeaderboardFromSheets(orderBy='bestScore'){
+      const body=document.getElementById('leaderboardBody');
+      body.innerHTML='<tr><td colspan="5">جاري تحميل لوحة الصدارة... 🚀</td></tr>';
+      try{
+        const res=await fetch(APPS_SCRIPT_URL,{method:'GET',mode:'cors'});
+        const text=await res.text(); let data;
+        try{ data=JSON.parse(text);}catch{ throw new Error('الرد ليس JSON. تحققي من doGet()'); }
+        const users=Array.isArray(data)?data.map(u=>({
+          name:u.Name??'', bestScore:Number(u.BestScore)||0, bestTime:Number(u.BestTime)||0, gamesPlayed:Number(u.GamesPlayed)||0
+        })):[];
+        users.sort((a,b)=>{
+          if(orderBy==='bestScore'){ if(b.bestScore!==a.bestScore) return b.bestScore-a.bestScore; return a.bestTime-b.bestTime; }
+          const ta=a.bestTime||Infinity, tb=b.bestTime||Infinity; if(ta!==tb) return ta-tb; return b.bestScore-a.bestScore;
+        });
+        body.innerHTML='';
+        if(users.length===0){ body.innerHTML='<tr><td colspan="5">لا توجد نتائج مسجلة حتى الآن.</td></tr>'; }
+        else{
+          users.slice(0,10).forEach((u,i)=>{
+            const cls=i<3?`rank-${i+1}`:''; const time=u.bestTime>0?formatSeconds(u.bestTime):'---';
+            const scoreStyle='background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px;font-weight:700;padding:4px 8px;display:inline-block;min-width:50px';
+            const tr=document.createElement('tr'); tr.className=cls;
+            tr.innerHTML=`<td style="font-weight:700">${i+1}</td><td style="text-align:right">${u.name}</td><td><span style="${scoreStyle}">${u.bestScore}%</span></td><td>${time}</td><td>${u.gamesPlayed}</td>`;
+            body.appendChild(tr);
+          });
+        }
+        showScreen('leaderboardScreen');
+      }catch(e){
+        console.error(e);
+        body.innerHTML='<tr><td colspan="5" style="color:#e74c3c">حدث خطأ أثناء جلب البيانات. تأكدي من نشر Apps Script كـ Web app وإرجاع JSON.</td></tr>';
+        showScreen('leaderboardScreen');
+      }
+    }
+
+    /* ============ كشف الدوال للأزرار ============ */
+    window.startLearningJourney = startLearningJourney;
+    window.showLeaderboard = showLeaderboard;
+    window.handleUserSelection = handleUserSelection;
+    window.confirmName = confirmName;
+    window.showDomainsScreen = showDomainsScreen;
+    window.showWelcomeScreen = showWelcomeScreen;
+    window.showDomainDetails = showDomainDetails;
+    window.switchTab = switchTab;
+    window.checkAndStartQuiz = checkAndStartQuiz;
+    window.startQuiz = startQuiz;
+    window.selectOption = selectOption;
+    window.nextQuestion = nextQuestion;
+    window.showQuizResults = showQuizResults;
+    window.showLeaderboardFromSheets = showLeaderboardFromSheets;
+
+    /* ============ تهيئة أولية ============ */
+    if(currentUser){ viewedDomains=new Set([1,2,3,4,5]); } // اختياري: لو أردتِ تمكين الاختبار بسرعة أثناء التجربة احذفي هذا السطر
+    updateDomainProgress();
+  </script>
 </body>
 </html>
