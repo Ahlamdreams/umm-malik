@@ -896,8 +896,6 @@
             margin-bottom: 10px;
         }
         
-        /* تم حذف الـ interactive-tabs و tab-content و switchTab لأنه سيتم عرض كل الأمثلة مباشرة */
-
         /* شاشة الاختبار */
         .quiz-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1489,7 +1487,7 @@
         <div class="screen" id="quizScreen">
             <div class="quiz-header">
                 <h2>🎯 اختبار بوصلة التميز الإشرافي</h2>
-                <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 10px;">⏰ لديك 3 دقائق لإكمال الاختبار</p>
+                <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 10px;">⏰ لديك 5 دقائق لإكمال الاختبار</p>
                 <div class="quiz-stats">
                     <div class="stat-item">
                         <div class="stat-value" id="currentQuestionNum">1</div>
@@ -1504,7 +1502,7 @@
                         <div class="stat-label">النقاط</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="timeRemaining">03:00</div>
+                        <div class="stat-value" id="timeRemaining">05:00</div>
                         <div class="stat-label">الوقت المتبقي</div>
                     </div>
                 </div>
@@ -2329,9 +2327,9 @@
         let quizTimer = null;
         let viewedDomains = new Set();
         let currentLeaderboardTab = 'accuracy';
-        let quizTimeLimit = 180; // 3 دقائق بالثواني
-        let remainingTime = 180;
-
+        let quizTimeLimit = 300; // تم التعديل: 5 دقائق = 300 ثانية
+        let remainingTime = 300; // تم التعديل
+        
         // **دالة إرسال البيانات إلى Google Sheet (مُضافة للتزامن)**
         function sendDataToSheet(data) {
             const formData = new FormData();
@@ -2610,7 +2608,12 @@
             if(timeElement) {
                 timeElement.style.color = 'white';
                 timeElement.style.fontWeight = 'normal';
-                timeElement.textContent = `${Math.floor(quizTimeLimit / 60).toString().padStart(2, '0')}:${(quizTimeLimit % 60).toString().padStart(2, '0')}`;
+                
+                // حساب الدقائق والثواني للعرض الأولي (5 دقائق)
+                const initialMinutes = Math.floor(quizTimeLimit / 60).toString().padStart(2, '0');
+                const initialSeconds = (quizTimeLimit % 60).toString().padStart(2, '0');
+
+                timeElement.textContent = `${initialMinutes}:${initialSeconds}`;
             }
 
             // اختيار أسئلة عشوائية
