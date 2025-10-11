@@ -1585,8 +1585,8 @@
             <p class="subtitle">أفضل الإنجازات في بوصلة التميز الإشرافي</p>
             
             <div class="leaderboard-tabs">
-                <button class="tab-btn active" onclick="showLeaderboardTab('accuracy', this)">🎯 الدقة</button>
-                <button class="tab-btn" onclick="showLeaderboardTab('speed', this)">⚡ السرعة</button>
+                <button class="tab-btn active" onclick="showLeaderboardTab('accuracy')">🎯 الدقة</button>
+                <button class="tab-btn" onclick="showLeaderboardTab('speed')">⚡ السرعة</button>
             </div>
             
             <div class="leaderboard-content" id="leaderboardContent">
@@ -1600,43 +1600,10 @@
     </div>
 
     <script>
-        /* =========================
-           إضافات/إصلاحات عامة
-           ========================= */
-        const LS_KEYS = {
-            users: 'gameUsers',
-            currentUser: 'currentUser',
-            viewed: 'viewedDomains'
-        };
+        // رابط الخدمة لربط Google Sheet
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby6iL-TvvsLFKrvaDGikfb3LdPvfNylMzaOLaRGKSTW6-37blqWEt-8Vmppz8FSbaAB/exec';
 
-        // مولّد الأصوات البسيطة
-        function playSound(type = 'click') {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const o = ctx.createOscillator();
-                const g = ctx.createGain();
-                o.connect(g);
-                g.connect(ctx.destination);
-                let freq = 440, dur = 0.07;
-                if (type === 'hover') { freq = 660; dur = 0.04; }
-                if (type === 'click') { freq = 520; dur = 0.06; }
-                if (type === 'correct') { freq = 740; dur = 0.1; }
-                if (type === 'wrong') { freq = 240; dur = 0.12; }
-                o.frequency.value = freq;
-                o.type = 'sine';
-                g.gain.setValueAtTime(0.0001, ctx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.01);
-                g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
-                o.start();
-                o.stop(ctx.currentTime + dur + 0.01);
-            } catch (e) {
-                // إذا منع المتصفح الصوت—نتجاهل بهدوء
-            }
-        }
-
-        /* =========================
-           البيانات (Domains) - تم نسخها كما هي
-           ========================= */
+        // بيانات المجالات والمعايير مع أمثلة موسعة (لم تتغير)
         const domains = {
             1: {
                 title: "الإنجاز الدراسي",
@@ -1962,9 +1929,7 @@
             }
         };
 
-        /* =========================
-           البيانات (Quiz Questions) - تم نسخها كما هي
-           ========================= */
+        // أسئلة الاختبار المطورة مع سيناريوهات واقعية (لم تتغير)
         const quizQuestions = [
             {
                 type: "scenario",
@@ -2080,7 +2045,7 @@
                 options: [
                     "الإنجاز الدراسي",
                     "النمو الشخصي",
-                    "التدريس والتقويم", 
+                    "التدريس والتقويم",
                     "القيادة والإدارة والحوكمة"
                 ],
                 correct: 0,
@@ -2091,7 +2056,7 @@
                 question: "إذا كان 'يحقق جميع الطلبة نواتج التعلم المتوقعة ويتجاوزونها'، فما التقدير المناسب؟",
                 options: [
                     "متميز (1)",
-                    "جيد (2)", 
+                    "جيد (2)",
                     "ملائم (3)",
                     "غير ملائم (4)"
                 ],
@@ -2412,10 +2377,6 @@
             }
         ];
 
-
-        /* =========================
-           من هنا تبدأ الوظائف المصحّحة والمدمجة
-           ========================= */
         // متغيرات اللعبة
         let currentUser = '';
         let currentQuizQuestion = 0;
@@ -2424,33 +2385,42 @@
         let totalQuizQuestions = 20;
         let quizStartTime = 0;
         let quizTimer = null;
-        let viewedDomains = new Set(); // سيتم تحميلها من التخزين
+        let viewedDomains = new Set();
         let currentLeaderboardTab = 'accuracy';
-        let quizTimeLimit = 180; // 3 دقائق
+        let quizTimeLimit = 180; // 3 دقائق بالثواني
         let remainingTime = 180;
 
-        // تحميل الحالة من التخزين
-        function loadState() {
-            const savedUser = localStorage.getItem(LS_KEYS.currentUser);
-            if (savedUser) currentUser = savedUser;
+        // **دالة إرسال البيانات إلى Google Sheet (مُضافة للتزامن)**
+        function sendDataToSheet(data) {
+            const formData = new FormData();
+            for (let key in data) {
+                formData.append(key, data[key]);
+            }
 
-            try {
-                const savedViewed = JSON.parse(localStorage.getItem(LS_KEYS.viewed) || '[]');
-                if (Array.isArray(savedViewed)) {
-                    viewedDomains = new Set(savedViewed.map(Number)); // تحويل إلى أرقام
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            } catch {}
+                return response.json();
+            })
+            .then(result => {
+                console.log('Data successfully sent to Google Sheet:', result);
+            })
+            .catch(error => {
+                console.error('Error sending data to Google Sheet:', error);
+                alert('حدث خطأ في إرسال النتيجة. يرجى مراجعة المشرف.');
+            });
         }
 
-        // حفظ المجالات المشاهَدة
-        function persistViewedDomains() {
-            localStorage.setItem(LS_KEYS.viewed, JSON.stringify([...viewedDomains]));
-        }
-
-        // إدارة المستخدم
+        // وظائف إدارة المستخدم
         function handleUserSelection() {
             const select = document.getElementById('userSelect');
             const customGroup = document.getElementById('customNameGroup');
+            
             if (select.value === 'custom') {
                 customGroup.style.display = 'block';
                 document.getElementById('customNameInput').focus();
@@ -2462,79 +2432,41 @@
         function confirmName() {
             const select = document.getElementById('userSelect');
             const customInput = document.getElementById('customNameInput');
-
+            
             if (select.value === 'custom') {
-                currentUser = (customInput.value || '').trim();
-                if (!currentUser) { alert('يرجى إدخال اسمك أولاً'); return; }
+                currentUser = customInput.value.trim();
+                if (!currentUser) {
+                    alert('يرجى إدخال اسمك أولاً');
+                    return;
+                }
             } else if (select.value) {
                 currentUser = select.value;
             } else {
                 alert('يرجى اختيار اسم أو إدخال اسم جديد');
                 return;
             }
-
-            localStorage.setItem(LS_KEYS.currentUser, currentUser);
-            initializeUser(currentUser);
+            
+            localStorage.setItem('currentUser', currentUser); // ما زلنا نستخدمها لتخزين اسم المستخدم الحالي
             showDomainsScreen();
         }
 
-        function initializeUser(userName) {
-            let users = JSON.parse(localStorage.getItem(LS_KEYS.users) || '{}');
-            if (!users[userName]) {
-                users[userName] = {
-                    name: userName, bestScore: 0, bestTime: 0,
-                    totalQuestions: 0, gamesPlayed: 0, averageTime: 0,
-                    lastPlayed: new Date().toISOString()
-                };
-                localStorage.setItem(LS_KEYS.users, JSON.stringify(users));
-            }
+        // تم حذف initializeUser و saveUserScore بالكامل وتم استبدالها بـ sendDataToSheet
+
+        // وظائف عرض الشاشات
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
         }
 
-        function saveUserScore(userName, score, totalQuestions, timeInSeconds) {
-            let users = JSON.parse(localStorage.getItem(LS_KEYS.users) || '{}');
-            if (!users[userName]) {
-                users[userName] = {
-                    name: userName, bestScore: 0, bestTime: 0,
-                    totalQuestions: 0, gamesPlayed: 0, averageTime: 0
-                };
-            }
-            const percentage = Math.round((score / totalQuestions) * 100);
-            const currentBest = users[userName].bestScore;
-            const currentBestTime = users[userName].bestTime;
-
-            let isNewRecord = false, isNewSpeedRecord = false;
-
-            if (percentage > currentBest) {
-                users[userName].bestScore = percentage;
-                users[userName].totalQuestions = totalQuestions;
-                isNewRecord = true;
-            }
-
-            if (percentage >= 70) {
-                if (currentBestTime === 0 || timeInSeconds < currentBestTime) {
-                    users[userName].bestTime = timeInSeconds;
-                    isNewSpeedRecord = true;
-                }
-            }
-
-            users[userName].gamesPlayed++;
-            const totalTime = (users[userName].averageTime * (users[userName].gamesPlayed - 1)) + timeInSeconds;
-            users[userName].averageTime = Math.round(totalTime / users[userName].gamesPlayed);
-            users[userName].lastPlayed = new Date().toISOString();
-
-            localStorage.setItem(LS_KEYS.users, JSON.stringify(users));
-            return { isNewRecord, isNewSpeedRecord };
+        function showWelcomeScreen() {
+            showScreen('welcomeScreen');
         }
 
-        // شاشات
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+        function startLearningJourney() {
+            showScreen('nameScreen');
         }
-
-        function showWelcomeScreen() { showScreen('welcomeScreen'); }
-
-        function startLearningJourney() { showScreen('nameScreen'); }
 
         function showDomainsScreen() {
             updateDomainProgress();
@@ -2545,22 +2477,26 @@
             for (let i = 1; i <= 5; i++) {
                 const progressBar = document.getElementById(`progress-${i}`);
                 const domainCard = document.getElementById(`domain-${i}`);
-                if (!progressBar || !domainCard) continue;
-                const done = viewedDomains.has(i);
-                progressBar.style.width = done ? '100%' : '0%';
-                if (done) {
-                    domainCard.classList.add('viewed');
-                    if (!domainCard.querySelector('.completion-badge')) {
-                        const badge = document.createElement('div');
-                        badge.className = 'completion-badge';
-                        badge.textContent = '✓ مكتمل';
-                        domainCard.appendChild(badge);
+                if (progressBar && domainCard) {
+                    const progress = viewedDomains.has(i) ? 100 : 0;
+                    progressBar.style.width = progress + '%';
+                    
+                    if (viewedDomains.has(i)) {
+                        domainCard.classList.add('viewed');
+                        if (!domainCard.querySelector('.completion-badge')) {
+                            const badge = document.createElement('div');
+                            badge.className = 'completion-badge';
+                            badge.textContent = '✓ مكتمل';
+                            domainCard.appendChild(badge);
+                        }
                     }
                 }
             }
-
+            
+            // إظهار/إخفاء زر الاختبار والتنبيه
             const startQuizBtn = document.getElementById('startQuizBtn');
             const requirementNotice = document.getElementById('requirementNotice');
+            
             if (viewedDomains.size === 5) {
                 startQuizBtn.disabled = false;
                 startQuizBtn.style.opacity = '1';
@@ -2577,34 +2513,36 @@
             if (!domain) return;
 
             viewedDomains.add(domainId);
-            persistViewedDomains();
 
+            // إحصائيات المجال
             const totalCriteria = domain.criteria.length;
-            const totalExamples = domain.criteria.reduce((s, c) => s + c.examples.length, 0);
-
+            const totalExamples = domain.criteria.reduce((sum, criterion) => sum + criterion.examples.length, 0);
+            
+            // أيقونات المعايير
             const criteriaIcons = {
-                1:'📊',2:'📈',3:'🎯',
-                4:'🌱',
-                5:'🏫',6:'📋',
-                7:'👨‍🏫',8:'🎓',9:'💻',10:'📝',
-                11:'👑',12:'⚖️',13:'🚀'
+                1: '📊', 2: '📈', 3: '🎯', // الإنجاز الدراسي
+                4: '🌱', // النمو الشخصي
+                5: '🏫', 6: '📋', // مناخ المدرسة
+                7: '👨‍🏫', 8: '🎓', 9: '💻', 10: '📝', // التدريس والتقويم
+                11: '👑', 12: '⚖️', 13: '🚀' // القيادة والإدارة
             };
 
             let criteriaHTML = '';
-            domain.criteria.forEach((criterion) => {
-                const len = criterion.examples.length;
-                const one = Math.ceil(len/3), two = Math.ceil((len*2)/3);
-                const practical = criterion.examples.slice(0, one);
-                const excellent = criterion.examples.slice(one, two);
-                const innovative = criterion.examples.slice(two);
+            domain.criteria.forEach((criterion, index) => {
+                // تصنيف الأمثلة
+                const practicalExamples = criterion.examples.filter((_, i) => i < Math.ceil(criterion.examples.length / 3));
+                const excellentExamples = criterion.examples.filter((_, i) => i >= Math.ceil(criterion.examples.length / 3) && i < Math.ceil(criterion.examples.length * 2 / 3));
+                const innovativeExamples = criterion.examples.filter((_, i) => i >= Math.ceil(criterion.examples.length * 2 / 3));
 
-                const item = (arr, cat, icon, color) => arr.map(ex => `
-                    <div class="example-item">
-                        <div class="example-category" style="background:${color};">${cat}</div>
-                        <span class="example-icon">${icon}</span>
-                        ${ex}
-                    </div>
-                `).join('');
+                const createExampleHTML = (examples, category, icon, color) => {
+                    return examples.map(example => `
+                        <div class="example-item">
+                            <div class="example-category" style="background: ${color};">${category}</div>
+                            <span class="example-icon">${icon}</span>
+                            ${example}
+                        </div>
+                    `).join('');
+                };
 
                 criteriaHTML += `
                     <div class="criterion-card">
@@ -2613,30 +2551,55 @@
                             <div class="criterion-title">${criterion.title}</div>
                             <div class="criterion-number">${criterion.id}</div>
                         </div>
-                        <div class="criterion-explanation">${criterion.explanation}</div>
+                        
+                        <div class="criterion-explanation">
+                            ${criterion.explanation}
+                        </div>
+                        
                         <div class="examples-section">
                             <div class="interactive-tabs">
-                                <button class="tab-button active" onclick="switchTab(${criterion.id}, 'practical', this)">
-                                    🎯 أمثلة عملية <span class="visual-indicator indicator-good"></span>
+                                <button class="tab-button active" onclick="switchTab(${criterion.id}, 'practical', event)">
+                                    🎯 أمثلة عملية
+                                    <span class="visual-indicator indicator-good"></span>
                                 </button>
-                                <button class="tab-button" onclick="switchTab(${criterion.id}, 'excellent', this)">
-                                    ⭐ أمثلة متميزة <span class="visual-indicator indicator-excellent"></span>
+                                <button class="tab-button" onclick="switchTab(${criterion.id}, 'excellent', event)">
+                                    ⭐ أمثلة متميزة
+                                    <span class="visual-indicator indicator-excellent"></span>
                                 </button>
-                                <button class="tab-button" onclick="switchTab(${criterion.id}, 'innovative', this)">
-                                    🚀 أمثلة إبداعية <span class="visual-indicator indicator-needs-improvement"></span>
+                                <button class="tab-button" onclick="switchTab(${criterion.id}, 'innovative', event)">
+                                    🚀 أمثلة إبداعية
+                                    <span class="visual-indicator indicator-needs-improvement"></span>
                                 </button>
                             </div>
+                            
                             <div id="tab-${criterion.id}-practical" class="tab-content active">
-                                <div class="examples-header"><span style="font-size:1.5rem;">🎯</span><h4>أمثلة عملية وتطبيقية</h4></div>
-                                <div class="examples-grid">${item(practical,'عملي','✅','#4CAF50')}</div>
+                                <div class="examples-header">
+                                    <span style="font-size: 1.5rem;">🎯</span>
+                                    <h4>أمثلة عملية وتطبيقية</h4>
+                                </div>
+                                <div class="examples-grid">
+                                    ${createExampleHTML(practicalExamples, 'عملي', '✅', '#4CAF50')}
+                                </div>
                             </div>
+                            
                             <div id="tab-${criterion.id}-excellent" class="tab-content">
-                                <div class="examples-header"><span style="font-size:1.5rem;">⭐</span><h4>أمثلة متميزة ومتقدمة</h4></div>
-                                <div class="examples-grid">${item(excellent,'متميز','🌟','#2196F3')}</div>
+                                <div class="examples-header">
+                                    <span style="font-size: 1.5rem;">⭐</span>
+                                    <h4>أمثلة متميزة ومتقدمة</h4>
+                                </div>
+                                <div class="examples-grid">
+                                    ${createExampleHTML(excellentExamples, 'متميز', '🌟', '#2196F3')}
+                                </div>
                             </div>
+                            
                             <div id="tab-${criterion.id}-innovative" class="tab-content">
-                                <div class="examples-header"><span style="font-size:1.5rem;">🚀</span><h4>أمثلة إبداعية ومبتكرة</h4></div>
-                                <div class="examples-grid">${item(innovative,'إبداعي','💡','#FF9800')}</div>
+                                <div class="examples-header">
+                                    <span style="font-size: 1.5rem;">🚀</span>
+                                    <h4>أمثلة إبداعية ومبتكرة</h4>
+                                </div>
+                                <div class="examples-grid">
+                                    ${createExampleHTML(innovativeExamples, 'إبداعي', '💡', '#FF9800')}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2645,53 +2608,77 @@
 
             document.getElementById('domainDetailsContent').innerHTML = `
                 <div class="domain-detail-header">
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
                         <div>
-                            <div style="font-size:4rem;margin-bottom:10px;">${domain.icon}</div>
-                            <h2 style="margin:0;font-size:2.2rem;">${domain.title}</h2>
+                            <div style="font-size: 4rem; margin-bottom: 10px;">${domain.icon}</div>
+                            <h2 style="margin: 0; font-size: 2.2rem;">${domain.title}</h2>
                         </div>
                         <div class="domain-stats">
-                            <div class="stat-box"><span class="stat-icon">📊</span><div class="stat-number">${totalCriteria}</div><div class="stat-label">معايير</div></div>
-                            <div class="stat-box"><span class="stat-icon">💡</span><div class="stat-number">${totalExamples}</div><div class="stat-label">مثال</div></div>
-                            <div class="stat-box"><span class="stat-icon">⏱️</span><div class="stat-number">${Math.ceil(totalExamples/10)}</div><div class="stat-label">دقائق</div></div>
+                            <div class="stat-box">
+                                <span class="stat-icon">📊</span>
+                                <div class="stat-number">${totalCriteria}</div>
+                                <div class="stat-label">معايير</div>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-icon">💡</span>
+                                <div class="stat-number">${totalExamples}</div>
+                                <div class="stat-label">مثال</div>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-icon">⏱️</span>
+                                <div class="stat-number">${Math.ceil(totalExamples / 10)}</div>
+                                <div class="stat-label">دقائق</div>
+                            </div>
                         </div>
                     </div>
-                    <p style="font-size:1.15rem;line-height:1.7;opacity:.95;margin:0;">${domain.description}</p>
+                    <p style="font-size: 1.15rem; line-height: 1.7; opacity: 0.95; margin: 0;">${domain.description}</p>
                 </div>
-                <div style="margin-bottom:40px;">
-                    <div style="text-align:center;margin-bottom:40px;">
-                        <h3 style="color:#2c3e50;font-size:2rem;margin-bottom:15px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+                
+                <div style="margin-bottom: 40px;">
+                    <div style="text-align: center; margin-bottom: 40px;">
+                        <h3 style="color: #2c3e50; font-size: 2rem; margin-bottom: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
                             🎯 المعايير التفصيلية مع الأمثلة التطبيقية
                         </h3>
-                        <p style="color:#7f8c8d;font-size:1.1rem;">استكشف كل معيار بأمثلة متدرجة من العملي إلى الإبداعي</p>
+                        <p style="color: #7f8c8d; font-size: 1.1rem;">استكشف كل معيار بأمثلة متدرجة من العملي إلى الإبداعي</p>
                     </div>
                     ${criteriaHTML}
                 </div>
-                <div style="text-align:center;margin-top:50px;padding:30px;background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%);border-radius:20px;">
-                    <div style="font-size:2.5rem;margin-bottom:15px;">🎓</div>
-                    <h3 style="color:#2c3e50;margin-bottom:20px;">هل أنت مستعد للاختبار؟</h3>
-                    <p style="color:#7f8c8d;margin-bottom:25px;">اختبر فهمك لهذا المجال والمجالات الأخرى</p>
-                    <button class="btn secondary" onclick="showDomainsScreen()"><span style="margin-left:8px;">🔙</span>العودة للمجالات</button>
-                    <button class="btn success" onclick="checkAndStartQuiz()"><span style="margin-left:8px;">🚀</span>ابدأ الاختبار الآن</button>
+                
+                <div style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 20px;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🎓</div>
+                    <h3 style="color: #2c3e50; margin-bottom: 20px;">هل أنت مستعد للاختبار؟</h3>
+                    <p style="color: #7f8c8d; margin-bottom: 25px;">اختبر فهمك لهذا المجال والمجالات الأخرى</p>
+                    <button class="btn secondary" onclick="showDomainsScreen()">
+                        <span style="margin-left: 8px;">🔙</span>
+                        العودة للمجالات
+                    </button>
+                    <button class="btn success" onclick="checkAndStartQuiz()">
+                        <span style="margin-left: 8px;">🚀</span>
+                        ابدأ الاختبار الآن
+                    </button>
                 </div>
             `;
 
-            updateDomainProgress(); // يحدث الشارات فورا
             showScreen('domainDetailsScreen');
         }
 
-        // تبويب الأمثلة — إصلاح الاعتماد على event
-        function switchTab(criterionId, tabType, btnEl) {
-            document.querySelectorAll(`[id^="tab-${criterionId}-"]`).forEach(t => t.classList.remove('active'));
+        // وظيفة تبديل التبويبات
+        function switchTab(criterionId, tabType, event) {
+            // إخفاء جميع المحتويات
+            document.querySelectorAll(`[id^="tab-${criterionId}-"]`).forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // إزالة الفئة النشطة من جميع الأزرار لنفس المعيار
+            document.querySelectorAll(event.target.closest('.interactive-tabs').querySelectorAll('.tab-button')).forEach(btn => btn.classList.remove('active'));
+            
+            // إظهار المحتوى المحدد
             document.getElementById(`tab-${criterionId}-${tabType}`).classList.add('active');
-
-            // فعِّل الزر الحالي وألغِ البقية داخل نفس الشريط
-            const container = btnEl.parentElement;
-            container.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-            btnEl.classList.add('active');
+            
+            // تفعيل الزر المحدد
+            event.target.classList.add('active');
         }
 
-        // فحص البدء
         function checkAndStartQuiz() {
             if (viewedDomains.size < 5) {
                 alert('يجب الاطلاع على جميع المجالات الخمسة قبل البدء في الاختبار');
@@ -2701,51 +2688,79 @@
             startQuiz();
         }
 
-        // الاختبار
+        // وظائف الاختبار
         function startQuiz() {
-            if (!currentUser) { showScreen('nameScreen'); return; }
+            if (!currentUser) {
+                showScreen('nameScreen');
+                return;
+            }
+            
             if (viewedDomains.size < 5) {
                 alert('يجب الاطلاع على جميع المجالات الخمسة قبل البدء في الاختبار');
-                showDomainsScreen(); return;
+                showDomainsScreen();
+                return;
             }
+            
             currentQuizQuestion = 0;
             quizScore = 0;
             quizStartTime = Date.now();
             remainingTime = quizTimeLimit;
+            
+            // إعادة ضبط لون المؤقت
+            const timeElement = document.getElementById('timeRemaining');
+            if(timeElement) {
+                timeElement.style.color = 'white';
+                timeElement.style.fontWeight = 'normal';
+                timeElement.textContent = `${Math.floor(quizTimeLimit / 60).toString().padStart(2, '0')}:${(quizTimeLimit % 60).toString().padStart(2, '0')}`;
+            }
 
+            // اختيار أسئلة عشوائية
             selectedQuestions = [...quizQuestions].sort(() => Math.random() - 0.5).slice(0, totalQuizQuestions);
-
+            
+            // بدء مؤقت الوقت
+            stopQuizTimer(); // التأكد من إيقاف المؤقت السابق
             startQuizTimer();
+            
             showScreen('quizScreen');
             showQuizQuestion();
         }
 
         function startQuizTimer() {
-            stopQuizTimer();
             quizTimer = setInterval(() => {
                 remainingTime--;
+                
                 if (remainingTime <= 0) {
+                    // انتهى الوقت
                     stopQuizTimer();
                     alert('⏰ انتهى الوقت المحدد للاختبار!');
                     showQuizResults();
                     return;
                 }
-                const m = Math.floor(remainingTime/60);
-                const s = remainingTime % 60;
-                const el = document.getElementById('timeRemaining');
-                if (el) {
-                    el.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-                    // إعادة ضبط اللون كل مرة لتجنب التكرار
-                    el.style.color = 'white'; 
-                    el.style.fontWeight = 'normal';
-                    if (remainingTime <= 30) { el.style.color = '#e74c3c'; el.style.fontWeight = 'bold'; }
-                    else if (remainingTime <= 60) { el.style.color = '#f39c12'; el.style.fontWeight = 'bold'; }
+                
+                const minutes = Math.floor(remainingTime / 60);
+                const seconds = remainingTime % 60;
+                const timeElement = document.getElementById('timeRemaining');
+                
+                if (timeElement) {
+                    timeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    // تغيير لون المؤقت عند اقتراب انتهاء الوقت
+                    if (remainingTime <= 30) {
+                        timeElement.style.color = '#e74c3c';
+                        timeElement.style.fontWeight = 'bold';
+                    } else if (remainingTime <= 60) {
+                        timeElement.style.color = '#f39c12';
+                        timeElement.style.fontWeight = 'bold';
+                    }
                 }
             }, 1000);
         }
 
         function stopQuizTimer() {
-            if (quizTimer) { clearInterval(quizTimer); quizTimer = null; }
+            if (quizTimer) {
+                clearInterval(quizTimer);
+                quizTimer = null;
+            }
         }
 
         function showQuizQuestion() {
@@ -2754,54 +2769,66 @@
                 showQuizResults();
                 return;
             }
-            const q = selectedQuestions[currentQuizQuestion];
 
+            const question = selectedQuestions[currentQuizQuestion];
+            
+            // تحديث الإحصائيات
             const progress = ((currentQuizQuestion + 1) / selectedQuestions.length) * 100;
             document.getElementById('quizProgressBar').style.width = progress + '%';
             document.getElementById('currentQuestionNum').textContent = currentQuizQuestion + 1;
             document.getElementById('totalQuestions').textContent = selectedQuestions.length;
             document.getElementById('currentScore').textContent = quizScore;
-
-            const letters = ['أ','ب','ج','د'];
+            
             let optionsHTML = '';
-            q.options.forEach((opt, i) => {
-                optionsHTML += `<div class="quiz-option" data-letter="${letters[i] || ''}" onclick="selectQuizOption(${i})">${opt}</div>`;
+            const letters = ['أ', 'ب', 'ج', 'د'];
+            question.options.forEach((option, index) => {
+                optionsHTML += `
+                    <div class="quiz-option" data-letter="${letters[index]}" onclick="selectQuizOption(${index})">
+                        ${option}
+                    </div>
+                `;
             });
 
             document.getElementById('quizContent').innerHTML = `
-                <div class="quiz-question">${q.question}</div>
-                <div class="quiz-options" id="quizOptions">${optionsHTML}</div>
-                <button class="btn" id="nextQuizBtn" onclick="nextQuizQuestion()" style="display:none;">السؤال التالي</button>
+                <div class="quiz-question">
+                    ${question.question}
+                </div>
+                <div class="quiz-options" id="quizOptions">
+                    ${optionsHTML}
+                </div>
+                <button class="btn" id="nextQuizBtn" onclick="nextQuizQuestion()" style="display: none;">السؤال التالي</button>
             `;
         }
 
         function selectQuizOption(selectedIndex) {
-            const q = selectedQuestions[currentQuizQuestion];
-            const opts = document.querySelectorAll('.quiz-option');
-            let isCorrect = selectedIndex === q.correct;
-
-            opts.forEach((opt, idx) => {
-                opt.style.pointerEvents = 'none';
-                if (idx === q.correct) opt.classList.add('correct');
-                else if (idx === selectedIndex && !isCorrect) opt.classList.add('incorrect');
+            const question = selectedQuestions[currentQuizQuestion];
+            const options = document.querySelectorAll('.quiz-option');
+            
+            options.forEach((option, index) => {
+                option.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex && selectedIndex !== question.correct) {
+                    option.classList.add('incorrect');
+                }
             });
 
-            if (isCorrect) {
+            if (selectedIndex === question.correct) {
                 quizScore++;
                 document.getElementById('currentScore').textContent = quizScore;
-                playSound('correct');
-            } else {
-                playSound('wrong');
             }
 
+            // إظهار الشرح
+            const isCorrect = selectedIndex === question.correct;
             const explanationHTML = `
                 <div class="explanation-box ${isCorrect ? '' : 'incorrect'}">
-                    <div style="font-weight:600;margin-bottom:10px;color:#2c3e50;font-size:1.1rem;">
+                    <div style="font-weight: 600; margin-bottom: 10px; color: #2c3e50; font-size: 1.1rem;">
                         ${isCorrect ? '✅ إجابة صحيحة!' : '❌ إجابة خاطئة'}
                     </div>
-                    ${q.explanation}
+                    ${question.explanation}
                 </div>
             `;
+
             document.getElementById('quizOptions').insertAdjacentHTML('afterend', explanationHTML);
             document.getElementById('nextQuizBtn').style.display = 'block';
         }
@@ -2811,67 +2838,91 @@
             showQuizQuestion();
         }
 
+        // **الدالة المُعدلة لعرض النتائج والإرسال عبر API**
         function showQuizResults() {
             const totalTime = quizTimeLimit - remainingTime;
-            const percentage = Math.round((quizScore / selectedQuestions.length) * 100);
-            const records = saveUserScore(currentUser, quizScore, selectedQuestions.length, totalTime);
+            const totalQuestions = selectedQuestions.length;
+            const percentage = Math.round((quizScore / totalQuestions) * 100);
+            
+            // 1. جمع البيانات للإرسال
+            const resultData = {
+                name: currentUser,
+                score: quizScore,
+                total: totalQuestions,
+                percentage: percentage,
+                time: totalTime, // الوقت بالثواني
+                timestamp: new Date().toISOString()
+            };
 
-            let resultIcon = '📚', resultMessage = 'يُنصح بمراجعة المجالات والمعايير مرة أخرى';
-            if (percentage >= 90) { resultIcon = '🏆'; resultMessage = 'أداء متميز! لديك فهم عميق لاستمارة الزيارة الإشرافية'; }
-            else if (percentage >= 80) { resultIcon = '🥇'; resultMessage = 'أداء ممتاز! تُظهر فهماً جيداً جداً للمعايير'; }
-            else if (percentage >= 70) { resultIcon = '🥈'; resultMessage = 'أداء جيد! لديك فهم جيد مع بعض النقاط للتحسين'; }
-            else if (percentage >= 60) { resultIcon = '🥉'; resultMessage = 'أداء مقبول! يُنصح بمراجعة بعض المجالات'; }
+            // 2. إرسال البيانات إلى Google Sheet
+            sendDataToSheet(resultData); // استدعاء دالة الإرسال
 
-            let recordMessages = '';
-            if (records.isNewRecord) recordMessages += '<div style="color:#e74c3c;font-size:1.2rem;margin:15px 0;font-weight:600;">🎉 رقم قياسي جديد في الدقة!</div>';
-            if (records.isNewSpeedRecord) recordMessages += '<div style="color:#00b894;font-size:1.2rem;margin:15px 0;font-weight:600;">⚡ رقم قياسي جديد في السرعة!</div>';
+            // 3. عرض رسائل الأداء
+            let resultIcon = '';
+            let resultMessage = '';
 
-            const m = Math.floor(totalTime/60), s = totalTime % 60;
-            const timeString = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            if (percentage >= 90) {
+                resultIcon = '🏆';
+                resultMessage = 'أداء متميز! لديك فهم عميق لاستمارة الزيارة الإشرافية';
+            } else if (percentage >= 80) {
+                resultIcon = '🥇';
+                resultMessage = 'أداء ممتاز! تُظهر فهماً جيداً جداً للمعايير';
+            } else if (percentage >= 70) {
+                resultIcon = '🥈';
+                resultMessage = 'أداء جيد! لديك فهم جيد مع بعض النقاط للتحسين';
+            } else if (percentage >= 60) {
+                resultIcon = '🥉';
+                resultMessage = 'أداء مقبول! يُنصح بمراجعة بعض المجالات';
+            } else {
+                resultIcon = '📚';
+                resultMessage = 'يُنصح بمراجعة المجالات والمعايير مرة أخرى';
+            }
+
+            const minutes = Math.floor(totalTime / 60);
+            const seconds = totalTime % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
             document.getElementById('resultsContent').innerHTML = `
                 <div class="results-icon">${resultIcon}</div>
                 <h2>انتهى الاختبار!</h2>
-                ${recordMessages}
                 <div class="results-message">${resultMessage}</div>
+                
                 <div class="results-stats">
-                    <div class="result-stat"><div class="result-stat-value">${quizScore}/${selectedQuestions.length}</div><div class="result-stat-label">الإجابات الصحيحة</div></div>
-                    <div class="result-stat"><div class="result-stat-value">${percentage}%</div><div class="result-stat-label">نسبة النجاح</div></div>
-                    <div class="result-stat"><div class="result-stat-value">${timeString}</div><div class="result-stat-label">الوقت المستغرق</div></div>
-                    <div class="result-stat"><div class="result-stat-value">${Math.round(totalTime / selectedQuestions.length)}ث</div><div class="result-stat-label">متوسط الوقت/سؤال</div></div>
+                    <div class="result-stat">
+                        <div class="result-stat-value">${quizScore}/${totalQuestions}</div>
+                        <div class="result-stat-label">الإجابات الصحيحة</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value">${percentage}%</div>
+                        <div class="result-stat-label">نسبة النجاح</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value">${timeString}</div>
+                        <div class="result-stat-label">الوقت المستغرق</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value">${Math.round(totalTime / totalQuestions)}ث</div>
+                        <div class="result-stat-label">متوسط الوقت/سؤال</div>
+                    </div>
                 </div>
-                <div style="margin:30px 0;">
+                
+                <div style="margin: 30px 0;">
                     <button class="btn" onclick="startQuiz()">اختبار جديد</button>
                     <button class="btn success" onclick="showLeaderboard()">لوحة الصدارة</button>
                     <button class="btn secondary" onclick="showWelcomeScreen()">الصفحة الرئيسية</button>
                 </div>
             `;
+            
             showScreen('resultsScreen');
         }
 
-        // لوحة الصدارة — إصلاح السرعة + تفعيل الأزرار
-        function showLeaderboard() {
-            // تفعيل الزر الافتراضي (الدقة)
-            showLeaderboardTab(currentLeaderboardTab, document.querySelector(`.tab-btn[onclick*="showLeaderboardTab('${currentLeaderboardTab}')"]`));
-            showScreen('leaderboardScreen');
-        }
-
-        function showLeaderboardTab(tabType, btnEl) {
-            currentLeaderboardTab = tabType;
-
-            // فعِّل الزر المختار
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if (btnEl) {
-                btnEl.classList.add('active');
-            }
-
-            const users = JSON.parse(localStorage.getItem(LS_KEYS.users) || '{}');
-            let arr = Object.values(users).filter(u => u.gamesPlayed > 0);
-
-            if (arr.length === 0) {
+        // **دالة لعرض البيانات بناءً على التبويب بعد سحبها (مُضافة للتزامن)**
+        function updateLeaderboardDisplay(userArray, tabType) {
+            
+            if (userArray.length === 0) {
                 document.getElementById('leaderboardContent').innerHTML = `
-                    <div style="text-align:center;padding:40px;color:#7f8c8d;">
-                        <div style="font-size:3rem;margin-bottom:20px;">📊</div>
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">📊</div>
                         <h3>لا توجد نتائج بعد</h3>
                         <p>ابدأ اللعب لتظهر النتائج هنا!</p>
                     </div>
@@ -2879,84 +2930,132 @@
                 return;
             }
 
+            // الترتيب حسب الدقة أو السرعة
             if (tabType === 'accuracy') {
-                // الفرز: الدقة الأعلى أولاً، ثم أسرع وقت ككسر تعادل
-                arr.sort((a,b) => b.bestScore - a.bestScore || (a.bestTime||Infinity) - (b.bestTime||Infinity));
+                userArray.sort((a, b) => b.bestScore - a.bestScore);
             } else {
-                // الفرز: للذين لديهم وقت مسجل، الوقت الأقل أولاً، ثم الدقة ككسر تعادل
-                arr = arr.filter(u => u.bestTime > 0).sort((a,b) => a.bestTime - b.bestTime || b.bestScore - a.bestScore);
+                // ترتيب حسب السرعة (الوقت الأقل أفضل) - فقط للنتائج التي تزيد عن 0
+                userArray.filter(user => user.bestTime > 0).sort((a, b) => a.bestTime - b.bestTime);
             }
-
+            
             let html = '';
-            arr.forEach((user, idx) => {
-                const rankClass = idx < 3 ? `rank-${idx + 1}` : '';
-                const badgeClass = idx < 3 ? '' : 'default';
-                let badgeContent = '', details = '';
-
+            userArray.forEach((user, index) => {
+                const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                const badgeClass = index < 3 ? '' : 'default';
+                
+                let badgeContent = '';
+                let playerDetails = '';
+                
                 if (tabType === 'accuracy') {
                     badgeContent = `<div class="score-badge">${user.bestScore}%</div>`;
-                    details = `عدد المحاولات: ${user.gamesPlayed}`;
+                    playerDetails = `عدد المحاولات: ${user.gamesPlayed || 'N/A'}`;
                 } else {
-                    const m = Math.floor(user.bestTime / 60), s = user.bestTime % 60;
-                    const t = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-                    badgeContent = `<div class="speed-badge">${t}</div>`;
-                    details = `أفضل نتيجة: ${user.bestScore}%`;
+                    // تحويل الوقت من ثواني إلى دقيقة:ثانية
+                    if (user.bestTime > 0) {
+                        const minutes = Math.floor(user.bestTime / 60);
+                        const seconds = user.bestTime % 60;
+                        const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        badgeContent = `<div class="speed-badge">${timeString}</div>`;
+                        playerDetails = `أفضل دقة: ${user.bestScore}%`;
+                    } else {
+                        return; // تخطي المستخدمين الذين ليس لديهم وقت مسجل
+                    }
                 }
-
+                
                 html += `
                     <div class="leaderboard-item ${rankClass}">
-                        <div class="rank-badge ${badgeClass}">${idx + 1}</div>
+                        <div class="rank-badge ${badgeClass}">${index + 1}</div>
                         <div class="player-info">
                             <div class="player-name">${user.name}</div>
-                            <div class="player-details">${details}</div>
+                            <div class="player-details">${playerDetails}</div>
                         </div>
                         ${badgeContent}
                     </div>
                 `;
             });
-
-            document.getElementById('leaderboardContent').innerHTML = html || `
-                <div style="text-align:center;padding:40px;color:#7f8c8d;">
-                    <div style="font-size:3rem;margin-bottom:20px;">⏱️</div>
-                    <h3>لا يوجد ترتيب للسرعة بعد</h3>
-                    <p>حقق نتيجة ≥ 70% ليُسجَّل وقتك هنا.</p>
-                </div>
-            `;
+            
+            document.getElementById('leaderboardContent').innerHTML = html;
         }
 
-        // تهيئة أولية
-        window.addEventListener('load', () => {
-            loadState();
-            // تحديث الأشرطة إن كان المستخدم دخل مباشرة للمجالات
-            updateDomainProgress();
-        });
+        // **دالة سحب لوحة الصدارة من الشيت (مُعدلة للتزامن)**
+        function showLeaderboard() {
+            showScreen('leaderboardScreen');
+            document.getElementById('leaderboardContent').innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #667eea;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🔄</div>
+                    <h3>جاري تحميل النتائج من قاعدة البيانات...</h3>
+                </div>
+            `;
+            
+            // سحب البيانات من الشيت باستخدام action=getLeaderboard
+            fetch(SCRIPT_URL + '?action=getLeaderboard')
+                .then(response => {
+                    if (!response.ok) throw new Error("فشل في جلب بيانات لوحة الصدارة.");
+                    return response.json();
+                })
+                .then(data => {
+                    const leaderboardData = data.leaderboard || []; 
+                    
+                    // تحديث لوحة الصدارة المحلية بعد سحب البيانات
+                    updateLeaderboardDisplay(leaderboardData, currentLeaderboardTab);
+                })
+                .catch(error => {
+                    console.error('Error fetching leaderboard:', error);
+                    document.getElementById('leaderboardContent').innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                            <div style="font-size: 3rem; margin-bottom: 20px;">⚠️</div>
+                            <h3>خطأ في تحميل لوحة الصدارة</h3>
+                            <p>${error.message}</p>
+                        </div>
+                    `;
+                });
+        }
 
-        // تحسين تجربة المستخدم (Enter → التالي)
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
+        // **دالة showLeaderboardTab المُعدلة لتبقى تعمل مع الدالة الجديدة**
+        function showLeaderboardTab(tabType) {
+            currentLeaderboardTab = tabType;
+            
+            // تحديث الأزرار
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            (event?.target?.classList.add('active') || document.querySelector(`[onclick="showLeaderboardTab('${tabType}')"]`)?.classList.add('active'));
+
+            // إعادة سحب البيانات وعرضها
+            showLeaderboard();
+        }
+
+        // تحميل المستخدم الحالي عند بدء التشغيل
+        window.onload = function() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = savedUser;
+            }
+        };
+
+        // تحسين تجربة المستخدم (بقيت كما هي)
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
                 const nextBtn = document.getElementById('nextQuizBtn');
-                if (nextBtn && nextBtn.style.display !== 'none') nextQuizQuestion();
+                if (nextBtn && nextBtn.style.display !== 'none') {
+                    nextQuizQuestion();
+                }
             }
         });
 
-        // أصوات الواجهات
+        // إضافة أحداث الصوت للعناصر التفاعلية (تم حذف دوال playSound حيث لم يتم توفيرها)
         document.addEventListener('DOMContentLoaded', function() {
             document.addEventListener('click', function(e) {
-                // فحص الأب إن كان النقر على أيقونة داخل زر
-                const target = e.target.closest('.btn, .domain-card, .step-card, .quiz-option');
-                if (target) {
-                    playSound('click');
+                if (e.target.classList.contains('btn') || e.target.classList.contains('domain-card') || e.target.classList.contains('step-card')) {
+                    // playSound('click'); // تم التعليق على دوال الصوت غير الموجودة
                 }
             });
 
             document.addEventListener('mouseover', function(e) {
-                // فحص الأب إن كان التمرير على أيقونة داخل زر
-                const target = e.target.closest('.btn, .domain-card, .step-card, .welcome-icon');
-                if (target) {
-                    playSound('hover');
+                if (e.target.classList.contains('btn') || e.target.classList.contains('domain-card') || e.target.classList.contains('step-card') || e.target.classList.contains('welcome-icon')) {
+                    // playSound('hover'); // تم التعليق على دوال الصوت غير الموجودة
                 }
             });
         });
     </script>
-</body>
-</html>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98cca247402f1274',t:'MTc2MDE2NzYzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange
